@@ -133,6 +133,7 @@
 				<version>${checkstyle-maven-plugin.version}</version>
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
+					<sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
 				</configuration>
 				<executions>
 					<execution>
