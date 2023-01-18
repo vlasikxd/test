@@ -71,7 +71,7 @@
 <li>загрузи проект себе в среду разработки</li>
 <li>изучи весь проект - начни с pom, properties файлов и конфигурационных классов, так же посмотри visual paradigm</li>
 <li>в докере подними БД в командной строке запущенной от имени администратора надо ввести <code>docker run --name postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=user -e POSTGRES_DB=postgres -p 5434:5432 -d postgres</code>, где --name имя контейнера, -e POSTGRES_PASSWORD= пароль БД,  POSTGRES_USER= логин БД</li>
-<li>так же в БД нужно создать 7 схем: account, anti_fraud, authorization, history, profile, transfer, public_bank_information</li>
+<li>так же в БД нужно создать 7 схем: account, anti_fraud, auth, history, profile, transfer, public_bank_information</li>
 <li>добейся успешного запуска своего микросервиса</li>
 </ol>
 
