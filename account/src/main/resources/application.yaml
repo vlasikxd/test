@@ -3,3 +3,4 @@ spring:
     name: account-app
   profiles:
     active: local
+
