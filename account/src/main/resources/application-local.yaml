@@ -1,10 +1,10 @@
 server:
-  port: 8085
+  port: 8088
   servlet:
     context-path: /api/account
 management:
   server:
-    port: 8185
+    port: 8188
   endpoint:
     shutdown:
       enabled: true
@@ -24,3 +24,4 @@ spring:
     drop-first: ${LIQUIBASE_DROP_FIRST:false}
   application:
     name: account-app
+
