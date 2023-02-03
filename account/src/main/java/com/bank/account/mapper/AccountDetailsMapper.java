@@ -9,8 +9,7 @@ import org.mapstruct.MappingTarget;
 import java.util.List;
 
 /**
- * TODO Mapper для {@link AccountDetailsEntity} и {@link AccountDetailsDto}.
- * Mapper для {@link AccountDetailsEntity}.
+ * Mapper для {@link AccountDetailsEntity} и {@link AccountDetailsDto}.
  */
 @Mapper(componentModel = "spring")
 public interface AccountDetailsMapper {

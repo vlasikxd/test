@@ -1,6 +1,6 @@
 package com.bank.account.dto;
 
-import com.bank.account.entity.AccountDetailsEntity;
+import com.bank.account.entity.AuditEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,22 +8,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-
 /**
- * Dto для {@link AccountDetailsEntity}.
+ * Dto для {@link AuditEntity}.
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AccountDetailsDto {
+public class AuditDto {
     Long id;
-    Long passportId;
-    Long accountNumber;
-    Long bankDetailsId;
-    BigDecimal money;
-    Boolean negativeBalance;
-    Long profileId;
+    String entityType;
+    String operationType;
+    String createdBy;
+    String modifiedBy;
+    String newEntityJson;
+    String entityJson;
 }
