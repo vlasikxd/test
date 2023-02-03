@@ -31,7 +31,7 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
     @Override
     public AccountDetailsDto readById(Long id) {
         return mapper.toDto(repository.findById(id)
-                .orElseThrow(() -> throwEntityNotFoundException("AccountDetails с таким id нет в базе данных"))
+                .orElseThrow(() -> returnEntityNotFoundException("AccountDetails с таким id нет в базе данных"))
         );
     }
 
@@ -43,39 +43,39 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
     public List<AccountDetailsDto> readAllById(List<Long> ids) {
         final List<AccountDetailsEntity> accountDetailsList = repository.findAllById(ids);
         if (ids.size() > accountDetailsList.size()) {
-            throw throwEntityNotFoundException("Одного или нескольких id из предоставленного списка нет в базе данных");
+            throw returnEntityNotFoundException("Одного или нескольких id из списка нет в базе данных");
         }
         return mapper.toDtoList(accountDetailsList);
     }
 
     /**
-     * @param accountDetails {@link AccountDetailsDto}
+     * @param accountDetailsDto {@link AccountDetailsDto}
      * @return {@link AccountDetailsDto}
      */
     @Override
     @Transactional
-    public AccountDetailsDto create(AccountDetailsDto accountDetails) {
-        // TODO save вынести, как локальную переменную.
-        return mapper.toDto(repository.save(mapper.toEntity(accountDetails)));
+    public AccountDetailsDto create(AccountDetailsDto accountDetailsDto) {
+        final AccountDetailsEntity accountDetails = repository.save(mapper.toEntity(accountDetailsDto));
+        return mapper.toDto(accountDetails);
     }
 
     /**
      * @param id техничский идентификатор {@link AccountDetailsEntity}.
-     * @param accountDetails {@link AccountDetailsDto}
+     * @param accountDetailsDto {@link AccountDetailsDto}
      * @return {@link AccountDetailsDto}
      */
     @Override
     @Transactional
-    public AccountDetailsDto update(Long id, AccountDetailsDto accountDetails) {
+    public AccountDetailsDto update(Long id, AccountDetailsDto accountDetailsDto) {
         final AccountDetailsEntity accountDetailsEntity = repository.findById(id)
-                .orElseThrow(() -> throwEntityNotFoundException("Не существующий id = " + id)
+                .orElseThrow(() -> returnEntityNotFoundException("Не существующий id = " + id)
         );
-        // TODO save вынести, как локальную переменную.
-        return mapper.toDto(repository.save(mapper.mergeToEntity(accountDetails, accountDetailsEntity)));
+        final AccountDetailsEntity accountDetails = repository.save(mapper.mergeToEntity(accountDetailsDto,
+                accountDetailsEntity));
+        return mapper.toDto(accountDetails);
     }
 
-    // TODO throwEntityNotFoundException переименуй в returnEntityNotFoundException.
-    private EntityNotFoundException throwEntityNotFoundException(String massage) {
+    private EntityNotFoundException returnEntityNotFoundException(String massage) {
         final EntityNotFoundException exception = new EntityNotFoundException(massage);
         log.error(exception.getMessage());
         return exception;

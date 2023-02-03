@@ -1,9 +1,11 @@
 package com.bank.account.entity;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,33 +22,34 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(schema = "account", name = "account_details")
 public class AccountDetailsEntity {
-    // TODO в этом пакете сделай AuditEntity.
+
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @Column(name = "passport_id")
-    private Long passportId;
+    Long passportId;
 
     @Column(name = "account_number")
-    private Long accountNumber;
+    Long accountNumber;
 
     @Column(name = "bank_details_id")
-    private Long bankDetailsId;
+    Long bankDetailsId;
 
     @Column
-    private BigDecimal money;
+    BigDecimal money;
 
     @Column(name = "negative_balance")
-    private Boolean negativeBalance;
+    Boolean negativeBalance;
 
     @Column(name = "profile_id")
-    private Long profileId;
+    Long profileId;
 
     @Override
     public boolean equals(Object o) {

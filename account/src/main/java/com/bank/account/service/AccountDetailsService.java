@@ -6,8 +6,7 @@ import com.bank.account.entity.AccountDetailsEntity;
 import java.util.List;
 
 /**
- * TODO Service для {@link AccountDetailsDto}.
- * Service для {@link AccountDetailsEntity}.
+ Service для {@link AccountDetailsDto}.
  */
 public interface AccountDetailsService {
 
