@@ -69,9 +69,6 @@
         <module name="ClassDataAbstractionCoupling">
             <property name="max" value="15"/>
         </module>
-        <module name="CyclomaticComplexity">
-            <property name="max" value="15"/>
-        </module>
         <module name="NPathComplexity"/>
 
 

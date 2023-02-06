@@ -22,5 +22,5 @@ spring:
     change-log: db/changelog/db.changelog-master.yaml
     enabled: true
     drop-first: false
-  application:
-    name: profile-app
+  #application:
+  #  name: profile-app
