@@ -143,7 +143,6 @@
             <column name="index" remarks="индекс" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="Column" type="INTEGER"/>
         </createTable>
     </changeSet>
     <changeSet author="Рустам" id="1672956301685-7">
