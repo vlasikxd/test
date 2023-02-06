@@ -26,6 +26,7 @@
 		<module>public-info</module>
 		<module>transfer</module>
 		<module>server</module>
+		<module>common</module>
 	</modules>
 
 	<properties>

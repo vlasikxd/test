@@ -1,10 +1,12 @@
 package com.bank.authorization.dto;
 
 import com.bank.authorization.entity.UserEntity;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -14,18 +16,19 @@ import java.io.Serializable;
  */
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDto implements Serializable {
 
-    private Long id;
+    Long id;
 
     @NotNull
-    private String role;
+    String role;
 
     @NotNull
-    private Long profileId;
+    Long profileId;
 
     @NotNull
-    private String password;
+    String password;
 }

@@ -18,9 +18,6 @@ spring:
     username: user
     password: password
   liquibase:
-    default-schema: auth
     change-log: db/changelog/db.changelog-master.yaml
     enabled: true
     drop-first: false
-  application:
-    name: authorization-app
