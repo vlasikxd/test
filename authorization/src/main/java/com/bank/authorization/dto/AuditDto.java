@@ -1,10 +1,12 @@
 package com.bank.authorization.dto;
 
 import com.bank.authorization.entity.AuditEntity;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -15,29 +17,30 @@ import java.sql.Timestamp;
  */
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuditDto implements Serializable {
 
-    private Long id;
+    Long id;
 
     @NotNull
-    private String entityType;
+    String entityType;
 
     @NotNull
-    private String operationType;
+    String operationType;
 
     @NotNull
-    private String createdBy;
+    String createdBy;
 
-    private String modifiedBy;
-
-    @NotNull
-    private Timestamp createdAt;
-
-    private Timestamp modifiedAt;
-    private String newEntityJson;
+    String modifiedBy;
 
     @NotNull
-    private String entityJson;
+    Timestamp createdAt;
+
+    Timestamp modifiedAt;
+    String newEntityJson;
+
+    @NotNull
+    String entityJson;
 }

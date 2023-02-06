@@ -1,9 +1,11 @@
 package com.bank.authorization.entity;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
@@ -24,41 +26,42 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "audit", schema = "auth")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
 
     @NotNull
     @Column(name = "entity_type")
-    private String entityType;
+    String entityType;
 
     @NotNull
     @Column(name = "operation_type")
-    private String operationType;
+    String operationType;
 
     @NotNull
     @Column(name = "created_by")
-    private String createdBy;
+    String createdBy;
 
     @Column(name = "modified_by")
-    private String modifiedBy;
+    String modifiedBy;
 
     @NotNull
     @Column(name = "created_at")
-    private Instant createdAt;
+    Timestamp createdAt;
 
     @Column(name = "modified_at")
-    private Instant modifiedAt;
+    Timestamp modifiedAt;
 
     @Column(name = "new_entity_json")
-    private String newEntityJson;
+    String newEntityJson;
 
     @NotNull
     @Column(name = "entity_json")
-    private String entityJson;
+    String entityJson;
 
     @Override
     public boolean equals(Object o) {

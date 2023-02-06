@@ -1,9 +1,11 @@
 package com.bank.authorization.entity;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,24 +25,25 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users", schema = "auth")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
 
     @NotNull
     @Column(name = "role")
-    private String role;
+    String role;
 
     @NotNull
     @Column(name = "profile_id")
-    private Long profileId;
+    Long profileId;
 
     @NotNull
     @Column(name = "password")
-    private String password;
+    String password;
 
     @Override
     public boolean equals(Object o) {

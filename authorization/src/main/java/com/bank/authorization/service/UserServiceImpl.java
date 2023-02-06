@@ -4,23 +4,25 @@ import com.bank.authorization.dto.UserDto;
 import com.bank.authorization.mapper.UserMapper;
 import com.bank.authorization.entity.UserEntity;
 import com.bank.authorization.repository.UserRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
-
 /**
  * Реализация для {@link UserService}.
  */
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
-    private final UserMapper mapper;
+    UserRepository repository;
+    UserMapper mapper;
 
     /**
      * @param id технический идентификатор для {@link UserEntity}.
@@ -29,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto read(Long id) {
         final UserEntity user = repository.findById(id)
-                .orElseThrow(() -> entityNotFoundException("Пользователь с данным идентификатором не существует!"));
+                .orElseThrow(() -> returnEntityNotFoundException("Пользователь с данным идентификатором не найден!"));
         return mapper.toDto(user);
     }
 
@@ -53,9 +55,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto update(Long id, UserDto userDto) {
         final UserEntity userById = repository.findById(id)
-                // TODO сообщение везде поправь на "пользователь не найден", так как пользователь не должен знать,
-                //    что пользователь не существует.
-                 .orElseThrow(() -> entityNotFoundException("Обновление невозможно, пользователя не существует!"));
+                 .orElseThrow(() -> returnEntityNotFoundException("Обновление невозможно, пользователь не найден!"));
         final UserEntity user = repository.save(mapper.mergeToEntity(userDto, userById));
         return mapper.toDto(user);
     }
@@ -67,16 +67,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> readAll(List<Long> ids) {
         final List<UserEntity> users = repository.findAllById(ids);
-
         if (users.size() != ids.size()) {
-            throw entityNotFoundException("Ошибка в переданных параметрах, пользователи(ь) не существуют(ет)");
+            throw returnEntityNotFoundException("Ошибка в переданных параметрах, пользователи(ь) не найден(ы)");
         }
-
         return mapper.toDtoList(users);
     }
 
-    // TODO entityNotFoundException переименуй в returnEntityNotFoundException.
-    private EntityNotFoundException entityNotFoundException(String message) {
+    private EntityNotFoundException returnEntityNotFoundException(String message) {
         return new EntityNotFoundException(message);
     }
 }
