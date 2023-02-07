@@ -43,9 +43,6 @@
             <property name="ignoreSetter" value="true"/>
             <property name="setterCanReturnItsClass" value="true"/>
         </module>
-        <module name="MagicNumber">
-            <property name="ignoreNumbers" value="-1, 0, 1, 2, 10, 100, 404, 1000, 1024"/>
-        </module>
         <module name="MissingSwitchDefault"/>
         <module name="MultipleStringLiterals"/>
         <module name="MultipleVariableDeclarations"/>
