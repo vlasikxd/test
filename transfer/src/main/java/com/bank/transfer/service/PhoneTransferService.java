@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Сервис {@link PhoneTransferDto}, {@link PhoneTransferEntity}
  */
-public interface PhoneService {
+public interface PhoneTransferService {
 
     /**
      * @param transfer {@link PhoneTransferDto}

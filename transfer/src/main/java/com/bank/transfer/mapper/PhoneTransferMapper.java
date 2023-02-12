@@ -12,7 +12,7 @@ import java.util.List;
  * Mapper для {@link PhoneTransferEntity}
  */
 @Mapper(componentModel = "spring")
-public interface PhoneMapper {
+public interface PhoneTransferMapper {
 
     /**
      * @param dto {@link PhoneTransferDto}
@@ -28,16 +28,13 @@ public interface PhoneMapper {
     PhoneTransferDto toDto(PhoneTransferEntity transfer);
 
     /**
-     * TODO transfer переименуй в transferDto.
-     * @param transfer {@link PhoneTransferDto}
-     * TODO transferEntity переименуй в transfer.
-     * @param transferEntity {@link PhoneTransferEntity}
+     * @param transferDto {@link PhoneTransferDto}
+     * @param transfer {@link PhoneTransferEntity}
      * @return {@link PhoneTransferEntity}
      */
     @Mapping(target = "id", ignore = true)
-    // TODO transfer переименуй в transferDto. transferEntity переименуй в transfer.
-    PhoneTransferEntity mergeToEntity (PhoneTransferDto transfer,
-                                      @MappingTarget PhoneTransferEntity transferEntity);
+    PhoneTransferEntity mergeToEntity (PhoneTransferDto transferDto,
+                                      @MappingTarget PhoneTransferEntity transfer);
 
     /**
      * @param transfers {@link List<PhoneTransferEntity>}

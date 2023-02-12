@@ -1,9 +1,11 @@
 package com.bank.transfer.entity;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,24 +24,25 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "account_transfer", schema = "transfer")
 public class AccountTransferEntity {
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @Column(name = "account_details_id")
-    private Long accountDetailsId;
+    Long accountDetailsId;
 
     @Column(name = "account_number")
-    private Long accountNumber;
+    Long accountNumber;
 
     @NotNull
     @Column(name = "amount")
-    private BigDecimal amount;
+    BigDecimal amount;
 
     @Column(name = "purpose")
-    private String purpose;
+    String purpose;
 }

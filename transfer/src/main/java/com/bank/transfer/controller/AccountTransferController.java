@@ -2,7 +2,7 @@ package com.bank.transfer.controller;
 
 import com.bank.transfer.dto.AccountTransferDto;
 import com.bank.transfer.entity.AccountTransferEntity;
-import com.bank.transfer.service.AccountService;
+import com.bank.transfer.service.AccountTransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/account")
-public class AccountController {
+public class AccountTransferController {
 
-    private final AccountService service;
+    private final AccountTransferService service;
 
     /**
      * @param transfer {@link AccountTransferDto}
@@ -48,8 +48,7 @@ public class AccountController {
      * @param ids лист технических идентификаторов {@link AccountTransferEntity}
      * @return {@link ResponseEntity<List>} c {@link AccountTransferDto}, HTTPStatus.OK.
      */
-    // TODO "/read/" измени на "/read/all"
-    @GetMapping("/read/")
+    @GetMapping("/read/all")
     public ResponseEntity<List<AccountTransferDto>> readAll(@RequestParam List<Long> ids) {
         return new ResponseEntity<>(service.readAll(ids), HttpStatus.OK);
     }

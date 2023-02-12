@@ -14,7 +14,7 @@ import java.util.List;
  * Mapper для {@link CardTransferEntity}
  */
 @Mapper(componentModel = "spring")
-public interface CardMapper {
+public interface CardTransferMapper {
 
     /**
      * @param transfer {@link CardTransferDto}
@@ -30,16 +30,13 @@ public interface CardMapper {
     CardTransferDto toDto(CardTransferEntity transfer);
 
     /**
-     * TODO transfer переименуй в transferDto.
-     * @param transfer {@link AccountTransferDto}
-     * TODO transferEntity переименуй в transfer.
-     * @param transferEntity {@link AccountTransferEntity}
+     * @param transferDto {@link AccountTransferDto}
+     * @param transfer {@link AccountTransferEntity}
      * @return {@link AccountTransferEntity}
      */
     @Mapping(target = "id", ignore = true)
-    // TODO transfer переименуй в transferDto. transferEntity переименуй в transfer.
-    CardTransferEntity mergeToEntity (CardTransferDto transfer,
-                                         @MappingTarget CardTransferEntity transferEntity);
+    CardTransferEntity mergeToEntity (CardTransferDto transferDto,
+                                         @MappingTarget CardTransferEntity transfer);
 
     /**
      * @param transfers {@link List<CardTransferEntity>}
