@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Сервис для {@link CardTransferDto}
  */
-public interface CardService {
+public interface CardTransferService {
 
     /**
      * @param transfer {@link CardTransferDto}
@@ -31,8 +31,7 @@ public interface CardService {
 
     /**
      * @param ids лист технических идентификаторов {@link CardTransferEntity}
-     * TODO return не просто дто, а лист дто!
-     * @return {@link CardTransferDto}
+     * @return {@link List<CardTransferDto>}
      */
     List<CardTransferDto> readAll(List<Long> ids);
 }

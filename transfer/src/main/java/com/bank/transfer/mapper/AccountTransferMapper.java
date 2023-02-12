@@ -12,7 +12,7 @@ import java.util.List;
  * Mapper для {@link AccountTransferEntity}, {@link AccountTransferDto}
  */
 @Mapper(componentModel = "spring")
-public interface AccountMapper {
+public interface AccountTransferMapper {
 
     /**
      * @param transfer {@link AccountTransferDto}
@@ -28,16 +28,13 @@ public interface AccountMapper {
     AccountTransferDto toDto(AccountTransferEntity transfer);
 
     /**
-     * TODO transfer переименуй в transferDto.
-     * @param transfer {@link AccountTransferDto}
-     * TODO transferEntity переименуй в transfer.
-     * @param transferEntity {@link AccountTransferEntity}
+     * @param transferDto {@link AccountTransferDto}
+     * @param transfer {@link AccountTransferEntity}
      * @return {@link AccountTransferEntity}
      */
     @Mapping(target = "id", ignore = true)
-    // TODO transfer переименуй в transferDto. transferEntity переименуй в transfer.
-    AccountTransferEntity mergeToEntity (AccountTransferDto transfer,
-                                         @MappingTarget AccountTransferEntity transferEntity);
+    AccountTransferEntity mergeToEntity (AccountTransferDto transferDto,
+                                         @MappingTarget AccountTransferEntity transfer);
 
     /**
      * @param transfers {@link List<AccountTransferEntity>}

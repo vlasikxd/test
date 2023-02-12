@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Сервис для {@link AccountTransferDto}
  */
-public interface AccountService {
+public interface AccountTransferService {
 
     /**
      * @param transfer {@link AccountTransferDto}

@@ -1,10 +1,12 @@
 package com.bank.transfer.dto;
 
 import com.bank.transfer.entity.PhoneTransferEntity;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 
@@ -15,11 +17,11 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PhoneTransferDto {
-
-    private Long id;
-    private Long phoneNumber;
-    private BigDecimal amount;
-    private String purpose;
-    private Long accountDetailsId;
+    Long id;
+    Long phoneNumber;
+    BigDecimal amount;
+    String purpose;
+    Long accountDetailsId;
 }

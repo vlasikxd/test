@@ -2,7 +2,7 @@ package com.bank.transfer.controller;
 
 import com.bank.transfer.dto.PhoneTransferDto;
 import com.bank.transfer.entity.PhoneTransferEntity;
-import com.bank.transfer.service.PhoneService;
+import com.bank.transfer.service.PhoneTransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +22,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/phone")
-public class PhoneController {
+public class PhoneTransferController {
 
-    private final PhoneService service;
+    private final PhoneTransferService service;
 
     /**
      * @param transfer {@link PhoneTransferDto}
      * @return {@link ResponseEntity<PhoneTransferDto>} HTTPStatus.OK.
      */
     @PostMapping("/create")
-    // TODO createNewTransfer переименуй в create
-    public ResponseEntity<PhoneTransferDto> createNewTransfer(@RequestBody PhoneTransferDto transfer) {
+    public ResponseEntity<PhoneTransferDto> create(@RequestBody PhoneTransferDto transfer) {
         return new ResponseEntity<>(service.create(transfer), HttpStatus.OK);
     }
 
@@ -41,8 +40,7 @@ public class PhoneController {
      * @return {@link ResponseEntity<PhoneTransferDto>} HTTPStatus.OK.
      */
     @GetMapping("/read")
-    // TODO showTransfer переименуй в read
-    public ResponseEntity<PhoneTransferDto> showTransfer(@RequestParam Long id) {
+    public ResponseEntity<PhoneTransferDto> read(@RequestParam Long id) {
         return new ResponseEntity<>(service.read(id), HttpStatus.OK);
     }
 
@@ -50,10 +48,9 @@ public class PhoneController {
      * @param ids лист технических идентификаторов {@link PhoneTransferEntity}
      * @return {@link ResponseEntity<List>} c {@link PhoneTransferDto}, HTTPStatus.OK.
      */
-    // TODO "/read/" измени на "/read/all"
-    @GetMapping("/read/")
-    // TODO showAllUsers переименуй в readAll
-    public ResponseEntity<List<PhoneTransferDto>> showAllUsers(@RequestParam List<Long> ids) {
+
+    @GetMapping("/read/all")
+    public ResponseEntity<List<PhoneTransferDto>> readAll(@RequestParam List<Long> ids) {
         return new ResponseEntity<>(service.readAll(ids), HttpStatus.OK);
     }
 

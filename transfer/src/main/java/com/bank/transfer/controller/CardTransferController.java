@@ -2,7 +2,7 @@ package com.bank.transfer.controller;
 
 import com.bank.transfer.dto.CardTransferDto;
 import com.bank.transfer.entity.CardTransferEntity;
-import com.bank.transfer.service.CardService;
+import com.bank.transfer.service.CardTransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/card")
-public class CardController {
+public class CardTransferController {
 
-    private final CardService service;
+    private final CardTransferService service;
 
     /**
      * @param transfer {@link CardTransferDto}
@@ -48,8 +48,7 @@ public class CardController {
      * @param ids лист технических идентификаторов {@link CardTransferEntity}
      * @return {@link ResponseEntity<List>} c {@link CardTransferDto}, HTTPStatus.OK.
      */
-    // TODO "/read/" измени на "/read/all"
-    @GetMapping("/read/")
+    @GetMapping("/read/all")
     public ResponseEntity<List<CardTransferDto>> readAll(@RequestParam List<Long> ids) {
         return new ResponseEntity<>(service.readAll(ids), HttpStatus.OK);
     }

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Репозиторий для {@link CardTransferEntity}
  */
-public interface CardRepository  extends JpaRepository<CardTransferEntity, Long> {
+public interface CardTransferRepository extends JpaRepository<CardTransferEntity, Long> {
 }

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Репозиторий для {@link PhoneTransferEntity}
  */
-public interface PhoneRepository extends JpaRepository<PhoneTransferEntity, Long> {
+public interface PhoneTransferRepository extends JpaRepository<PhoneTransferEntity, Long> {
 }

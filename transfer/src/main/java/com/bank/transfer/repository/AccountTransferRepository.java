@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Репозиторий для {@link AccountTransferEntity}
  */
-public interface AccountRepository extends JpaRepository<AccountTransferEntity, Long> {
+public interface AccountTransferRepository extends JpaRepository<AccountTransferEntity, Long> {
 }
