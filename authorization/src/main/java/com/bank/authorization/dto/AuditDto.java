@@ -39,6 +39,7 @@ public class AuditDto implements Serializable {
     Timestamp createdAt;
 
     Timestamp modifiedAt;
+
     String newEntityJson;
 
     @NotNull
