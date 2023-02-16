@@ -5,7 +5,6 @@ import com.bank.account.entity.AccountDetailsEntity;
 import com.bank.account.mapper.AccountDetailsMapper;
 import com.bank.account.repository.AccountDetailsRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +14,6 @@ import java.util.List;
 /**
  * Реализация {@link AccountDetailsService}
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountDetailsServiceImp implements AccountDetailsService {
@@ -31,7 +29,7 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
     @Override
     public AccountDetailsDto readById(Long id) {
         return mapper.toDto(repository.findById(id)
-                .orElseThrow(() -> returnEntityNotFoundException("AccountDetails с таким id нет в базе данных"))
+                .orElseThrow(() -> returnEntityNotFoundException("AccountDetails с таким id не найдено"))
         );
     }
 
@@ -43,7 +41,7 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
     public List<AccountDetailsDto> readAllById(List<Long> ids) {
         final List<AccountDetailsEntity> accountDetailsList = repository.findAllById(ids);
         if (ids.size() > accountDetailsList.size()) {
-            throw returnEntityNotFoundException("Одного или нескольких id из списка нет в базе данных");
+            throw returnEntityNotFoundException("Одного или нескольких id из списка не найдено");
         }
         return mapper.toDtoList(accountDetailsList);
     }
@@ -76,8 +74,6 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
     }
 
     private EntityNotFoundException returnEntityNotFoundException(String massage) {
-        final EntityNotFoundException exception = new EntityNotFoundException(massage);
-        log.error(exception.getMessage());
-        return exception;
+        return new EntityNotFoundException(massage);
     }
 }
