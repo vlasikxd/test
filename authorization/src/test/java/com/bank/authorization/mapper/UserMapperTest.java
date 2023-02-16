@@ -3,7 +3,7 @@ package com.bank.authorization.mapper;
 import com.bank.authorization.ParentTest;
 import com.bank.authorization.dto.UserDto;
 import com.bank.authorization.entity.UserEntity;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,15 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserMapperTest extends ParentTest {
 
-    private static final UserMapper MAPPER = new UserMapperImpl();
+    private final UserMapper MAPPER = new UserMapperImpl();
 
-    private static UserEntity user;
-    private static UserDto userDto;
-    private static UserDto userUpdateDto;
-    private static List<UserEntity> users;
+    private UserEntity user;
+    private UserDto userDto;
+    private UserDto userUpdateDto;
+    private List<UserEntity> users;
 
-    @BeforeAll
-    static void init() {
+    @BeforeEach
+    void init() {
         userDto = getUserDto(ONE, ROLE_USER, PASSWORD, ONE);
 
         userUpdateDto = getUserDto(null, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
@@ -92,9 +92,9 @@ class UserMapperTest extends ParentTest {
 
         assertAll(() -> {
             assertEquals(ONE, result.getId());
-            assertEquals(ROLE_ADMIN, result.getRole());
-            assertEquals(PASSWORD_ADMIN, result.getPassword());
-            assertEquals(TWO, result.getProfileId());
+            assertEquals(ROLE_USER, result.getRole());
+            assertEquals(PASSWORD, result.getPassword());
+            assertEquals(ONE, result.getProfileId());
         });
     }
 
