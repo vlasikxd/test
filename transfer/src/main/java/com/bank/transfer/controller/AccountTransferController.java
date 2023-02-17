@@ -49,7 +49,7 @@ public class AccountTransferController {
      * @return {@link ResponseEntity<List>} c {@link AccountTransferDto}, HTTPStatus.OK.
      */
     @GetMapping("/read/all")
-    public ResponseEntity<List<AccountTransferDto>> readAll(@RequestParam List<Long> ids) {
+    public ResponseEntity<List<AccountTransferDto>> readAll(@RequestParam("ids") List<Long> ids) {
         return new ResponseEntity<>(service.readAll(ids), HttpStatus.OK);
     }
 
