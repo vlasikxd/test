@@ -74,7 +74,7 @@ public class CardTransferServiceImpl implements CardTransferService {
     @Override
     public List<CardTransferDto> readAll(List<Long> ids) {
         final List<CardTransferDto> transfers = mapper.toDtoList(repository.findAllById(ids));
-         final String exceptionMessage = "Лист содержит один и более id, по которым нет CardTransfer";
+        final String exceptionMessage = "Лист содержит один и более id, по которым нет CardTransfer";
         validator.validation(transfers, ids, exceptionMessage);
         return transfers;
     }

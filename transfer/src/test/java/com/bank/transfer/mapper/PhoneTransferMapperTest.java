@@ -1,5 +1,6 @@
 package com.bank.transfer.mapper;
 
+import com.bank.transfer.ParentTest;
 import com.bank.transfer.dto.PhoneTransferDto;
 import com.bank.transfer.entity.PhoneTransferEntity;
 import lombok.AccessLevel;
@@ -7,33 +8,37 @@ import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class PhoneTransferMapperTest {
+class PhoneTransferMapperTest extends ParentTest {
+
     final PhoneTransferMapperImpl mapper = new PhoneTransferMapperImpl();
 
     static PhoneTransferEntity transferEntity;
+
     static PhoneTransferDto transferDto;
+
     static List<PhoneTransferEntity> transferList;
 
 
     @BeforeAll
     public static void init() {
-        transferEntity = new PhoneTransferEntity(15L,15L,15L, BigDecimal.valueOf(15)
-                ,"Tarzan");
-        transferDto = new PhoneTransferDto(14L,14L, BigDecimal.valueOf(14)
-                ,"Ramzan", 14L);
+
+        transferEntity = new PhoneTransferEntity(ID, ENTITY_NUMBER, ENTITY_DETAILS_ID, AMOUNT, PURPOSE);
+
+        transferDto = new PhoneTransferDto(ID, ENTITY_NUMBER, AMOUNT, PURPOSE, ENTITY_DETAILS_ID);
+
         transferList = new ArrayList<>();
         transferList.add(transferEntity);
     }
 
     @Test
     void toEntityTest() {
+
         PhoneTransferEntity phoneTransferEntity = mapper.toEntity(transferDto);
 
         assertAll(()-> assertEquals(phoneTransferEntity.getPhoneNumber(), transferDto.getPhoneNumber()),
@@ -44,6 +49,7 @@ class PhoneTransferMapperTest {
 
     @Test
     void toDtoTest() {
+
         PhoneTransferDto phoneTransferDto = mapper.toDto(transferEntity);
 
         assertAll(()-> assertEquals(phoneTransferDto.getPhoneNumber(), transferEntity.getPhoneNumber()),
@@ -54,6 +60,7 @@ class PhoneTransferMapperTest {
 
     @Test
     void mergeToEntityTest() {
+
         PhoneTransferEntity mergeEntity = mapper.mergeToEntity(transferDto, transferEntity);
 
         assertAll(()-> assertEquals(mergeEntity.getAccountDetailsId(), transferDto.getAccountDetailsId()),
@@ -64,6 +71,7 @@ class PhoneTransferMapperTest {
 
     @Test
     void toDtoListTest() {
+
         List<PhoneTransferDto> dtoList = mapper.toDtoList(transferList);
 
         assertAll(()-> assertEquals(dtoList.get(0).getAccountDetailsId(), transferList.get(0).getAccountDetailsId()),

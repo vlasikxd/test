@@ -1,5 +1,6 @@
 package com.bank.transfer.service.impl;
 
+import com.bank.transfer.ParentTest;
 import com.bank.transfer.dto.CardTransferDto;
 import com.bank.transfer.entity.CardTransferEntity;
 import com.bank.transfer.mapper.CardTransferMapper;
@@ -29,47 +30,48 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class CardTransferServiceImplTest {
+class CardTransferServiceImplTest extends ParentTest {
 
     @InjectMocks
     CardTransferServiceImpl service;
 
     @Mock
     CardTransferRepository repository;
+
     @Spy
     CardTransferMapper mapper = new CardTransferMapperImpl();
+
     @Mock
     ReadAllValidator validator;
 
     static CardTransferDto transferDto;
-    static CardTransferEntity transfer;
+
     static CardTransferEntity transferEntity;
-    static final Long id = 14L;
+
     static List<Long> ids;
+
     static List<CardTransferEntity> transferList;
 
 
     @BeforeAll
     public static void init(){
-        transferDto = new CardTransferDto(14L,14L, BigDecimal.valueOf(14)
-                ,"Ramzan", 14L);
-        transfer = new CardTransferEntity(15L,15L,15L,BigDecimal.valueOf(15)
-                ,"Tarzan");
-        transferEntity = new CardTransferEntity(14L, 14L, 14L, BigDecimal.valueOf(14)
-                ,"Ramzan");
+
+        transferDto = new CardTransferDto(ID, ENTITY_NUMBER, AMOUNT, PURPOSE, ENTITY_DETAILS_ID);
+
+        transferEntity = new CardTransferEntity(ID, ENTITY_NUMBER, ENTITY_DETAILS_ID, AMOUNT, PURPOSE);
+
         ids = new ArrayList<>();
-        ids.add(id);
-        ids.add(transfer.getId());
+        ids.add(ID);
+
         transferList = new ArrayList<>();
         transferList.add(transferEntity);
-        transferList.add(transfer);
     }
 
     @Test
     @DisplayName("Позитивный сценарий создания транзакции")
     void createTest() {
+
         when(repository.save(ArgumentMatchers.any())).thenReturn(transferEntity);
 
         CardTransferDto cardTransferDto =  service.create(transferDto);
@@ -82,13 +84,26 @@ class CardTransferServiceImplTest {
     }
 
     @Test
+    @DisplayName("Негативный сценарий добавления транзакции")
+    void createNegativeTest() {
+
+        when(repository.save(ArgumentMatchers.any())).thenThrow(new EntityNotFoundException("Неверные данные"));
+
+        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
+                service.create(transferDto));
+
+        assertEquals(exception.getMessage(), "Неверные данные");
+    }
+
+    @Test
     @DisplayName("Позитивный сценарий обновление транзакции")
     void updateTest() {
+
         when(repository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(transferEntity));
 
         when(repository.save(ArgumentMatchers.any())).thenReturn(transferEntity);
 
-        CardTransferDto transferDto1 = service.update(transferDto, id);
+        CardTransferDto transferDto1 = service.update(transferDto, ID);
 
         assertAll(() -> Assertions.assertEquals(
                         transferDto1.getAccountDetailsId(), transferDto.getAccountDetailsId()),
@@ -100,19 +115,23 @@ class CardTransferServiceImplTest {
     @Test
     @DisplayName("Негативный сценарий обновления транзакции")
     void updateNegativeTest() {
+
         when(repository.findById(ArgumentMatchers.anyLong())).thenThrow(new
                 EntityNotFoundException("CardTransfer для обновления с указанным id не найден"));
+
         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
-                service.update(transferDto, id));
+                service.update(transferDto, ID));
+
         assertEquals(exception.getMessage(), "CardTransfer для обновления с указанным id не найден");
     }
 
     @Test
     @DisplayName("Позитивный сценарий чтения транзакции")
     void readTest() {
+
         when(repository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(transferEntity));
 
-        CardTransferDto transferDto1 = service.read(id);
+        CardTransferDto transferDto1 = service.read(ID);
 
         assertAll(() -> Assertions.assertEquals(
                         transferDto1.getAccountDetailsId(), transferEntity.getAccountDetailsId()),
@@ -124,28 +143,37 @@ class CardTransferServiceImplTest {
     @Test
     @DisplayName("Негативный сценарий чтения транзакции")
     void readNegativeTest() {
+
         when(repository.findById(ArgumentMatchers.anyLong())).thenThrow(new
                 EntityNotFoundException("CardTransfer с указанным id не найден"));
+
         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
-                service.update(transferDto, id));
+                service.update(transferDto, ID));
+
         assertEquals(exception.getMessage(), "CardTransfer с указанным id не найден");
     }
 
     @Test
     @DisplayName("Позитивный сценарий чтения коллекции транзакций")
     void readAllTest() {
+
         when(repository.findAllById(ArgumentMatchers.anyCollection())).thenReturn(transferList);
+
         List<CardTransferDto> transferDtoList = service.readAll(ids);
+
         assertEquals(transferDtoList.size(), ids.size());
     }
 
     @Test
     @DisplayName("Негативный сценарий чтения коллекции транзакций")
     void readAllNegativeTest() {
+
         when(repository.findAllById(ArgumentMatchers.anyCollection())).thenThrow(new
                 EntityNotFoundException("Лист содержит один и более id, по которым нет CardTransfer"));
+
         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
                 service.readAll(ids));
+
         assertEquals(exception.getMessage(), "Лист содержит один и более id, по которым нет CardTransfer");
     }
 }
