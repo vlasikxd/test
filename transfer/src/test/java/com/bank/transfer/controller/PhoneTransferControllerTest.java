@@ -32,24 +32,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-@WebMvcTest(PhoneTransferController.class)
+
 @AutoConfigureMockMvc()
+@WebMvcTest(PhoneTransferController.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 class PhoneTransferControllerTest extends ParentTest {
 
-    final ObjectMapper mapper;
+    private static PhoneTransferDto transferDto;
 
-    final MockMvc mock;
+    private static List<Long> ids;
+
+    private static List<PhoneTransferDto> transferList;
+
+    private final ObjectMapper mapper;
+
+    private final MockMvc mock;
 
     @MockBean
-    final PhoneTransferServiceImpl service;
-
-    static PhoneTransferDto transferDto;
-
-    static List<Long> ids;
-
-    static List<PhoneTransferDto> transferList;
+    private final PhoneTransferServiceImpl service;
 
     @BeforeAll
     public static void init(){
@@ -57,6 +57,7 @@ class PhoneTransferControllerTest extends ParentTest {
         transferDto = new PhoneTransferDto(ID, ENTITY_NUMBER, AMOUNT, PURPOSE, ENTITY_DETAILS_ID);
 
         ids = List.of(ID);
+
         transferList = List.of(transferDto);
     }
 
@@ -135,7 +136,7 @@ class PhoneTransferControllerTest extends ParentTest {
     @Test
     @DisplayName("Негативный сценарий чтения коллекции транзакции")
     public void readAllNegativeTest() throws Exception {
-        String massage = "Ошибка в переданных параметрах";
+        final String massage = "Ошибка в переданных параметрах";
 
         doThrow(new EntityNotFoundException(massage)).when(service).readAll(any());
 

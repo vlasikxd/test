@@ -37,23 +37,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest(AccountTransferController.class)
 @AutoConfigureMockMvc()
+@WebMvcTest(AccountTransferController.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 class AccountTransferControllerTest extends ParentTest {
 
-    final ObjectMapper mapper;
+    private static AccountTransferDto transferDto;
 
-    final MockMvc mock;
+    private static List<Long> ids;
+
+    private static List<AccountTransferDto> transferList;
+
+    private final ObjectMapper mapper;
+
+    private final MockMvc mock;
     @MockBean
-    final AccountTransferServiceImpl service;
-
-    static AccountTransferDto transferDto;
-
-    static List<Long> ids;
-
-    static List<AccountTransferDto> transferList;
+    private final AccountTransferServiceImpl service;
 
     @BeforeAll
     public static void init(){
@@ -61,6 +60,7 @@ class AccountTransferControllerTest extends ParentTest {
         transferDto = new AccountTransferDto(ID, ENTITY_NUMBER, AMOUNT, PURPOSE, ENTITY_DETAILS_ID);
 
         ids = List.of(ID);
+
         transferList = List.of(transferDto);
     }
 
@@ -140,7 +140,7 @@ class AccountTransferControllerTest extends ParentTest {
     @DisplayName("Негативный сценарий чтения коллекции транзакции")
     public void readAllNegativeTest() throws Exception {
 
-        String massage = "Ошибка в переданных параметрах";
+        final String massage = "Ошибка в переданных параметрах";
 
         doThrow(new EntityNotFoundException(massage)).when(service).readAll(any());
 

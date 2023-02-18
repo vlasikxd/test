@@ -8,21 +8,16 @@ import com.bank.transfer.mapper.PhoneTransferMapper;
 import com.bank.transfer.mapper.PhoneTransferMapperImpl;
 import com.bank.transfer.repository.PhoneTransferRepository;
 import com.bank.transfer.validator.ReadAllValidator;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,29 +26,27 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 class PhoneTransferServiceImplTest extends ParentTest {
 
+    private static PhoneTransferDto transferDto;
+
+    private static PhoneTransferEntity transferEntity;
+
+    private static List<Long> ids;
+
+    private static List<PhoneTransferEntity> transferList;
+
     @InjectMocks
-    PhoneTransferServiceImpl service;
+    private PhoneTransferServiceImpl service;
 
     @Mock
-    PhoneTransferRepository repository;
+    private PhoneTransferRepository repository;
 
     @Spy
-    PhoneTransferMapper mapper = new PhoneTransferMapperImpl();
+    private PhoneTransferMapper mapper = new PhoneTransferMapperImpl();
 
     @Mock
-    ReadAllValidator validator;
-
-    static PhoneTransferDto transferDto;
-
-    static PhoneTransferEntity transferEntity;
-
-    static List<Long> ids;
-
-    static List<PhoneTransferEntity> transferList;
-
+    private ReadAllValidator validator;
 
     @BeforeAll
     public static void init(){
@@ -61,10 +54,10 @@ class PhoneTransferServiceImplTest extends ParentTest {
         transferDto = new PhoneTransferDto(ID, ENTITY_NUMBER, AMOUNT, PURPOSE, ENTITY_DETAILS_ID);
 
         transferEntity = new PhoneTransferEntity(ID, ENTITY_NUMBER, ENTITY_DETAILS_ID, AMOUNT, PURPOSE);
-        ids = new ArrayList<>();
-        ids.add(ID);
-        transferList = new ArrayList<>();
-        transferList.add(transferEntity);
+
+        ids = List.of(ID);
+
+        transferList = List.of(transferEntity);
     }
 
     @Test
@@ -73,7 +66,7 @@ class PhoneTransferServiceImplTest extends ParentTest {
 
         when(repository.save(ArgumentMatchers.any())).thenReturn(transferEntity);
 
-        PhoneTransferDto phoneTransferDto =  service.create(transferDto);
+        final PhoneTransferDto phoneTransferDto =  service.create(transferDto);
 
         assertAll(() -> Assertions.assertEquals(
                         transferEntity.getAccountDetailsId(), phoneTransferDto.getAccountDetailsId()),
@@ -88,7 +81,7 @@ class PhoneTransferServiceImplTest extends ParentTest {
 
         when(repository.save(ArgumentMatchers.any())).thenThrow(new EntityNotFoundException("Неверные данные"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
                 service.create(transferDto));
 
         assertEquals(exception.getMessage(), "Неверные данные");
@@ -102,7 +95,7 @@ class PhoneTransferServiceImplTest extends ParentTest {
 
         when(repository.save(ArgumentMatchers.any())).thenReturn(transferEntity);
 
-        PhoneTransferDto transferDto1 = service.update(transferDto, ID);
+        final PhoneTransferDto transferDto1 = service.update(transferDto, ID);
 
         assertAll(() -> Assertions.assertEquals(
                         transferDto1.getAccountDetailsId(), transferDto.getAccountDetailsId()),
@@ -118,7 +111,7 @@ class PhoneTransferServiceImplTest extends ParentTest {
         when(repository.findById(ArgumentMatchers.anyLong())).thenThrow(new
                 EntityNotFoundException("PhoneTransfer для обновления с указанным id не найден"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
                 service.update(transferDto, ID));
 
         assertEquals(exception.getMessage(), "PhoneTransfer для обновления с указанным id не найден");
@@ -130,7 +123,7 @@ class PhoneTransferServiceImplTest extends ParentTest {
 
         when(repository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(transferEntity));
 
-        PhoneTransferDto transferDto1 = service.read(ID);
+        final PhoneTransferDto transferDto1 = service.read(ID);
 
         assertAll(() -> Assertions.assertEquals(
                         transferDto1.getAccountDetailsId(), transferEntity.getAccountDetailsId()),
@@ -146,7 +139,7 @@ class PhoneTransferServiceImplTest extends ParentTest {
         when(repository.findById(ArgumentMatchers.anyLong())).thenThrow(new
                 EntityNotFoundException("PhoneTransfer с указанным id не найден"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
                 service.update(transferDto, ID));
 
         assertEquals(exception.getMessage(), "PhoneTransfer с указанным id не найден");
@@ -158,7 +151,7 @@ class PhoneTransferServiceImplTest extends ParentTest {
 
         when(repository.findAllById(ArgumentMatchers.anyCollection())).thenReturn(transferList);
 
-        List<PhoneTransferDto> transferDtoList = service.readAll(ids);
+        final List<PhoneTransferDto> transferDtoList = service.readAll(ids);
 
         assertEquals(transferDtoList.size(), ids.size());
     }
@@ -170,7 +163,7 @@ class PhoneTransferServiceImplTest extends ParentTest {
         when(repository.findAllById(ArgumentMatchers.anyCollection())).thenThrow(new
                 EntityNotFoundException("Лист содержит один и более id, по которым нет PhoneTransfer"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
                 service.readAll(ids));
 
         assertEquals(exception.getMessage(), "Лист содержит один и более id, по которым нет PhoneTransfer");

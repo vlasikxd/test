@@ -7,18 +7,14 @@ import com.bank.transfer.mapper.CardTransferMapper;
 import com.bank.transfer.mapper.CardTransferMapperImpl;
 import com.bank.transfer.repository.CardTransferRepository;
 import com.bank.transfer.validator.ReadAllValidator;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -30,29 +26,27 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 class CardTransferServiceImplTest extends ParentTest {
 
+    private static CardTransferDto transferDto;
+
+    private static CardTransferEntity transferEntity;
+
+    private static List<Long> ids;
+
+    private static List<CardTransferEntity> transferList;
+
     @InjectMocks
-    CardTransferServiceImpl service;
+    private CardTransferServiceImpl service;
 
     @Mock
-    CardTransferRepository repository;
+    private CardTransferRepository repository;
 
     @Spy
-    CardTransferMapper mapper = new CardTransferMapperImpl();
+    private CardTransferMapper mapper = new CardTransferMapperImpl();
 
     @Mock
-    ReadAllValidator validator;
-
-    static CardTransferDto transferDto;
-
-    static CardTransferEntity transferEntity;
-
-    static List<Long> ids;
-
-    static List<CardTransferEntity> transferList;
-
+    private ReadAllValidator validator;
 
     @BeforeAll
     public static void init(){
@@ -61,11 +55,9 @@ class CardTransferServiceImplTest extends ParentTest {
 
         transferEntity = new CardTransferEntity(ID, ENTITY_NUMBER, ENTITY_DETAILS_ID, AMOUNT, PURPOSE);
 
-        ids = new ArrayList<>();
-        ids.add(ID);
+        ids = List.of(ID);
 
-        transferList = new ArrayList<>();
-        transferList.add(transferEntity);
+        transferList = List.of(transferEntity);
     }
 
     @Test
@@ -74,7 +66,7 @@ class CardTransferServiceImplTest extends ParentTest {
 
         when(repository.save(ArgumentMatchers.any())).thenReturn(transferEntity);
 
-        CardTransferDto cardTransferDto =  service.create(transferDto);
+        final CardTransferDto cardTransferDto =  service.create(transferDto);
 
         assertAll(() -> Assertions.assertEquals(
                         transferEntity.getAccountDetailsId(), cardTransferDto.getAccountDetailsId()),
@@ -89,7 +81,7 @@ class CardTransferServiceImplTest extends ParentTest {
 
         when(repository.save(ArgumentMatchers.any())).thenThrow(new EntityNotFoundException("Неверные данные"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
                 service.create(transferDto));
 
         assertEquals(exception.getMessage(), "Неверные данные");
@@ -103,7 +95,7 @@ class CardTransferServiceImplTest extends ParentTest {
 
         when(repository.save(ArgumentMatchers.any())).thenReturn(transferEntity);
 
-        CardTransferDto transferDto1 = service.update(transferDto, ID);
+        final CardTransferDto transferDto1 = service.update(transferDto, ID);
 
         assertAll(() -> Assertions.assertEquals(
                         transferDto1.getAccountDetailsId(), transferDto.getAccountDetailsId()),
@@ -119,7 +111,7 @@ class CardTransferServiceImplTest extends ParentTest {
         when(repository.findById(ArgumentMatchers.anyLong())).thenThrow(new
                 EntityNotFoundException("CardTransfer для обновления с указанным id не найден"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
                 service.update(transferDto, ID));
 
         assertEquals(exception.getMessage(), "CardTransfer для обновления с указанным id не найден");
@@ -131,7 +123,7 @@ class CardTransferServiceImplTest extends ParentTest {
 
         when(repository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(transferEntity));
 
-        CardTransferDto transferDto1 = service.read(ID);
+        final CardTransferDto transferDto1 = service.read(ID);
 
         assertAll(() -> Assertions.assertEquals(
                         transferDto1.getAccountDetailsId(), transferEntity.getAccountDetailsId()),
@@ -147,7 +139,7 @@ class CardTransferServiceImplTest extends ParentTest {
         when(repository.findById(ArgumentMatchers.anyLong())).thenThrow(new
                 EntityNotFoundException("CardTransfer с указанным id не найден"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
                 service.update(transferDto, ID));
 
         assertEquals(exception.getMessage(), "CardTransfer с указанным id не найден");
@@ -159,7 +151,7 @@ class CardTransferServiceImplTest extends ParentTest {
 
         when(repository.findAllById(ArgumentMatchers.anyCollection())).thenReturn(transferList);
 
-        List<CardTransferDto> transferDtoList = service.readAll(ids);
+        final List<CardTransferDto> transferDtoList = service.readAll(ids);
 
         assertEquals(transferDtoList.size(), ids.size());
     }
@@ -171,7 +163,7 @@ class CardTransferServiceImplTest extends ParentTest {
         when(repository.findAllById(ArgumentMatchers.anyCollection())).thenThrow(new
                 EntityNotFoundException("Лист содержит один и более id, по которым нет CardTransfer"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
                 service.readAll(ids));
 
         assertEquals(exception.getMessage(), "Лист содержит один и более id, по которым нет CardTransfer");

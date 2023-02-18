@@ -13,16 +13,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 class AccountTransferMapperTest extends ParentTest {
 
-    final AccountTransferMapperImpl mapper = new AccountTransferMapperImpl();
+    private static AccountTransferEntity transferEntity;
 
-    static AccountTransferEntity transferEntity;
+    private static AccountTransferDto transferDto;
 
-    static AccountTransferDto transferDto;
+    private static List<AccountTransferEntity> transferList;
 
-    static List<AccountTransferEntity> transferList;
+    private final AccountTransferMapperImpl mapper = new AccountTransferMapperImpl();
 
     @BeforeAll
     public static void init() {
@@ -31,14 +30,13 @@ class AccountTransferMapperTest extends ParentTest {
 
         transferDto = new AccountTransferDto(ID, ENTITY_NUMBER, AMOUNT, PURPOSE, ENTITY_DETAILS_ID);
 
-        transferList = new ArrayList<>();
-        transferList.add(transferEntity);
+        transferList = List.of(transferEntity);
     }
 
     @Test
     void toEntityTest() {
 
-        AccountTransferEntity accountTransferEntity = mapper.toEntity(transferDto);
+        final AccountTransferEntity accountTransferEntity = mapper.toEntity(transferDto);
 
         assertAll(() -> assertEquals(accountTransferEntity.getAccountNumber(), transferDto.getAccountNumber()),
                 () -> assertEquals(accountTransferEntity.getAccountDetailsId(), transferDto.getAccountDetailsId()),
@@ -49,7 +47,7 @@ class AccountTransferMapperTest extends ParentTest {
     @Test
     void toDtoTest() {
 
-        AccountTransferDto accountTransferDto = mapper.toDto(transferEntity);
+        final AccountTransferDto accountTransferDto = mapper.toDto(transferEntity);
 
         assertAll(() -> assertEquals(accountTransferDto.getAccountNumber(), transferEntity.getAccountNumber()),
                 () -> assertEquals(accountTransferDto.getAccountDetailsId(), transferEntity.getAccountDetailsId()),
@@ -60,7 +58,7 @@ class AccountTransferMapperTest extends ParentTest {
     @Test
     void mergeToEntityTest() {
 
-        AccountTransferEntity mergeEntity = mapper.mergeToEntity(transferDto, transferEntity);
+        final AccountTransferEntity mergeEntity = mapper.mergeToEntity(transferDto, transferEntity);
 
         assertAll(() -> assertEquals(mergeEntity.getAccountDetailsId(), transferDto.getAccountDetailsId()),
                 () -> assertEquals(mergeEntity.getAccountNumber(), transferDto.getAccountNumber()),
@@ -71,7 +69,7 @@ class AccountTransferMapperTest extends ParentTest {
     @Test
     void toDtoListTest() {
 
-        List<AccountTransferDto> dtoList = mapper.toDtoList(transferList);
+        final List<AccountTransferDto> dtoList = mapper.toDtoList(transferList);
 
         assertAll(() -> assertEquals(dtoList.get(0).getAccountDetailsId(), transferList.get(0).getAccountDetailsId()),
                 () -> assertEquals(dtoList.get(0).getId(), transferList.get(0).getId()),

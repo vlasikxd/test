@@ -3,8 +3,6 @@ package com.bank.transfer.mapper;
 import com.bank.transfer.ParentTest;
 import com.bank.transfer.dto.PhoneTransferDto;
 import com.bank.transfer.entity.PhoneTransferEntity;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -13,16 +11,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 class PhoneTransferMapperTest extends ParentTest {
 
-    final PhoneTransferMapperImpl mapper = new PhoneTransferMapperImpl();
+    private static PhoneTransferEntity transferEntity;
 
-    static PhoneTransferEntity transferEntity;
+    private static PhoneTransferDto transferDto;
 
-    static PhoneTransferDto transferDto;
+    private static List<PhoneTransferEntity> transferList;
 
-    static List<PhoneTransferEntity> transferList;
+    private final PhoneTransferMapperImpl mapper = new PhoneTransferMapperImpl();
 
 
     @BeforeAll
@@ -32,14 +29,13 @@ class PhoneTransferMapperTest extends ParentTest {
 
         transferDto = new PhoneTransferDto(ID, ENTITY_NUMBER, AMOUNT, PURPOSE, ENTITY_DETAILS_ID);
 
-        transferList = new ArrayList<>();
-        transferList.add(transferEntity);
+        transferList = List.of(transferEntity);
     }
 
     @Test
     void toEntityTest() {
 
-        PhoneTransferEntity phoneTransferEntity = mapper.toEntity(transferDto);
+        final PhoneTransferEntity phoneTransferEntity = mapper.toEntity(transferDto);
 
         assertAll(()-> assertEquals(phoneTransferEntity.getPhoneNumber(), transferDto.getPhoneNumber()),
                 ()-> assertEquals(phoneTransferEntity.getAccountDetailsId(), transferDto.getAccountDetailsId()),
@@ -50,7 +46,7 @@ class PhoneTransferMapperTest extends ParentTest {
     @Test
     void toDtoTest() {
 
-        PhoneTransferDto phoneTransferDto = mapper.toDto(transferEntity);
+        final PhoneTransferDto phoneTransferDto = mapper.toDto(transferEntity);
 
         assertAll(()-> assertEquals(phoneTransferDto.getPhoneNumber(), transferEntity.getPhoneNumber()),
                 ()-> assertEquals(phoneTransferDto.getAccountDetailsId(), transferEntity.getAccountDetailsId()),
@@ -61,7 +57,7 @@ class PhoneTransferMapperTest extends ParentTest {
     @Test
     void mergeToEntityTest() {
 
-        PhoneTransferEntity mergeEntity = mapper.mergeToEntity(transferDto, transferEntity);
+        final PhoneTransferEntity mergeEntity = mapper.mergeToEntity(transferDto, transferEntity);
 
         assertAll(()-> assertEquals(mergeEntity.getAccountDetailsId(), transferDto.getAccountDetailsId()),
                 ()-> assertEquals(mergeEntity.getPhoneNumber(), transferDto.getPhoneNumber()),
@@ -72,7 +68,7 @@ class PhoneTransferMapperTest extends ParentTest {
     @Test
     void toDtoListTest() {
 
-        List<PhoneTransferDto> dtoList = mapper.toDtoList(transferList);
+        final List<PhoneTransferDto> dtoList = mapper.toDtoList(transferList);
 
         assertAll(()-> assertEquals(dtoList.get(0).getAccountDetailsId(), transferList.get(0).getAccountDetailsId()),
                 () -> assertEquals(dtoList.get(0).getId(), transferList.get(0).getId()),

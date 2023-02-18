@@ -28,6 +28,14 @@ import java.util.Optional;
 
 class AccountTransferServiceImplTest extends ParentTest {
 
+    private static AccountTransferDto transferDto;
+
+    private static AccountTransferEntity transferEntity;
+
+    private static List<Long> ids;
+
+    private static List<AccountTransferEntity> transferList;
+
     @InjectMocks
     private AccountTransferServiceImpl service;
 
@@ -40,14 +48,6 @@ class AccountTransferServiceImplTest extends ParentTest {
     @Mock
     private ReadAllValidator validator;
 
-    private static AccountTransferDto transferDto;
-
-    private static AccountTransferEntity transferEntity;
-
-    private static List<Long> ids;
-
-    private static List<AccountTransferEntity> transferList;
-
     @BeforeAll
     public static void init(){
 
@@ -55,11 +55,9 @@ class AccountTransferServiceImplTest extends ParentTest {
 
         transferEntity = new AccountTransferEntity(ID, ENTITY_NUMBER, ENTITY_DETAILS_ID, AMOUNT, PURPOSE);
 
-        ids = new ArrayList<>();
-        ids.add(ID);
+        ids = List.of(ID);
 
-        transferList = new ArrayList<>();
-        transferList.add(transferEntity);
+        transferList = List.of(transferEntity);
     }
 
     @Test
@@ -68,7 +66,7 @@ class AccountTransferServiceImplTest extends ParentTest {
 
         when(repository.save(ArgumentMatchers.any())).thenReturn(transferEntity);
 
-        AccountTransferDto accountTransferDto =  service.create(transferDto);
+        final AccountTransferDto accountTransferDto =  service.create(transferDto);
 
         assertAll(() -> Assertions.assertEquals(
                         transferEntity.getAccountDetailsId(), accountTransferDto.getAccountDetailsId()),
@@ -82,7 +80,7 @@ class AccountTransferServiceImplTest extends ParentTest {
     void createNegativeTest() {
         when(repository.save(ArgumentMatchers.any())).thenThrow(new EntityNotFoundException("Неверные данные"));
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
                 service.create(transferDto));
 
         assertEquals(exception.getMessage(), "Неверные данные");
@@ -96,7 +94,7 @@ class AccountTransferServiceImplTest extends ParentTest {
 
         when(repository.save(ArgumentMatchers.any())).thenReturn(transferEntity);
 
-        AccountTransferDto transferDto1 = service.update(transferDto, ID);
+        final AccountTransferDto transferDto1 = service.update(transferDto, ID);
 
         assertAll(() -> Assertions.assertEquals(
                 transferDto1.getAccountDetailsId(), transferDto.getAccountDetailsId()),
@@ -111,7 +109,7 @@ class AccountTransferServiceImplTest extends ParentTest {
 
         when(repository.findById(ArgumentMatchers.anyLong())).thenThrow(new
                 EntityNotFoundException("AccountTransfer для обновления с указанным id не найден"));
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class,() ->
                 service.update(transferDto, ID));
         assertEquals(exception.getMessage(), "AccountTransfer для обновления с указанным id не найден");
     }
@@ -122,7 +120,7 @@ class AccountTransferServiceImplTest extends ParentTest {
 
         when(repository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(transferEntity));
 
-        AccountTransferDto transferDto1 = service.read(ID);
+        final AccountTransferDto transferDto1 = service.read(ID);
 
         assertAll(() -> Assertions.assertEquals(
                 transferDto1.getAccountDetailsId(), transferEntity.getAccountDetailsId()),
@@ -137,7 +135,7 @@ class AccountTransferServiceImplTest extends ParentTest {
 
         when(repository.findById(ArgumentMatchers.anyLong())).thenThrow(new
                 EntityNotFoundException("AccountTransfer с указанным id не найден"));
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
                 service.read(ID));
         assertEquals(exception.getMessage(), "AccountTransfer с указанным id не найден");
     }
@@ -147,7 +145,7 @@ class AccountTransferServiceImplTest extends ParentTest {
      void readAllTest() {
 
         when(repository.findAllById(ArgumentMatchers.anyCollection())).thenReturn(transferList);
-        List<AccountTransferDto> transferDtoList = service.readAll(ids);
+        final List<AccountTransferDto> transferDtoList = service.readAll(ids);
         assertEquals(transferDtoList.size(), ids.size());
     }
 
@@ -157,7 +155,7 @@ class AccountTransferServiceImplTest extends ParentTest {
 
         when(repository.findAllById(ArgumentMatchers.anyCollection())).thenThrow(new
                 EntityNotFoundException("Лист содержит один и более id, по которым нет AccountTransfer"));
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
+        final EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () ->
                 service.readAll(ids));
         assertEquals(exception.getMessage(), "Лист содержит один и более id, по которым нет AccountTransfer");
     }

@@ -3,8 +3,7 @@ package com.bank.transfer.mapper;
 import com.bank.transfer.ParentTest;
 import com.bank.transfer.dto.CardTransferDto;
 import com.bank.transfer.entity.CardTransferEntity;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -13,16 +12,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 class CardTransferMapperTest extends ParentTest {
 
-    final CardTransferMapperImpl mapper = new CardTransferMapperImpl();
+    private static CardTransferEntity transferEntity;
 
-    static CardTransferEntity transferEntity;
+    private static CardTransferDto transferDto;
 
-    static CardTransferDto transferDto;
+    private static List<CardTransferEntity> transferList;
 
-    static List<CardTransferEntity> transferList;
+    private final CardTransferMapperImpl mapper = new CardTransferMapperImpl();
 
     @BeforeAll
     public static void init() {
@@ -31,14 +29,13 @@ class CardTransferMapperTest extends ParentTest {
 
         transferDto = new CardTransferDto(ID, ENTITY_NUMBER, AMOUNT, PURPOSE, ENTITY_DETAILS_ID);
 
-        transferList = new ArrayList<>();
-        transferList.add(transferEntity);
+        transferList = List.of(transferEntity);
     }
 
     @Test
     void toEntityTest() {
 
-        CardTransferEntity cardTransferEntity = mapper.toEntity(transferDto);
+        final CardTransferEntity cardTransferEntity = mapper.toEntity(transferDto);
 
         assertAll(()-> assertEquals(cardTransferEntity.getCardNumber(), transferDto.getCardNumber()),
                 ()-> assertEquals(cardTransferEntity.getAccountDetailsId(), transferDto.getAccountDetailsId()),
@@ -49,7 +46,7 @@ class CardTransferMapperTest extends ParentTest {
     @Test
     void toDtoTest() {
 
-        CardTransferDto cardTransferDto = mapper.toDto(transferEntity);
+        final CardTransferDto cardTransferDto = mapper.toDto(transferEntity);
 
         assertAll(()-> assertEquals(cardTransferDto.getCardNumber(), transferEntity.getCardNumber()),
                 ()-> assertEquals(cardTransferDto.getAccountDetailsId(), transferEntity.getAccountDetailsId()),
@@ -60,7 +57,7 @@ class CardTransferMapperTest extends ParentTest {
     @Test
     void mergeToEntityTest() {
 
-        CardTransferEntity mergeEntity = mapper.mergeToEntity(transferDto, transferEntity);
+        final CardTransferEntity mergeEntity = mapper.mergeToEntity(transferDto, transferEntity);
 
         assertAll(()-> assertEquals(mergeEntity.getAccountDetailsId(), transferDto.getAccountDetailsId()),
                 ()-> assertEquals(mergeEntity.getCardNumber(), transferDto.getCardNumber()),
@@ -71,7 +68,7 @@ class CardTransferMapperTest extends ParentTest {
     @Test
     void toDtoListTest() {
 
-        List<CardTransferDto> dtoList = mapper.toDtoList(transferList);
+        final List<CardTransferDto> dtoList = mapper.toDtoList(transferList);
 
         assertAll(()-> assertEquals(dtoList.get(0).getAccountDetailsId(), transferList.get(0).getAccountDetailsId()),
                 () -> assertEquals(dtoList.get(0).getId(), transferList.get(0).getId()),
