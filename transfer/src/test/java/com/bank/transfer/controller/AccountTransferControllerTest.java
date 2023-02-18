@@ -73,11 +73,11 @@ class AccountTransferControllerTest extends ParentTest {
        mock.perform(post("/account/create").content(mapper.writeValueAsString(transferDto))
                .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
-               .andExpectAll(jsonPath("$.id").value(transferDto.getId())
-                            ,jsonPath("$.accountNumber").value(transferDto.getAccountNumber())
-                            ,jsonPath("$.accountDetailsId").value(transferDto.getAccountDetailsId())
-                            ,jsonPath("$.amount").value(transferDto.getAmount())
-                            ,jsonPath("$.purpose").value(transferDto.getPurpose()));
+               .andExpectAll(jsonPath("$.id").value(transferDto.getId()),
+                       jsonPath("$.accountNumber").value(transferDto.getAccountNumber()),
+                       jsonPath("$.accountDetailsId").value(transferDto.getAccountDetailsId()),
+                       jsonPath("$.amount").value(transferDto.getAmount()),
+                       jsonPath("$.purpose").value(transferDto.getPurpose()));
     }
 
     @Test
@@ -100,11 +100,11 @@ class AccountTransferControllerTest extends ParentTest {
 
         mock.perform(get(String.format("/account/read?id=%s",ID)))
                 .andExpect(status().isOk())
-                .andExpectAll(jsonPath("$.id").value(transferDto.getId())
-                        ,jsonPath("$.accountNumber").value(transferDto.getAccountNumber())
-                        ,jsonPath("$.accountDetailsId").value(transferDto.getAccountDetailsId())
-                        ,jsonPath("$.amount").value(transferDto.getAmount())
-                        ,jsonPath("$.purpose").value(transferDto.getPurpose()));
+                .andExpectAll(jsonPath("$.id").value(transferDto.getId()),
+                        jsonPath("$.accountNumber").value(transferDto.getAccountNumber()),
+                        jsonPath("$.accountDetailsId").value(transferDto.getAccountDetailsId()),
+                        jsonPath("$.amount").value(transferDto.getAmount()),
+                        jsonPath("$.purpose").value(transferDto.getPurpose()));
     }
 
     @Test
@@ -128,12 +128,12 @@ class AccountTransferControllerTest extends ParentTest {
 
         mock.perform(get(String.format("/account/read/all?ids=14")))
                 .andExpect(status().isOk())
-                .andExpectAll(jsonPath("$", hasSize(1))
-                        ,jsonPath("$.[0].id").value(transferList.get(0).getId())
-                        ,jsonPath("$.[0].accountNumber").value(transferList.get(0).getAccountNumber())
-                        ,jsonPath("$.[0].accountDetailsId").value(transferList.get(0).getAccountDetailsId())
-                        ,jsonPath("$.[0].amount").value(transferList.get(0).getAmount())
-                        ,jsonPath("$.[0].purpose").value(transferList.get(0).getPurpose()));
+                .andExpectAll(jsonPath("$", hasSize(1)),
+                        jsonPath("$.[0].id").value(transferList.get(0).getId()),
+                        jsonPath("$.[0].accountNumber").value(transferList.get(0).getAccountNumber()),
+                        jsonPath("$.[0].accountDetailsId").value(transferList.get(0).getAccountDetailsId()),
+                        jsonPath("$.[0].amount").value(transferList.get(0).getAmount()),
+                        jsonPath("$.[0].purpose").value(transferList.get(0).getPurpose()));
     }
 
     @Test
@@ -159,11 +159,11 @@ class AccountTransferControllerTest extends ParentTest {
                         .content(mapper.writeValueAsString(transferDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpectAll(jsonPath("$.id").value(transferDto.getId())
-                        ,jsonPath("$.accountNumber").value(transferDto.getAccountNumber())
-                        ,jsonPath("$.accountDetailsId").value(transferDto.getAccountDetailsId())
-                        ,jsonPath("$.amount").value(transferDto.getAmount())
-                        ,jsonPath("$.purpose").value(transferDto.getPurpose()));
+                .andExpectAll(jsonPath("$.id").value(transferDto.getId()),
+                        jsonPath("$.accountNumber").value(transferDto.getAccountNumber()),
+                        jsonPath("$.accountDetailsId").value(transferDto.getAccountDetailsId()),
+                        jsonPath("$.amount").value(transferDto.getAmount()),
+                        jsonPath("$.purpose").value(transferDto.getPurpose()));
     }
 
     @Test
