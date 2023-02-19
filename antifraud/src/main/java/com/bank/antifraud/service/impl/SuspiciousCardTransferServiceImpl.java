@@ -7,7 +7,6 @@ import com.bank.antifraud.repository.SuspiciousCardTransferRepository;
 import com.bank.antifraud.service.SuspiciousCardTransferService;
 import com.bank.antifraud.util.ListSizeValidator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +16,9 @@ import java.util.List;
 /**
  * Реализация {@link SuspiciousCardTransferService}
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransferService {
-
-    private final static String ENTITY_NAME = "SuspiciousCardTransfer";
 
     private final SuspiciousCardTransferRepository repository;
     private final SuspiciousCardTransferMapper mapper;
@@ -84,9 +80,9 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
      * @param id технический идентификатор {@link SuspiciousCardTransferEntity}
      * @return {@link SuspiciousCardTransferEntity}
      */
-    SuspiciousCardTransferEntity findById(Long id) {
+    private SuspiciousCardTransferEntity findById(Long id) {
         return repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ENTITY_NAME + " с id = " + id + " не найден.")
+                () -> new EntityNotFoundException("SuspiciousCardTransfer с id = " + id + " не найден.")
         );
     }
 }
