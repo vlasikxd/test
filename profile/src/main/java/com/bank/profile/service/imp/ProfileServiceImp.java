@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class ProfileServiceImp implements ProfileService {
     @Override
     public ProfileDto read(Long id) {
         final ProfileEntity profile = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("profile с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("profile с данным идентификатором не найден!")
         );
         return mapper.toDto(profile);
     }
@@ -56,7 +58,7 @@ public class ProfileServiceImp implements ProfileService {
     @Transactional
     public ProfileDto update(Long id, ProfileDto profileDto) {
         final ProfileEntity profileEntityById = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("Обновление невозможно, profile не найден!")
+                () -> new EntityNotFoundException("Обновление невозможно, profile не найден!")
         );
         final ProfileEntity profile = repository.save(
                 mapper.mergeToEntity(profileDto, profileEntityById)
@@ -75,7 +77,7 @@ public class ProfileServiceImp implements ProfileService {
         validator.checkSize(
                 profileEntities,
                 ids,
-                "Ошибка в переданных параметрах, profile не существуют(ет)"
+                () -> new EntityNotFoundException("Ошибка в переданных параметрах, profile не существуют(ет)")
         );
 
         return mapper.toDtoList(profileEntities);

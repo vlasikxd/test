@@ -58,7 +58,7 @@ public class ProfileEntity {
 
     @ManyToOne
     @JoinColumn(name = "actual_registration_id")
-    private ActualRegistrationEntity actualRegistrationEntity;
+    private ActualRegistrationEntity actualRegistration;
 
     @Override
     public boolean equals(Object o) {
@@ -76,11 +76,11 @@ public class ProfileEntity {
                 inn.equals(profile.inn) &&
                 snils.equals(profile.snils) &&
                 passport.equals(profile.passport) &&
-                actualRegistrationEntity.equals(profile.actualRegistrationEntity);
+                actualRegistration.equals(profile.actualRegistration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, phoneNumber, email, nameOnCard, inn, snils, passport, actualRegistrationEntity);
+        return Objects.hash(id, phoneNumber, email, nameOnCard, inn, snils, passport, actualRegistration);
     }
 }

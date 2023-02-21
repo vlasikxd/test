@@ -2,8 +2,8 @@ package com.bank.profile.validator;
 
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Методы для валидации результатов запросов к БД
@@ -12,21 +12,15 @@ import java.util.List;
 public class EntityListValidator {
 
     /**
-     * @param entities список Entity.
-     * @param ids список технических идентификаторов.
-     * @param message сообщение об ошибке.
+     * Выбрасывает исключение, если размер списков разный
+     * @param entities {@link List}
+     * @param ids {@link List}
+     * @param exceptionSupplier {@link RuntimeException}
      */
-    public void checkSize(List<?> entities, List<?> ids, String message) {
+    public void checkSize(List<?> entities, List<?> ids,
+                                 Supplier<? extends RuntimeException> exceptionSupplier) {
         if (entities.size() != ids.size()) {
-            throw returnEntityNotFoundException(message);
+            throw exceptionSupplier.get();
         }
-    }
-
-    /**
-     * @param message сообщение об ошибке.
-     * @return {@link EntityNotFoundException}.
-     */
-    public EntityNotFoundException returnEntityNotFoundException(String message) {
-        return new EntityNotFoundException(message);
     }
 }

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class AccountDetailsIdServiceImp implements AccountDetailsIdService {
     @Override
     public AccountDetailsIdDto read(Long id) {
         final AccountDetailsIdEntity accountDetailsId = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("accountDetailsId с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("accountDetailsId с данным идентификатором не найден!")
         );
         return mapper.toDto(accountDetailsId);
     }
@@ -57,7 +59,7 @@ public class AccountDetailsIdServiceImp implements AccountDetailsIdService {
     @Transactional
     public AccountDetailsIdDto update(Long id, AccountDetailsIdDto accountDetailsIdDto) {
         final AccountDetailsIdEntity accountDetailsById = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("Обновление невозможно, accountDetailsId не найден!")
+                () -> new EntityNotFoundException("Обновление невозможно, accountDetailsId не найден!")
         );
         final AccountDetailsIdEntity accountDetailsId = repository.save(
                 mapper.mergeToEntity(accountDetailsIdDto, accountDetailsById)
@@ -76,7 +78,7 @@ public class AccountDetailsIdServiceImp implements AccountDetailsIdService {
         validator.checkSize(
                 accountDetailsIdEntities,
                 ids,
-                "Ошибка в переданных параметрах, accountDetailsId не существуют(ет)"
+                () -> new EntityNotFoundException("Ошибка в переданных параметрах, accountDetailsId не существуют(ет)")
         );
 
         return mapper.toDtoList(accountDetailsIdEntities);

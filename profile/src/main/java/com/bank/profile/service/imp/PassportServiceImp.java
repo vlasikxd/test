@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class PassportServiceImp implements PassportService {
     @Override
     public PassportDto read(Long id) {
         final PassportEntity passport = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("passport с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("passport с данным идентификатором не найден!")
         );
         return mapper.toDto(passport);
     }
@@ -56,7 +58,7 @@ public class PassportServiceImp implements PassportService {
     @Transactional
     public PassportDto update(Long id, PassportDto passportDto) {
         final PassportEntity passportEntityById = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("Обновление невозможно, passport не найден!")
+                () -> new EntityNotFoundException("Обновление невозможно, passport не найден!")
         );
         final PassportEntity actualRegistration = repository.save(
                 mapper.mergeToEntity(passportDto, passportEntityById)
@@ -75,7 +77,7 @@ public class PassportServiceImp implements PassportService {
         validator.checkSize(
                 passportEntities,
                 ids,
-                "Ошибка в переданных параметрах, passport не существуют(ет)"
+                () -> new EntityNotFoundException("Ошибка в переданных параметрах, passport не существуют(ет)")
         );
 
         return mapper.toDtoList(passportEntities);

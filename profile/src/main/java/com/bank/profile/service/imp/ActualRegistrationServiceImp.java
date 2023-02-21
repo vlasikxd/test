@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class ActualRegistrationServiceImp implements ActualRegistrationService {
     @Override
     public ActualRegistrationDto read(Long id) {
         final ActualRegistrationEntity actualRegistration = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("actualRegistration с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("actualRegistration с данным идентификатором не найден!")
         );
         return mapper.toDto(actualRegistration);
     }
@@ -58,7 +60,7 @@ public class ActualRegistrationServiceImp implements ActualRegistrationService {
     @Transactional
     public ActualRegistrationDto update(Long id, ActualRegistrationDto actualRegistrationDto) {
         final ActualRegistrationEntity registrationById = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("Обновление невозможно, ActualRegistration не найден!")
+                () -> new EntityNotFoundException("Обновление невозможно, ActualRegistration не найден!")
         );
         final ActualRegistrationEntity registration = repository.save(
                 mapper.mergeToEntity(actualRegistrationDto, registrationById)
@@ -77,7 +79,9 @@ public class ActualRegistrationServiceImp implements ActualRegistrationService {
         validator.checkSize(
                 actualRegistrationEntities,
                 ids,
-                "Ошибка в переданных параметрах, ActualRegistration не существуют(ет)"
+                () -> new EntityNotFoundException(
+                        "Ошибка в переданных параметрах, ActualRegistration не существуют(ет)"
+                )
         );
 
         return mapper.toDtoList(actualRegistrationEntities);
