@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class RegistrationServiceImp implements RegistrationService {
     @Override
     public RegistrationDto read(Long id) {
         final RegistrationEntity registration = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("registration с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("registration с данным идентификатором не найден!")
         );
         return mapper.toDto(registration);
     }
@@ -56,7 +58,7 @@ public class RegistrationServiceImp implements RegistrationService {
     @Transactional
     public RegistrationDto update(Long id, RegistrationDto registrationDto) {
         final RegistrationEntity registrationEntityById = repository.findById(id).orElseThrow(
-                () -> validator.returnEntityNotFoundException("Обновление невозможно, registration не найден!")
+                () -> new EntityNotFoundException("Обновление невозможно, registration не найден!")
         );
         final RegistrationEntity registration = repository.save(
                 mapper.mergeToEntity(registrationDto, registrationEntityById)
@@ -75,7 +77,7 @@ public class RegistrationServiceImp implements RegistrationService {
         validator.checkSize(
                 registrationEntities,
                 ids,
-                "Ошибка в переданных параметрах, registration не существуют(ет)"
+                () -> new EntityNotFoundException("Ошибка в переданных параметрах, registration не существуют(ет)")
         );
 
         return mapper.toDtoList(registrationEntities);
