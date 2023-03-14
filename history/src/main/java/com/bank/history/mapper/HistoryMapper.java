@@ -28,8 +28,8 @@ public interface HistoryMapper {
     HistoryDto toDto(HistoryEntity history);
 
     /**
-     * @param historyDto {@link HistoryDto}
-     * @param history    {@link HistoryEntity}
+     * @param historyDto    {@link HistoryDto}
+     * @param history {@link HistoryEntity}
      * @return {@link HistoryEntity}
      */
     @Mapping(target = "id", ignore = true)

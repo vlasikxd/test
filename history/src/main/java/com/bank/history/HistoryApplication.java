@@ -3,7 +3,6 @@ package com.bank.history;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 @EnableEurekaClient
 @SpringBootApplication(scanBasePackages = {"com.bank.common", "com.bank.history"})
 public class HistoryApplication {

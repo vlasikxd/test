@@ -10,19 +10,20 @@ import com.bank.history.service.HistoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller для {@link HistoryEntity}.
  */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/history")
 public class HistoryController {
-
     private final HistoryService service;
 
     /**
@@ -36,7 +37,7 @@ public class HistoryController {
 
     /**
      * @param id список технических идентификаторов {@link HistoryEntity}
-     * @return {@link ResponseEntity} c листом {@link HistoryDto} и HttpStatus OK
+     * @return {@link ResponseEntity} c {@link HistoryDto} и HttpStatus OK
      */
     @GetMapping
     public ResponseEntity<List<HistoryDto>> readAll(@RequestParam("id") List<Long> id) {

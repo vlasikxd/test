@@ -1,18 +1,22 @@
 package com.bank.history.dto;
 
 import com.bank.history.entity.HistoryEntity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
+
 
 /**
  * Dto для {@link HistoryEntity}.
  */
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

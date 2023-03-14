@@ -17,10 +17,10 @@ public interface HistoryService {
     HistoryDto readById(Long id);
 
     /**
-     * @param ids список технических идентификаторов {@link HistoryEntity}.
+     * @param id список технических идентификаторов {@link HistoryEntity}.
      * @return список {@link HistoryDto}
      */
-    List<HistoryDto> readAllById(List<Long> ids);
+    List<HistoryDto> readAllById(List<Long> id);
 
     /**
      * @param history {@link HistoryDto}
