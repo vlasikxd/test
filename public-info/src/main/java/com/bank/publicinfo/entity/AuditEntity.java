@@ -1,4 +1,4 @@
-package com.bank.profile.entity;
+package com.bank.publicinfo.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,9 +17,6 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.sql.Timestamp;
 
-/**
- * Entity для таблицы audit.
- */
 @Entity
 @Getter
 @Setter
@@ -31,7 +28,7 @@ public class AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     Long id;
 
     @NotNull
