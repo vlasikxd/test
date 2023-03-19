@@ -1,6 +1,5 @@
 package com.bank.antifraud.mapper;
 
-import com.bank.antifraud.ParentTest;
 import com.bank.antifraud.dto.SuspiciousPhoneTransferDto;
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
 import com.bank.antifraud.supplier.SuspiciousPhoneTransferSupplier;
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class SuspiciousPhoneTransferMapperTest extends ParentTest {
+public class SuspiciousPhoneTransferMapperTest implements MapperSupplier {
 
     private static SuspiciousPhoneTransferMapper mapper;
 
@@ -31,23 +30,25 @@ class SuspiciousPhoneTransferMapperTest extends ParentTest {
 
         var suspiciousPhoneTransferSupplier = new SuspiciousPhoneTransferSupplier();
 
-        suspiciousPhoneTransfer = suspiciousPhoneTransferSupplier.getEntity(ONE, ONE, TRUE, TRUE, REASON, REASON);
-        suspiciousPhoneTransferDto = suspiciousPhoneTransferSupplier.getDto(ONE, TWO, FALSE, FALSE, REASON, REASON);
+        suspiciousPhoneTransfer = suspiciousPhoneTransferSupplier.getEntity(ONE, ONE, TRUE, TRUE);
+        suspiciousPhoneTransferDto = suspiciousPhoneTransferSupplier.getDto(ONE, TWO, FALSE, FALSE);
     }
 
     @Test
-    @DisplayName("маппинг к entity позитивный сценарий")
+    @DisplayName("маппинг к entity")
     void toEntityTest() {
         final SuspiciousPhoneTransferEntity result = mapper.toEntity(suspiciousPhoneTransferDto);
 
-        assertAll(() -> {
-            assertNull(result.getId());
-            assertEquals(suspiciousPhoneTransferDto.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousPhoneTransferDto.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousPhoneTransferDto.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousPhoneTransferDto.getPhoneTransferId(), result.getPhoneTransferId());
-            assertEquals(suspiciousPhoneTransferDto.getSuspiciousReason(), result.getSuspiciousReason());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getId());
+                    assertEquals(suspiciousPhoneTransferDto.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousPhoneTransferDto.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousPhoneTransferDto.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousPhoneTransferDto.getPhoneTransferId(), result.getPhoneTransferId());
+                    assertEquals(suspiciousPhoneTransferDto.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
     }
 
     @Test
@@ -57,18 +58,20 @@ class SuspiciousPhoneTransferMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к dto позитивный сценарий")
+    @DisplayName("маппинг к dto")
     void toDtoTest() {
         final SuspiciousPhoneTransferDto result = mapper.toDto(suspiciousPhoneTransfer);
 
-        assertAll(() -> {
-            assertEquals(suspiciousPhoneTransfer.getId(), result.getId());
-            assertEquals(suspiciousPhoneTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousPhoneTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), result.getPhoneTransferId());
-            assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousPhoneTransfer.getId(), result.getId());
+                    assertEquals(suspiciousPhoneTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousPhoneTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), result.getPhoneTransferId());
+                    assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
     }
 
     @Test
@@ -78,41 +81,45 @@ class SuspiciousPhoneTransferMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("слияние в entity позитивный сценарий")
+    @DisplayName("слияние в entity")
     void mergeToEntityTest() {
         final SuspiciousPhoneTransferEntity result = mapper.mergeToEntity(
                 suspiciousPhoneTransferDto, suspiciousPhoneTransfer
         );
 
-        assertAll(() -> {
-            assertEquals(suspiciousPhoneTransfer.getId(), result.getId());
-            assertEquals(suspiciousPhoneTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousPhoneTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), result.getPhoneTransferId());
-            assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousPhoneTransfer.getId(), result.getId());
+                    assertEquals(suspiciousPhoneTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousPhoneTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), result.getPhoneTransferId());
+                    assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
     }
 
     @Test
-    @DisplayName("слияние в entity, где dto равен null")
+    @DisplayName("слияние в entity, dto равен null")
     void mergeToEntityNullTest() {
         final SuspiciousPhoneTransferEntity result = mapper.mergeToEntity(
                 null, suspiciousPhoneTransfer
         );
 
-        assertAll(() -> {
-            assertEquals(suspiciousPhoneTransfer.getId(), result.getId());
-            assertEquals(suspiciousPhoneTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousPhoneTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), result.getPhoneTransferId());
-            assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousPhoneTransfer.getId(), result.getId());
+                    assertEquals(suspiciousPhoneTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousPhoneTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), result.getPhoneTransferId());
+                    assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг к списку dto позитивный сценарий")
+    @DisplayName("маппинг к списку dto")
     void toListDtoTest() {
         final List<SuspiciousPhoneTransferDto> suspiciousPhoneTransfers = mapper.toListDto(
                 List.of(suspiciousPhoneTransfer)
@@ -121,24 +128,25 @@ class SuspiciousPhoneTransferMapperTest extends ParentTest {
         final SuspiciousPhoneTransferDto result = suspiciousPhoneTransfers.get(0);
 
         assertAll(() -> {
-            assertEquals(ONE, suspiciousPhoneTransfers.size());
-            assertEquals(suspiciousPhoneTransfer.getId(), result.getId());
-            assertEquals(suspiciousPhoneTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousPhoneTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), result.getPhoneTransferId());
-            assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-        });
+                    assertEquals(ONE, suspiciousPhoneTransfers.size());
+                    assertEquals(suspiciousPhoneTransfer.getId(), result.getId());
+                    assertEquals(suspiciousPhoneTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousPhoneTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), result.getPhoneTransferId());
+                    assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, где список равен null")
+    @DisplayName("маппинг к списку dto, список равен null")
     void toListDtoNullTest() {
         assertNull(mapper.toListDto(null));
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, где один из элементов списка равен null")
+    @DisplayName("маппинг к списку dto, один из элементов списка равен null")
     void toListDtoElementNullTest() {
         final List<SuspiciousPhoneTransferEntity> suspiciousPhoneTransfers = new ArrayList<>();
         suspiciousPhoneTransfers.add(suspiciousPhoneTransfer);
@@ -147,15 +155,17 @@ class SuspiciousPhoneTransferMapperTest extends ParentTest {
         final List<SuspiciousPhoneTransferDto> actually = mapper.toListDto(suspiciousPhoneTransfers);
         final var zeroIndexResult = actually.get(0);
 
-        assertAll(() -> {
-            assertNull(actually.get(1));
-            assertEquals(TWO, actually.size());
-            assertEquals(suspiciousPhoneTransfer.getId(), zeroIndexResult.getId());
-            assertEquals(suspiciousPhoneTransfer.getIsBlocked(), zeroIndexResult.getIsBlocked());
-            assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), zeroIndexResult.getIsSuspicious());
-            assertEquals(suspiciousPhoneTransfer.getBlockedReason(), zeroIndexResult.getBlockedReason());
-            assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), zeroIndexResult.getPhoneTransferId());
-            assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), zeroIndexResult.getSuspiciousReason());
-        });
+        assertAll(
+                () -> {
+                    assertNull(actually.get(1));
+                    assertEquals(TWO, actually.size());
+                    assertEquals(suspiciousPhoneTransfer.getId(), zeroIndexResult.getId());
+                    assertEquals(suspiciousPhoneTransfer.getIsBlocked(), zeroIndexResult.getIsBlocked());
+                    assertEquals(suspiciousPhoneTransfer.getIsSuspicious(), zeroIndexResult.getIsSuspicious());
+                    assertEquals(suspiciousPhoneTransfer.getBlockedReason(), zeroIndexResult.getBlockedReason());
+                    assertEquals(suspiciousPhoneTransfer.getPhoneTransferId(), zeroIndexResult.getPhoneTransferId());
+                    assertEquals(suspiciousPhoneTransfer.getSuspiciousReason(), zeroIndexResult.getSuspiciousReason());
+                }
+        );
     }
 }

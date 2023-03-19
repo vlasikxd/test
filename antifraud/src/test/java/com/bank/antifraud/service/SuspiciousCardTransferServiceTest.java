@@ -23,6 +23,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -51,122 +52,162 @@ class SuspiciousCardTransferServiceTest extends ParentTest {
     static void init() {
         var suspiciousCardTransferSupplier = new SuspiciousCardTransferSupplier();
 
-        suspiciousCardTransfer = suspiciousCardTransferSupplier.getEntity(ONE, ONE, TRUE, TRUE, REASON, REASON);
+        suspiciousCardTransfer = suspiciousCardTransferSupplier.getEntity(ONE, ONE, TRUE, TRUE);
 
-        updateSuspiciousCardTransferDto = suspiciousCardTransferSupplier.getDto(ONE, TWO, FALSE, FALSE, REASON, REASON);
+        updateSuspiciousCardTransferDto = suspiciousCardTransferSupplier.getDto(ONE, TWO, FALSE, FALSE);
 
-        updatedSuspiciousCardTransfer = suspiciousCardTransferSupplier.getEntity(
-                ONE, TWO, FALSE, FALSE, REASON, REASON
-        );
+        updatedSuspiciousCardTransfer = suspiciousCardTransferSupplier.getEntity(ONE, TWO, FALSE, FALSE);
     }
 
     @Test
-    @DisplayName("сохранение позитивный сценарий")
-    void createTest() {
-        repositorySaveMock();
+    @DisplayName("сохранение, позитивный сценарий")
+    void createPositiveTest() {
+        saveUpdatedMock();
 
         final SuspiciousCardTransferDto result = service.create(updateSuspiciousCardTransferDto);
 
-        assertAll(() -> {
-            assertEquals(updatedSuspiciousCardTransfer.getId(), result.getId());
-            assertEquals(updateSuspiciousCardTransferDto.getIsBlocked(), result.getIsBlocked());
-            assertEquals(updateSuspiciousCardTransferDto.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(updateSuspiciousCardTransferDto.getBlockedReason(), result.getBlockedReason());
-            assertEquals(updateSuspiciousCardTransferDto.getCardTransferId(), result.getCardTransferId());
-            assertEquals(updateSuspiciousCardTransferDto.getSuspiciousReason(), result.getSuspiciousReason());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(updatedSuspiciousCardTransfer.getId(), result.getId());
+                    assertEquals(updateSuspiciousCardTransferDto.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(updateSuspiciousCardTransferDto.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(updateSuspiciousCardTransferDto.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(updateSuspiciousCardTransferDto.getCardTransferId(), result.getCardTransferId());
+                    assertEquals(updateSuspiciousCardTransferDto.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
     }
 
     @Test()
-    @DisplayName("сохранение негативный сценарий")
+    @DisplayName("сохранение, негативный сценарий")
     void createNegativeTest() {
-        doThrow(new IllegalArgumentException("Entity must not be null.")).when(repository).save(any());
+        final String messageException = "Entity must not be null.";
 
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.create(null)
+        doThrow(new IllegalArgumentException(messageException)).when(repository).save(any());
+
+        final var exception = assertThrows(
+                IllegalArgumentException.class, () -> service.create(null)
         );
 
-        assertEquals("Entity must not be null.", exception.getMessage());
+        assertEquals(messageException, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение позитивный сценарий")
-    void readTest() {
-        repositoryFindByIdMock();
+    @DisplayName("чтение, позитивный сценарий")
+    void readPositiveTest() {
+        findByIdMock();
 
         final SuspiciousCardTransferDto result = service.read(ONE);
 
-        assertAll(() -> {
-            assertEquals(suspiciousCardTransfer.getId(), result.getId());
-            assertEquals(suspiciousCardTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousCardTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousCardTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousCardTransfer.getCardTransferId(), result.getCardTransferId());
-            assertEquals(suspiciousCardTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousCardTransfer.getId(), result.getId());
+                    assertEquals(suspiciousCardTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousCardTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousCardTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousCardTransfer.getCardTransferId(), result.getCardTransferId());
+                    assertEquals(suspiciousCardTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
+    @DisplayName("чтение по несуществующему id, негативный сценарий")
     void readNegativeTest() {
-        repositoryFindByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> service.read(ONE));
-
-        assertEquals(getNotFoundExceptionMessage(ONE, SUSPICIOUS_CARD_TRANSFER_NAME), exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("обновление позитивный сценарий")
-    void updateTest() {
-        repositorySaveMock();
-        repositoryFindByIdMock();
-
-        final SuspiciousCardTransferDto result = service.update(updateSuspiciousCardTransferDto, ONE);
-
-        assertAll(() -> {
-            assertEquals(suspiciousCardTransfer.getId(), result.getId());
-            assertEquals(updateSuspiciousCardTransferDto.getIsBlocked(), result.getIsBlocked());
-            assertEquals(updateSuspiciousCardTransferDto.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(updateSuspiciousCardTransferDto.getBlockedReason(), result.getBlockedReason());
-            assertEquals(updateSuspiciousCardTransferDto.getCardTransferId(), result.getCardTransferId());
-            assertEquals(updateSuspiciousCardTransferDto.getSuspiciousReason(), result.getSuspiciousReason());
-        });
-    }
-
-    @Test
-    @DisplayName("обновление, где dto равен null")
-    void updateNullDtoTest() {
-        doReturn(suspiciousCardTransfer).when(repository).save(any());
-        repositoryFindByIdMock();
-
-        final SuspiciousCardTransferDto result = service.update(null, ONE);
-
-        assertAll(() -> {
-            assertEquals(suspiciousCardTransfer.getId(), result.getId());
-            assertEquals(suspiciousCardTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousCardTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousCardTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousCardTransfer.getCardTransferId(), result.getCardTransferId());
-            assertEquals(suspiciousCardTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-        });
-    }
-
-    @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() {
-        repositoryFindByIdEmptyMock();
-
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.update(updateSuspiciousCardTransferDto, ONE)
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(ONE)
         );
 
         assertEquals(getNotFoundExceptionMessage(ONE, SUSPICIOUS_CARD_TRANSFER_NAME), exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение по списку id позитивный сценарий")
-    void readAllTest() {
+    @DisplayName("чтение по id равному null, негативный сценарий")
+    void readNullNegativeTest() {
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(null)
+        );
+
+        assertEquals(getNotFoundExceptionMessage(null, SUSPICIOUS_CARD_TRANSFER_NAME), exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, позитивный сценарий")
+    void updatePositiveTest() {
+        findByIdMock();
+        saveUpdatedMock();
+
+        final SuspiciousCardTransferDto result = service.update(updateSuspiciousCardTransferDto, ONE);
+
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousCardTransfer.getId(), result.getId());
+                    assertEquals(updateSuspiciousCardTransferDto.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(updateSuspiciousCardTransferDto.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(updateSuspiciousCardTransferDto.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(updateSuspiciousCardTransferDto.getCardTransferId(), result.getCardTransferId());
+                    assertEquals(updateSuspiciousCardTransferDto.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("обновление, на вход подан dto null, негативный сценарий")
+    void updateNullDtoNegativeTest() {
+        findByIdMock();
+        repositorySaveMock();
+
+        final SuspiciousCardTransferDto result = service.update(null, ONE);
+
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousCardTransfer.getId(), result.getId());
+                    assertEquals(suspiciousCardTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousCardTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousCardTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousCardTransfer.getCardTransferId(), result.getCardTransferId());
+                    assertEquals(suspiciousCardTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("обновление, на вход подан id null, позитивный сценарий")
+    void updateNullIdTestPositiveTest() {
+        findByNullMock();
+        repositorySaveMock();
+
+        final SuspiciousCardTransferDto result = service.update(updateSuspiciousCardTransferDto, null);
+
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousCardTransfer.getId(), result.getId());
+                    assertEquals(suspiciousCardTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousCardTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousCardTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousCardTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                    assertEquals(suspiciousCardTransfer.getCardTransferId(), result.getCardTransferId());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("обновление, негативный сценарий")
+    void updateNegativeTest() {
+        findByIdEmptyMock();
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(updateSuspiciousCardTransferDto, ONE)
+        );
+
+        assertEquals(getNotFoundExceptionMessage(ONE, SUSPICIOUS_CARD_TRANSFER_NAME), exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("чтение по списку id, позитивный сценарий")
+    void readAllPositiveTest() {
         final List<SuspiciousCardTransferDto> suspiciousCardTransfers = readAllTestPrepare();
         final var indexOneTransfer = suspiciousCardTransfers.get(1);
         final var indexZeroTransfer = suspiciousCardTransfers.get(0);
@@ -174,53 +215,80 @@ class SuspiciousCardTransferServiceTest extends ParentTest {
         final String suspiciousReason = indexOneTransfer.getSuspiciousReason();
         final Long cardTransferId = indexOneTransfer.getCardTransferId();
 
-        assertAll(() -> {
-            assertEquals(TWO, suspiciousCardTransfers.size());
-            assertEquals(suspiciousCardTransfer.getId(), indexZeroTransfer.getId());
-            assertEquals(suspiciousCardTransfer.getIsBlocked(), indexZeroTransfer.getIsBlocked());
-            assertEquals(suspiciousCardTransfer.getIsSuspicious(), indexZeroTransfer.getIsSuspicious());
-            assertEquals(suspiciousCardTransfer.getBlockedReason(), indexZeroTransfer.getBlockedReason());
-            assertEquals(suspiciousCardTransfer.getCardTransferId(), indexZeroTransfer.getCardTransferId());
-            assertEquals(suspiciousCardTransfer.getSuspiciousReason(), indexZeroTransfer.getSuspiciousReason());
-
-            assertEquals(updatedSuspiciousCardTransfer.getId(), indexOneTransfer.getId());
-            assertEquals(updatedSuspiciousCardTransfer.getCardTransferId(), cardTransferId);
-            assertEquals(updatedSuspiciousCardTransfer.getSuspiciousReason(), suspiciousReason);
-            assertEquals(updatedSuspiciousCardTransfer.getIsBlocked(), indexOneTransfer.getIsBlocked());
-            assertEquals(updatedSuspiciousCardTransfer.getIsSuspicious(), indexOneTransfer.getIsSuspicious());
-            assertEquals(updatedSuspiciousCardTransfer.getBlockedReason(), indexOneTransfer.getBlockedReason());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(TWO, suspiciousCardTransfers.size());
+                    assertEquals(suspiciousCardTransfer.getId(), indexZeroTransfer.getId());
+                    assertEquals(suspiciousCardTransfer.getIsBlocked(), indexZeroTransfer.getIsBlocked());
+                    assertEquals(suspiciousCardTransfer.getIsSuspicious(), indexZeroTransfer.getIsSuspicious());
+                    assertEquals(suspiciousCardTransfer.getBlockedReason(), indexZeroTransfer.getBlockedReason());
+                    assertEquals(suspiciousCardTransfer.getCardTransferId(), indexZeroTransfer.getCardTransferId());
+                    assertEquals(suspiciousCardTransfer.getSuspiciousReason(), indexZeroTransfer.getSuspiciousReason());
+                    assertEquals(updatedSuspiciousCardTransfer.getId(), indexOneTransfer.getId());
+                    assertEquals(updatedSuspiciousCardTransfer.getCardTransferId(), cardTransferId);
+                    assertEquals(updatedSuspiciousCardTransfer.getSuspiciousReason(), suspiciousReason);
+                    assertEquals(updatedSuspiciousCardTransfer.getIsBlocked(), indexOneTransfer.getIsBlocked());
+                    assertEquals(updatedSuspiciousCardTransfer.getIsSuspicious(), indexOneTransfer.getIsSuspicious());
+                    assertEquals(updatedSuspiciousCardTransfer.getBlockedReason(), indexOneTransfer.getBlockedReason());
+                }
+        );
     }
 
     private List<SuspiciousCardTransferDto> readAllTestPrepare() {
-        doReturn(List.of(suspiciousCardTransfer, updatedSuspiciousCardTransfer))
-                .when(repository)
-                .findAllById(any());
+        doReturn(List.of(suspiciousCardTransfer, updatedSuspiciousCardTransfer)).when(repository).findAllById(any());
 
-        return service.readAll(List.of(ONE, TWO));
+        return service.readAll(
+                List.of(ONE, TWO)
+        );
     }
 
     @Test
-    @DisplayName("чтение по списку id негативный сценарий")
-    void readAllNegativeTest() {
+    @DisplayName("чтение по списку несуществующих id, негативный сценарий")
+    void readAllNoIdNegativeTest() {
         doReturn(List.of(suspiciousCardTransfer)).when(repository).findAllById(any());
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.readAll(List.of(ONE, TWO))
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(List.of(ONE, TWO))
         );
 
         assertEquals("Количество найденных и запрошенных записей не совпадает.", exception.getMessage());
     }
 
+    @Test
+    @SuppressWarnings("all")
+    @DisplayName("чтение по списку id, передан лист с null-значениями, негативный сценарий")
+    void readAllElementNullNegativeTest() {
+
+        final var exception = assertThrows(NullPointerException.class,
+                () -> service.readAll(List.of(null, null))
+        );
+
+        assertNull(exception.getMessage());
+    }
+
     private void repositorySaveMock() {
+        doReturn(suspiciousCardTransfer).when(repository).save(any());
+    }
+
+    private void saveUpdatedMock() {
         doReturn(updatedSuspiciousCardTransfer).when(repository).save(any());
     }
 
-    private void repositoryFindByIdMock() {
+    private void findByIdMock() {
         doReturn(Optional.of(suspiciousCardTransfer)).when(repository).findById(ONE);
     }
 
-    private void repositoryFindByIdEmptyMock() {
+    @SuppressWarnings("all")
+    private void findByNullMock() {
+        doReturn(Optional.of(suspiciousCardTransfer)).when(repository).findById(null);
+    }
+
+    private void findByIdEmptyMock() {
         doReturn(Optional.empty()).when(repository).findById(ONE);
+    }
+
+    @SuppressWarnings("all")
+    private void findByNullEmptyMock() {
+        doReturn(Optional.empty()).when(repository).findById(null);
     }
 }

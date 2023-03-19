@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -37,15 +36,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(SuspiciousCardTransferController.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class SuspiciousCardTransferControllerTest extends ParentTest {
+public class SuspiciousCardTransferControllerTest extends ParentTest {
 
     private static SuspiciousCardTransferDto suspiciousCardTransfer;
     private static SuspiciousCardTransferSupplier suspiciousCardTransferSupplier;
 
     private final ObjectMapper mapper;
     private final MockMvc mock;
-
-    private ResultActions response;
 
     @MockBean
     private SuspiciousCardTransferService service;
@@ -54,24 +51,23 @@ class SuspiciousCardTransferControllerTest extends ParentTest {
     static void init() {
         suspiciousCardTransferSupplier = new SuspiciousCardTransferSupplier();
 
-        suspiciousCardTransfer = suspiciousCardTransferSupplier.getDto(ONE, ONE, TRUE, TRUE, REASON, REASON);
+        suspiciousCardTransfer = suspiciousCardTransferSupplier.getDto(ONE, ONE, TRUE, TRUE);
     }
 
     @Test
-    @DisplayName("сохранение позитивный сценарий")
-    void createTest() throws Exception {
+    @DisplayName("сохранение, позитивный сценарий")
+    void createPositiveTest() throws Exception {
         doReturn(suspiciousCardTransfer).when(service).create(any());
-
-        response = mock.perform(post("/suspicious/card/transfer")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(suspiciousCardTransfer))
-        );
 
         final int cardTransferId = getIntFromLong(
                 suspiciousCardTransfer.getCardTransferId()
         );
 
-        response.andExpectAll(status().isOk(),
+        mock.perform(
+                post("/suspicious/card/transfer")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(suspiciousCardTransfer))
+        ).andExpectAll(status().isOk(),
                 jsonPath("$.cardTransferId", is(cardTransferId)),
                 jsonPath("$.isBlocked", is(suspiciousCardTransfer.getIsBlocked())),
                 jsonPath("$.isSuspicious", is(suspiciousCardTransfer.getIsSuspicious())),
@@ -81,33 +77,43 @@ class SuspiciousCardTransferControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение негативный сценарий")
-    void createNegativeTest() throws Exception {
+    @DisplayName("сохранение невалидного значения, негативный сценарий")
+    void createNoValidNegativeTest() throws Exception {
         final String exceptionMessage = "Дублирование значения уникального поля";
 
         doThrow(new ValidationException(exceptionMessage)).when(service).create(any());
 
-        response = mock.perform(post("/suspicious/card/transfer")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(suspiciousCardTransfer))
-        );
-
-        response.andExpectAll(status().isUnprocessableEntity(),
+        mock.perform(
+                post("/suspicious/card/transfer")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(suspiciousCardTransfer))
+        ).andExpectAll(status().isUnprocessableEntity(),
                 content().string(exceptionMessage)
         );
     }
 
     @Test
-    @DisplayName("чтение позитивный сценарий")
-    void readTest() throws Exception {
+    @DisplayName("сохранение pdf вместо json, негативный сценарий")
+    void createWrongMediaTypeNegativeTest() throws Exception {
+        mock.perform(
+                post("/suspicious/card/transfer")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .content(mapper.writeValueAsString(suspiciousCardTransfer))
+        ).andExpectAll(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("чтение, позитивный сценарий")
+    void readPositiveTest() throws Exception {
         doReturn(suspiciousCardTransfer).when(service).read(any());
 
         final int cardTransferId = getIntFromLong(
                 suspiciousCardTransfer.getCardTransferId()
         );
 
-        mock.perform(get("/suspicious/card/transfer/{id}", ONE))
-                .andExpectAll(status().isOk(),
+        mock.perform(
+                        get("/suspicious/card/transfer/{id}", ONE)).
+                andExpectAll(status().isOk(),
                         jsonPath("$.cardTransferId", is(cardTransferId)),
                         jsonPath("$.isBlocked", is(suspiciousCardTransfer.getIsBlocked())),
                         jsonPath("$.isSuspicious", is(suspiciousCardTransfer.getIsSuspicious())),
@@ -117,21 +123,31 @@ class SuspiciousCardTransferControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
-    void readNegativeTest() throws Exception {
+    @DisplayName("чтение по несуществующему id, негативный сценарий")
+    void readNoIdNegativeTest() throws Exception {
         doThrow(new EntityNotFoundException(getNotFoundExceptionMessage(ONE, SUSPICIOUS_CARD_TRANSFER_NAME)))
                 .when(service).read(any());
 
-        mock.perform(get("/suspicious/card/transfer/{id}", ONE))
-                .andExpectAll(
-                        status().isNotFound(),
-                        content().string(getNotFoundExceptionMessage(ONE, SUSPICIOUS_CARD_TRANSFER_NAME))
-                );
+        mock.perform(
+                get("/suspicious/card/transfer/{id}", ONE)
+        ).andExpectAll(status().isNotFound(),
+                content().string(getNotFoundExceptionMessage(ONE, SUSPICIOUS_CARD_TRANSFER_NAME))
+        );
     }
 
     @Test
-    @DisplayName("чтение по списку id позитивный сценарий")
-    void readAllTest() throws Exception {
+    @DisplayName("чтение по неверному параметру, негативный сценарий)")
+    void readIncorrectParamNegativeTest() throws Exception {
+        mock.perform(
+                        get("/suspicious/card/transfer/{id}", ONE_AND_HALF))
+                .andExpectAll(
+                        status().isInternalServerError());
+    }
+
+
+    @Test
+    @DisplayName("чтение по списку id, позитивный сценарий")
+    void readAllPositiveTest() throws Exception {
         final List<SuspiciousCardTransferDto> suspiciousCardTransfers = readAllTestPrepare();
 
         final var oneIndexTransfer = suspiciousCardTransfers.get(1);
@@ -140,25 +156,40 @@ class SuspiciousCardTransferControllerTest extends ParentTest {
         final int oneIndexCardTransferId = getIntFromLong(oneIndexTransfer.getCardTransferId());
         final int zeroIndexCardTransferId = getIntFromLong(zeroIndexTransfer.getCardTransferId());
 
-        mock.perform(get("/suspicious/card/transfer?id=1&id=2")).andExpectAll(status().isOk(),
-                jsonPath("$", hasSize(suspiciousCardTransfers.size())),
-                jsonPath("$.[0].cardTransferId", is(zeroIndexCardTransferId)),
-                jsonPath("$.[0].isBlocked", is(zeroIndexTransfer.getIsBlocked())),
-                jsonPath("$.[0].isSuspicious", is(zeroIndexTransfer.getIsSuspicious())),
-                jsonPath("$.[0].blockedReason", is(zeroIndexTransfer.getBlockedReason())),
-                jsonPath("$.[0].suspiciousReason", is(zeroIndexTransfer.getSuspiciousReason())),
-                jsonPath("$.[1].cardTransferId", is(oneIndexCardTransferId)),
-                jsonPath("$.[1].isBlocked", is(oneIndexTransfer.getIsBlocked())),
-                jsonPath("$.[1].isSuspicious", is(oneIndexTransfer.getIsSuspicious())),
-                jsonPath("$.[1].blockedReason", is(oneIndexTransfer.getBlockedReason())),
-                jsonPath("$.[1].suspiciousReason", is(oneIndexTransfer.getSuspiciousReason()))
-        );
+        mock.perform(
+                        get("/suspicious/card/transfer?id=1&id=2"))
+                .andExpectAll(status().isOk(),
+                        jsonPath("$", hasSize(suspiciousCardTransfers.size())),
+                        jsonPath("$.[0].cardTransferId", is(zeroIndexCardTransferId)),
+                        jsonPath("$.[0].isBlocked", is(zeroIndexTransfer.getIsBlocked())),
+                        jsonPath("$.[0].isSuspicious", is(zeroIndexTransfer.getIsSuspicious())),
+                        jsonPath("$.[0].blockedReason", is(zeroIndexTransfer.getBlockedReason())),
+                        jsonPath("$.[0].suspiciousReason", is(zeroIndexTransfer.getSuspiciousReason())),
+                        jsonPath("$.[1].cardTransferId", is(oneIndexCardTransferId)),
+                        jsonPath("$.[1].isBlocked", is(oneIndexTransfer.getIsBlocked())),
+                        jsonPath("$.[1].isSuspicious", is(oneIndexTransfer.getIsSuspicious())),
+                        jsonPath("$.[1].blockedReason", is(oneIndexTransfer.getBlockedReason())),
+                        jsonPath("$.[1].suspiciousReason", is(oneIndexTransfer.getSuspiciousReason()))
+                );
+    }
+
+    @Test
+    @DisplayName("чтение по списку несуществующих id, негативный сценарий")
+    void readAllNoIdNegativeTest() throws Exception {
+        doThrow(new EntityNotFoundException(getNotFoundExceptionMessage(TWO, SUSPICIOUS_CARD_TRANSFER_NAME)))
+                .when(service).readAll(any());
+
+        mock.perform(
+                        get("/suspicious/card/transfer?id=" + TWO))
+                .andExpectAll(status().isNotFound(),
+                        content().string(getNotFoundExceptionMessage(TWO, SUSPICIOUS_CARD_TRANSFER_NAME))
+                );
     }
 
     private List<SuspiciousCardTransferDto> readAllTestPrepare() {
         final List<SuspiciousCardTransferDto> suspiciousCardTransfers = List.of(
-                suspiciousCardTransferSupplier.getDto(ONE, ONE, TRUE, TRUE, REASON, REASON),
-                suspiciousCardTransferSupplier.getDto(TWO, TWO, FALSE, TRUE, REASON, REASON)
+                suspiciousCardTransferSupplier.getDto(ONE, ONE, TRUE, TRUE),
+                suspiciousCardTransferSupplier.getDto(TWO, TWO, FALSE, TRUE)
         );
 
         doReturn(suspiciousCardTransfers).when(service).readAll(any());
@@ -167,32 +198,32 @@ class SuspiciousCardTransferControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id негативный сценарий")
-    void readAllNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException(getNotFoundExceptionMessage(TWO, SUSPICIOUS_CARD_TRANSFER_NAME)))
-                .when(service).readAll(any());
+    @DisplayName("чтение по списку с некорректным id, негативный сценарий")
+    void readAllWrongIdNegativeTest() throws Exception {
+        doThrow(new IllegalArgumentException()).when(service).readAll(any());
 
-        mock.perform(get("/suspicious/card/transfer?id=" + TWO))
-                .andExpectAll(status().isNotFound(),
-                        content().string(getNotFoundExceptionMessage(TWO, SUSPICIOUS_CARD_TRANSFER_NAME))
+        mock.perform(
+                        get("/suspicious/card/transfer?id=6&id=4&id=String"))
+                .andExpectAll(
+                        status().isInternalServerError(),
+                        content().string("Ошибка на стороне сервера.")
                 );
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
-    void updateTest() throws Exception {
+    @DisplayName("обновление, позитивный сценарий")
+    void updatePositiveTest() throws Exception {
         doReturn(suspiciousCardTransfer).when(service).update(any(), anyLong());
-
-        response = mock.perform(put("/suspicious/card/transfer/{id}", ONE)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(suspiciousCardTransfer))
-        );
 
         final int cardTransferId = getIntFromLong(
                 suspiciousCardTransfer.getCardTransferId()
         );
 
-        response.andExpectAll(status().isOk(),
+        mock.perform(
+                put("/suspicious/card/transfer/{id}", ONE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(suspiciousCardTransfer))
+        ).andExpectAll(status().isOk(),
                 jsonPath("$.cardTransferId", is(cardTransferId)),
                 jsonPath("$.isBlocked", is(suspiciousCardTransfer.getIsBlocked())),
                 jsonPath("$.isSuspicious", is(suspiciousCardTransfer.getIsSuspicious())),
@@ -202,18 +233,30 @@ class SuspiciousCardTransferControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() throws Exception {
+    @DisplayName("обновление несуществующего перевода, негативный сценарий")
+    void updateNoIdNegativeTest() throws Exception {
         doThrow(new EntityNotFoundException(getNotFoundExceptionMessage(ONE, SUSPICIOUS_CARD_TRANSFER_NAME)))
                 .when(service).update(any(), anyLong());
 
-        response = mock.perform(put("/suspicious/card/transfer/{id}", ONE)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(suspiciousCardTransfer))
-        );
-
-        response.andExpectAll(status().isNotFound(),
+        mock.perform(
+                put("/suspicious/card/transfer/{id}", ONE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(suspiciousCardTransfer))
+        ).andExpectAll(
+                status().isNotFound(),
                 content().string(getNotFoundExceptionMessage(ONE, SUSPICIOUS_CARD_TRANSFER_NAME))
+        );
+    }
+
+    @Test
+    @DisplayName("обновление pdf вместо json, негативный сценарий")
+    void updateWithWrongMediaTypeNegativeTest() throws Exception {
+        mock.perform(
+                put("/suspicious/card/transfer/{id}", ONE)
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .content(mapper.writeValueAsString(suspiciousCardTransfer))
+        ).andExpectAll(
+                status().isInternalServerError()
         );
     }
 }

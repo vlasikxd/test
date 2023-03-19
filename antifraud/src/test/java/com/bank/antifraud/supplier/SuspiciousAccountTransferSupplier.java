@@ -5,20 +5,21 @@ import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
 
 public class SuspiciousAccountTransferSupplier {
 
-    public SuspiciousAccountTransferEntity getEntity(Long id, Long accountTransferId, Boolean isBlocked,
-                                                     Boolean isSuspicious, String blockedReason,
-                                                     String suspiciousReason) {
+    private final Boolean isBlocked = false;
 
-        return new SuspiciousAccountTransferEntity(id, accountTransferId, isBlocked,
-                isSuspicious, blockedReason, suspiciousReason
+    private final String blockedReason = "Random blocked reason";
+
+    public SuspiciousAccountTransferEntity getEntity(Long id, Long accountTransferId,
+                                                     Boolean isSuspicious, String suspiciousReason) {
+        return new SuspiciousAccountTransferEntity(id, accountTransferId, isBlocked, isSuspicious,
+                blockedReason, suspiciousReason
         );
     }
 
-    public SuspiciousAccountTransferDto getDto(Long id, Long accountTransferId, Boolean isBlocked,
-                                               Boolean isSuspicious, String blockedReason, String suspiciousReason) {
-
-        return new SuspiciousAccountTransferDto(id, accountTransferId, isBlocked,
-                isSuspicious, blockedReason, suspiciousReason
+    public SuspiciousAccountTransferDto getDto(Long id, Long accountTransferId,
+                                               Boolean isSuspicious, String suspiciousReason) {
+        return new SuspiciousAccountTransferDto(id, accountTransferId, isBlocked, isSuspicious,
+                blockedReason, suspiciousReason
         );
     }
 }
