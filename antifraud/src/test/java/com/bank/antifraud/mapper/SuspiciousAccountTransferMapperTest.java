@@ -1,6 +1,5 @@
 package com.bank.antifraud.mapper;
 
-import com.bank.antifraud.ParentTest;
 import com.bank.antifraud.dto.SuspiciousAccountTransferDto;
 import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
 import com.bank.antifraud.supplier.SuspiciousAccountTransferSupplier;
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class SuspiciousAccountTransferMapperTest extends ParentTest {
+public class SuspiciousAccountTransferMapperTest implements MapperSupplier {
 
     private static SuspiciousAccountTransferMapper mapper;
 
@@ -31,23 +30,25 @@ class SuspiciousAccountTransferMapperTest extends ParentTest {
 
         var suspiciousAccountTransferSupplier = new SuspiciousAccountTransferSupplier();
 
-        suspiciousAccountTransfer = suspiciousAccountTransferSupplier.getEntity(ONE, ONE, TRUE, TRUE, REASON, REASON);
-        suspiciousAccountTransferDto = suspiciousAccountTransferSupplier.getDto(ONE, TWO, FALSE, FALSE, REASON, REASON);
+        suspiciousAccountTransfer = suspiciousAccountTransferSupplier.getEntity(ONE, ONE, TRUE, REASON);
+        suspiciousAccountTransferDto = suspiciousAccountTransferSupplier.getDto(ONE, TWO, FALSE, REASON);
     }
 
     @Test
-    @DisplayName("маппинг к entity позитивный сценарий")
+    @DisplayName("маппинг к entity")
     void toEntityTest() {
         final SuspiciousAccountTransferEntity result = mapper.toEntity(suspiciousAccountTransferDto);
 
-        assertAll(() -> {
-            assertNull(result.getId());
-            assertEquals(suspiciousAccountTransferDto.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousAccountTransferDto.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousAccountTransferDto.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousAccountTransferDto.getSuspiciousReason(), result.getSuspiciousReason());
-            assertEquals(suspiciousAccountTransferDto.getAccountTransferId(), result.getAccountTransferId());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getId());
+                    assertEquals(suspiciousAccountTransferDto.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousAccountTransferDto.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousAccountTransferDto.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousAccountTransferDto.getSuspiciousReason(), result.getSuspiciousReason());
+                    assertEquals(suspiciousAccountTransferDto.getAccountTransferId(), result.getAccountTransferId());
+                }
+        );
     }
 
     @Test
@@ -57,18 +58,20 @@ class SuspiciousAccountTransferMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к dto позитивный сценарий")
+    @DisplayName("маппинг к dto")
     void toDtoTest() {
         final SuspiciousAccountTransferDto result = mapper.toDto(suspiciousAccountTransfer);
 
-        assertAll(() -> {
-            assertEquals(suspiciousAccountTransfer.getId(), result.getId());
-            assertEquals(suspiciousAccountTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousAccountTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousAccountTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-            assertEquals(suspiciousAccountTransfer.getAccountTransferId(), result.getAccountTransferId());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousAccountTransfer.getId(), result.getId());
+                    assertEquals(suspiciousAccountTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousAccountTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousAccountTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                    assertEquals(suspiciousAccountTransfer.getAccountTransferId(), result.getAccountTransferId());
+                }
+        );
     }
 
     @Test
@@ -78,41 +81,45 @@ class SuspiciousAccountTransferMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("слияние в entity позитивный сценарий")
+    @DisplayName("слияние в entity")
     void mergeToEntityTest() {
         final SuspiciousAccountTransferEntity result = mapper.mergeToEntity(
                 suspiciousAccountTransferDto, suspiciousAccountTransfer
         );
 
-        assertAll(() -> {
-            assertEquals(suspiciousAccountTransfer.getId(), result.getId());
-            assertEquals(suspiciousAccountTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousAccountTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousAccountTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-            assertEquals(suspiciousAccountTransfer.getAccountTransferId(), result.getAccountTransferId());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousAccountTransfer.getId(), result.getId());
+                    assertEquals(suspiciousAccountTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousAccountTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousAccountTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                    assertEquals(suspiciousAccountTransfer.getAccountTransferId(), result.getAccountTransferId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("слияние в entity, где dto равен null")
+    @DisplayName("слияние в entity, dto равен null")
     void mergeToEntityNullTest() {
         final SuspiciousAccountTransferEntity result = mapper.mergeToEntity(
                 null, suspiciousAccountTransfer
         );
 
-        assertAll(() -> {
-            assertEquals(suspiciousAccountTransfer.getId(), result.getId());
-            assertEquals(suspiciousAccountTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousAccountTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousAccountTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-            assertEquals(suspiciousAccountTransfer.getAccountTransferId(), result.getAccountTransferId());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(suspiciousAccountTransfer.getId(), result.getId());
+                    assertEquals(suspiciousAccountTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousAccountTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousAccountTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                    assertEquals(suspiciousAccountTransfer.getAccountTransferId(), result.getAccountTransferId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг к списку dto позитивный сценарий")
+    @DisplayName("маппинг к списку dto")
     void toListDtoTest() {
         final List<SuspiciousAccountTransferDto> suspiciousAccountTransfers = mapper.toListDto(
                 List.of(suspiciousAccountTransfer)
@@ -120,25 +127,27 @@ class SuspiciousAccountTransferMapperTest extends ParentTest {
 
         final SuspiciousAccountTransferDto result = suspiciousAccountTransfers.get(0);
 
-        assertAll(() -> {
-            assertEquals(ONE, suspiciousAccountTransfers.size());
-            assertEquals(suspiciousAccountTransfer.getId(), result.getId());
-            assertEquals(suspiciousAccountTransfer.getIsBlocked(), result.getIsBlocked());
-            assertEquals(suspiciousAccountTransfer.getIsSuspicious(), result.getIsSuspicious());
-            assertEquals(suspiciousAccountTransfer.getBlockedReason(), result.getBlockedReason());
-            assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), result.getSuspiciousReason());
-            assertEquals(suspiciousAccountTransfer.getAccountTransferId(), result.getAccountTransferId());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(ONE, suspiciousAccountTransfers.size());
+                    assertEquals(suspiciousAccountTransfer.getId(), result.getId());
+                    assertEquals(suspiciousAccountTransfer.getIsBlocked(), result.getIsBlocked());
+                    assertEquals(suspiciousAccountTransfer.getIsSuspicious(), result.getIsSuspicious());
+                    assertEquals(suspiciousAccountTransfer.getBlockedReason(), result.getBlockedReason());
+                    assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), result.getSuspiciousReason());
+                    assertEquals(suspiciousAccountTransfer.getAccountTransferId(), result.getAccountTransferId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, где список равен null")
+    @DisplayName("маппинг к списку dto, список равен null")
     void toListDtoNullTest() {
         assertNull(mapper.toListDto(null));
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, где один из элементов списка равен null")
+    @DisplayName("маппинг к списку dto, один из элементов списка равен null")
     void toListDtoElementNullTest() {
         final List<SuspiciousAccountTransferEntity> suspiciousAccountTransfers = new ArrayList<>();
         suspiciousAccountTransfers.add(suspiciousAccountTransfer);
@@ -147,15 +156,21 @@ class SuspiciousAccountTransferMapperTest extends ParentTest {
         final List<SuspiciousAccountTransferDto> actually = mapper.toListDto(suspiciousAccountTransfers);
         final var zeroIndexResult = actually.get(0);
 
-        assertAll(() -> {
-            assertNull(actually.get(1));
-            assertEquals(TWO, actually.size());
-            assertEquals(suspiciousAccountTransfer.getId(), zeroIndexResult.getId());
-            assertEquals(suspiciousAccountTransfer.getIsBlocked(), zeroIndexResult.getIsBlocked());
-            assertEquals(suspiciousAccountTransfer.getIsSuspicious(), zeroIndexResult.getIsSuspicious());
-            assertEquals(suspiciousAccountTransfer.getBlockedReason(), zeroIndexResult.getBlockedReason());
-            assertEquals(suspiciousAccountTransfer.getSuspiciousReason(), zeroIndexResult.getSuspiciousReason());
-            assertEquals(suspiciousAccountTransfer.getAccountTransferId(), zeroIndexResult.getAccountTransferId());
-        });
+        assertAll(
+                () -> {
+                    assertNull(actually.get(1));
+                    assertEquals(TWO, actually.size());
+                    assertEquals(suspiciousAccountTransfer.getId(), zeroIndexResult.getId());
+                    assertEquals(suspiciousAccountTransfer.getIsBlocked(), zeroIndexResult.getIsBlocked());
+                    assertEquals(suspiciousAccountTransfer.getIsSuspicious(), zeroIndexResult.getIsSuspicious());
+                    assertEquals(suspiciousAccountTransfer.getBlockedReason(), zeroIndexResult.getBlockedReason());
+                    assertEquals(suspiciousAccountTransfer.getSuspiciousReason(),
+                            zeroIndexResult.getSuspiciousReason()
+                    );
+                    assertEquals(suspiciousAccountTransfer.getAccountTransferId(),
+                            zeroIndexResult.getAccountTransferId())
+                    ;
+                }
+        );
     }
 }
