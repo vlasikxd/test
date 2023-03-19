@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -32,7 +33,8 @@ public class SuspiciousPhoneTransferController {
      * @return {@link ResponseEntity} c {@link SuspiciousPhoneTransferDto} и {@link HttpStatus}
      */
     @PostMapping
-    public ResponseEntity<SuspiciousPhoneTransferDto> create(@RequestBody SuspiciousPhoneTransferDto transfer) {
+    public ResponseEntity<SuspiciousPhoneTransferDto> create(
+            @RequestBody @Valid SuspiciousPhoneTransferDto transfer) {
         return ResponseEntity.ok(service.create(transfer));
     }
 

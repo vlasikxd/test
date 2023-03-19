@@ -1,6 +1,7 @@
 package com.bank.antifraud.dto;
 
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
+import com.bank.antifraud.validation.BlockedReasonRequiredIfBlocked;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -19,6 +21,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@BlockedReasonRequiredIfBlocked
 public class SuspiciousPhoneTransferDto implements Serializable {
 
     Long id;
@@ -34,6 +37,6 @@ public class SuspiciousPhoneTransferDto implements Serializable {
 
     String blockedReason;
 
-    @NotNull
+    @NotBlank
     String suspiciousReason;
 }
