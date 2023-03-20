@@ -53,7 +53,7 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение, позитивный сценарий")
+    @DisplayName("Сохранение, позитивный сценарий")
     void savePositiveTest() throws Exception {
         doReturn(license).when(service).save(any());
 
@@ -69,20 +69,22 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение, негативный сценарий")
+    @DisplayName("Сохранение, негативный сценарий")
     void saveNegativeTest() throws Exception {
-        doThrow(new ValidationException("Неверные данные")).when(service).save(any());
+        String errorMessage = "Неверные данные";
+
+        doThrow(new ValidationException(errorMessage)).when(service).save(any());
 
         mockMvc.perform(post("/license")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(license))
         ).andExpectAll(status().isUnprocessableEntity(),
-                content().string("Неверные данные")
+                content().string(errorMessage)
         );
     }
 
     @Test
-    @DisplayName("чтение, позитивный сценарий")
+    @DisplayName("Чтение, позитивный сценарий")
     void readPositiveTest() throws Exception {
         doReturn(license).when(service).read(any());
 
@@ -99,19 +101,21 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение, негативный сценарий")
+    @DisplayName("Чтение, негативный сценарий")
     void readNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Лицензии нет")).when(service).read(any());
+        String errorMessage = "Лицензии нет";
+
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).read(any());
 
         mockMvc.perform(get("/license/{id}", ONE))
                 .andExpectAll(
                         status().isNotFound(),
-                        content().string("Лицензии нет")
+                        content().string(errorMessage)
                 );
     }
 
     @Test
-    @DisplayName("чтение по нескольким id, позитивный сценарий")
+    @DisplayName("Чтение по нескольким id, позитивный сценарий")
     void readAllPositiveTest() throws Exception {
 
         final List<LicenseDto> licenses = returnLicenses();
@@ -146,17 +150,19 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по нескольким id, негативный сценарий")
+    @DisplayName("Чтение по нескольким id, негативный сценарий")
     void readAllNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Ошибка в параметрах")).when(service).readAll(any());
+        String errorMessage = "Ошибка в параметрах";
+
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
         mockMvc.perform(get("/license?id=1")).andExpectAll(status().isNotFound(),
-                content().string("Ошибка в параметрах")
+                content().string(errorMessage)
         );
     }
 
     @Test
-    @DisplayName("обновление, позитивный сценарий")
+    @DisplayName("Обновление, позитивный сценарий")
     void updatePositiveTest() throws Exception {
         doReturn(license).when(service).update(anyLong(), any());
 
@@ -174,15 +180,17 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
+    @DisplayName("Обновление, негативный сценарий")
     void updateNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Обновление невозможно")).when(service).update(anyLong(), any());
+        String errorMessage = "Обновление невозможно";
+
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).update(anyLong(), any());
 
         mockMvc.perform(put("/license/{id}", ONE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(license))
         ).andExpectAll(status().isNotFound(),
-                content().string("Обновление невозможно")
+                content().string(errorMessage)
         );
     }
 }

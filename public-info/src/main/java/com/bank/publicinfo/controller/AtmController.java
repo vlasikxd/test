@@ -50,6 +50,7 @@ public class AtmController {
      * @return {@link ResponseEntity} c {@link AtmDto} и HttpStatus OK
      */
     @PostMapping
+
     public ResponseEntity<AtmDto> create(@RequestBody AtmDto atm) {
         return new ResponseEntity<>(service.save(atm), HttpStatus.OK);
     }

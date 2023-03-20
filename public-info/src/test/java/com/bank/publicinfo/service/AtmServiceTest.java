@@ -59,9 +59,9 @@ public class AtmServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение, позитивный сценарий")
+    @DisplayName("Сохранение, позитивный сценарий")
     void savePositiveTest() {
-        saveMock();
+        doReturn(updateAtm).when(repository).save(any());
 
         final AtmDto result = service.save(updateAtmDto);
 
@@ -78,15 +78,17 @@ public class AtmServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение, негативный сценарий")
+    @DisplayName("Сохранение, негативный сценарий")
     void saveNegativeTest() {
-        doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
+        String errorMessage = "Недопустимые параметры";
+
+        doThrow(new IllegalArgumentException(errorMessage)).when(repository).save(any());
 
         final var exception = assertThrows(
                 IllegalArgumentException.class, () -> service.save(null)
         );
 
-        assertEquals("Недопустимые параметры", exception.getMessage());
+        assertEquals(errorMessage, exception.getMessage());
     }
 
     @Test

@@ -76,18 +76,19 @@ public class AtmControllerTest extends ParentTest {
     @Test
     @DisplayName("Сохранение, негативный сценарий")
     void saveNegativeTest() throws Exception {
-        doThrow(new ValidationException("Неверные данные")).when(service).save(any());
+        String errorMessage = "Неверные данные";
+        doThrow(new ValidationException(errorMessage)).when(service).save(any());
 
         mockMvc.perform(post("/atm")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(atm))
         ).andExpectAll(status().isUnprocessableEntity(),
-                content().string("Неверные данные")
+                content().string(errorMessage)
         );
     }
 
     @Test
-    @DisplayName("Чтение позитивный сценарий")
+    @DisplayName("Чтение, позитивный сценарий")
     void readTest() throws Exception {
         doReturn(atm).when(service).read(any());
 
@@ -107,19 +108,21 @@ public class AtmControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение негативный сценарий")
+    @DisplayName("Чтение. негативный сценарий")
     void readNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Банкомата нет")).when(service).read(any());
+        String errorMessage = "Банкомата нет";
+
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).read(any());
 
         mockMvc.perform(get("/atm/{id}", ONE))
                 .andExpectAll(
                         status().isNotFound(),
-                        content().string("Банкомата нет")
+                        content().string(errorMessage)
                 );
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id позитивный сценарий")
+    @DisplayName("Чтение по нескольким id, позитивный сценарий")
     void readAll() throws Exception {
 
         final List<AtmDto> atms = returnAtms();
@@ -137,21 +140,22 @@ public class AtmControllerTest extends ParentTest {
         final String oneStartOfWork = LocalTimeToString(oneAtm.getStartOfWork());
         final String oneEndOfWork = LocalTimeToString(oneAtm.getEndOfWork());
 
-        mockMvc.perform(get("/atm?id=1&id=2")).andExpectAll(status().isOk(),
-                jsonPath("$", hasSize(atms.size())),
-                jsonPath("$.[0].id", is(zeroId)),
-                jsonPath("$.[0].startOfWork", is(zeroStartOfWork)),
-                jsonPath("$.[0].endOfWork", is(zeroEndOfWork)),
-                jsonPath("$.[0].address", is(zeroAtm.getAddress())),
-                jsonPath("$.[0].allHours", is(zeroAtm.getAllHours())),
-                jsonPath("$.[0].branch", is(zeroAtm.getBranch())),
-                jsonPath("$.[1].id", is(oneId)),
-                jsonPath("$.[1].startOfWork", is(oneStartOfWork)),
-                jsonPath("$.[1].endOfWork", is(oneEndOfWork)),
-                jsonPath("$.[1].address", is(oneAtm.getAddress())),
-                jsonPath("$.[1].allHours", is(oneAtm.getAllHours())),
-                jsonPath("$.[1].branch", is(oneAtm.getBranch()))
-        );
+        mockMvc.perform(get("/atm?id=1&id=2"))
+                .andExpectAll(status().isOk(),
+                        jsonPath("$", hasSize(atms.size())),
+                        jsonPath("$.[0].id", is(zeroId)),
+                        jsonPath("$.[0].startOfWork", is(zeroStartOfWork)),
+                        jsonPath("$.[0].endOfWork", is(zeroEndOfWork)),
+                        jsonPath("$.[0].address", is(zeroAtm.getAddress())),
+                        jsonPath("$.[0].allHours", is(zeroAtm.getAllHours())),
+                        jsonPath("$.[0].branch", is(zeroAtm.getBranch())),
+                        jsonPath("$.[1].id", is(oneId)),
+                        jsonPath("$.[1].startOfWork", is(oneStartOfWork)),
+                        jsonPath("$.[1].endOfWork", is(oneEndOfWork)),
+                        jsonPath("$.[1].address", is(oneAtm.getAddress())),
+                        jsonPath("$.[1].allHours", is(oneAtm.getAllHours())),
+                        jsonPath("$.[1].branch", is(oneAtm.getBranch()))
+                );
     }
 
     private List<AtmDto> returnAtms() {
@@ -164,11 +168,13 @@ public class AtmControllerTest extends ParentTest {
     @Test
     @DisplayName("Чтение по нескольким id, негативный сценарий")
     void readAllNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Ошибка в параметрах")).when(service).readAll(any());
+        String errorMessage = "Ошибка в параметрах";
+
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
         mockMvc.perform(get("/atm?id=1"))
                 .andExpectAll(status().isNotFound(),
-                        content().string("Ошибка в параметрах")
+                        content().string(errorMessage)
                 );
     }
 
@@ -197,13 +203,15 @@ public class AtmControllerTest extends ParentTest {
     @Test
     @DisplayName("обновление, негативный сценарий")
     void updateNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Обновление невозможно")).when(service).update(anyLong(), any());
+        String errorMessage = "Обновление невозможно";
+
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).update(anyLong(), any());
 
         mockMvc.perform(put("/atm/{id}", ONE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(atm))
         ).andExpectAll(status().isNotFound(),
-                content().string("Обновление невозможно")
+                content().string(errorMessage)
         );
     }
 }

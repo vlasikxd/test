@@ -39,7 +39,7 @@ public class BankDetailsMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity")
+    @DisplayName("Маппинг к entity")
     void toEntityTest() {
         final BankDetailsEntity result = mapper.toEntity(bankDetailsDto);
 
@@ -58,13 +58,13 @@ public class BankDetailsMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity, на вход подан null")
+    @DisplayName("Маппинг к entity, на вход подан null")
     void toEntityNullTest() {
         assertNull(mapper.toEntity(null));
     }
 
     @Test
-    @DisplayName("маппинг к dto")
+    @DisplayName("Маппинг к dto")
     void toDtoTest() {
 
         final BankDetailsDto result = mapper.toDto(bankDetails);
@@ -84,13 +84,13 @@ public class BankDetailsMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к dto, на вход подан null")
+    @DisplayName("Маппинг к dto, на вход подан null")
     void toDtoNullTest() {
         assertNull(mapper.toDto(null));
     }
 
     @Test
-    @DisplayName("слияние в entity")
+    @DisplayName("Слияние в entity")
     void mergeToEntityPositiveTest() {
 
         final BankDetailsEntity result = mapper.mergeToEntity(bankDetailsUpdateDto, bankDetails);
@@ -110,7 +110,7 @@ public class BankDetailsMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("слияние в entity, на вход подан null")
+    @DisplayName("Слияние в entity, на вход подан null")
     void mergeToEntityNullTest() {
         final BankDetailsEntity result = mapper.mergeToEntity(null, bankDetails);
 
@@ -129,7 +129,7 @@ public class BankDetailsMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку dto")
+    @DisplayName("Маппинг к списку dto")
     void toDtoListTest() {
         final List<BankDetailsDto> bankDetailsList = mapper.toDtoList(
                 List.of(bankDetails)
@@ -153,13 +153,13 @@ public class BankDetailsMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, на вход подан null")
+    @DisplayName("Маппинг к списку dto, на вход подан null")
     void toDtoListNullTest() {
         assertNull(mapper.toDtoList(null));
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, один из элементов списка равен null")
+    @DisplayName("Маппинг к списку dto, один из элементов списка равен null")
     void toListDtoElementNullTest() {
         final List<BankDetailsEntity> bankDetailsList = new ArrayList<>();
         bankDetailsList.add(bankDetails);

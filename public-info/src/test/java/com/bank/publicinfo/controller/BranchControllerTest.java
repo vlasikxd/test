@@ -40,7 +40,7 @@ public class BranchControllerTest extends ParentTest {
     private static BranchSupplier branchSupplier;
 
     private final ObjectMapper mapper;
-    private final MockMvc mock;
+    private final MockMvc mockMvc;
 
     @MockBean
     private BranchService service;
@@ -53,7 +53,7 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение, позитивный сценарий")
+    @DisplayName("Сохранение, позитивный сценарий")
     void saveTest() throws Exception {
         doReturn(branch).when(service).save(any());
 
@@ -61,7 +61,7 @@ public class BranchControllerTest extends ParentTest {
         final String startOfWork = LocalTimeToString(branch.getStartOfWork());
         final String endOfWork = LocalTimeToString(branch.getEndOfWork());
 
-        mock.perform(post("/branch")
+        mockMvc.perform(post("/branch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isOk(),
@@ -74,20 +74,22 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение  негативный сценарий")
+    @DisplayName("Сохранение, негативный сценарий")
     void saveNegativeTest() throws Exception {
-        doThrow(new ValidationException("Неверные данные")).when(service).save(any());
+        String errorMessage = "Неверные данные";
 
-        mock.perform(post("/branch")
+        doThrow(new ValidationException(errorMessage)).when(service).save(any());
+
+        mockMvc.perform(post("/branch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isUnprocessableEntity(),
-                content().string("Неверные данные")
+                content().string(errorMessage)
         );
     }
 
     @Test
-    @DisplayName("чтение, позитивный сценарий")
+    @DisplayName("Чтение, позитивный сценарий")
     void readTest() throws Exception {
         doReturn(branch).when(service).read(any());
 
@@ -96,7 +98,7 @@ public class BranchControllerTest extends ParentTest {
         final String startOfWork = LocalTimeToString(branch.getStartOfWork());
         final String endOfWork = LocalTimeToString(branch.getEndOfWork());
 
-        mock.perform(get("/branch/{id}", ONE))
+        mockMvc.perform(get("/branch/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
                         jsonPath("$.address", is(branch.getAddress())),
@@ -108,19 +110,21 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение, негативный сценарий")
+    @DisplayName("Чтение, негативный сценарий")
     void readNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Отделения банка нет")).when(service).read(any());
+        String errorMessage = "Отделения банка нет";
 
-        mock.perform(get("/branch/{id}", ONE))
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).read(any());
+
+        mockMvc.perform(get("/branch/{id}", ONE))
                 .andExpectAll(
                         status().isNotFound(),
-                        content().string("Отделения банка нет")
+                        content().string(errorMessage)
                 );
     }
 
     @Test
-    @DisplayName("чтение по нескольким id, позитивный сценарий")
+    @DisplayName("Чтение по нескольким id, позитивный сценарий")
     void readAll() throws Exception {
 
         final List<BranchDto> branches = returnBranches();
@@ -140,7 +144,7 @@ public class BranchControllerTest extends ParentTest {
         final String oneStartOfWork = LocalTimeToString(oneBranch.getStartOfWork());
         final String oneEndOfWork = LocalTimeToString(oneBranch.getEndOfWork());
 
-        mock.perform(get("/branch?id=1&id=2"))
+        mockMvc.perform(get("/branch?id=1&id=2"))
                 .andExpectAll(status().isOk(),
                         jsonPath("$", hasSize(branches.size())),
                         jsonPath("$.[0].id", is(zeroId)),
@@ -166,17 +170,18 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по нескольким id, негативный сценарий")
+    @DisplayName("Чтение по нескольким id, негативный сценарий")
     void readAllNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Ошибка в параметрах")).when(service).readAll(any());
+        String errorMessage = "Ошибка в параметрах";
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
-        mock.perform(get("/branch?id=1")).andExpectAll(status().isNotFound(),
-                content().string("Ошибка в параметрах")
+        mockMvc.perform(get("/branch?id=1")).andExpectAll(status().isNotFound(),
+                content().string(errorMessage)
         );
     }
 
     @Test
-    @DisplayName("обновление, позитивный сценарий")
+    @DisplayName("Обновление, позитивный сценарий")
     void updateTest() throws Exception {
         doReturn(branch).when(service).update(anyLong(), any());
 
@@ -185,7 +190,7 @@ public class BranchControllerTest extends ParentTest {
         final String startOfWork = LocalTimeToString(branch.getStartOfWork());
         final String endOfWork = LocalTimeToString(branch.getEndOfWork());
 
-        mock.perform(put("/branch/{id}", ONE).
+        mockMvc.perform(put("/branch/{id}", ONE).
                 contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isOk(),
@@ -199,15 +204,17 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
+    @DisplayName("Обновление, негативный сценарий")
     void updateNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Обновление невозможно")).when(service).update(anyLong(), any());
+        String errorMessage = "Обновление невозможно";
 
-        mock.perform(put("/branch/{id}", ONE)
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).update(anyLong(), any());
+
+        mockMvc.perform(put("/branch/{id}", ONE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isNotFound(),
-                content().string("Обновление невозможно")
+                content().string(errorMessage)
         );
     }
 }
