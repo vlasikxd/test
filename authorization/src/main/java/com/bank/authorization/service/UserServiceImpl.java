@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto read(Long id) {
         final UserEntity user = repository.findById(id)
-                .orElseThrow(() -> returnEntityNotFoundException("Пользователь с данным идентификатором не найден!"));
+                .orElseThrow(() -> returnEntityNotFoundException("Пользователь с данным id не найден!"));
         return mapper.toDto(user);
     }
 
@@ -67,9 +67,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> readAll(List<Long> ids) {
         final List<UserEntity> users = repository.findAllById(ids);
+
         if (users.size() != ids.size()) {
-            throw returnEntityNotFoundException("Ошибка в переданных параметрах, пользователи(ь) не найден(ы)");
+            throw returnEntityNotFoundException("Ошибка в переданных параметрах, пользователь(и) не найден(ы)");
         }
+
         return mapper.toDtoList(users);
     }
 

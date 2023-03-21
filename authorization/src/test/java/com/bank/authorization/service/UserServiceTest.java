@@ -13,9 +13,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.bank.authorization.supplier.UserSupplier.getUserDto;
+import static com.bank.authorization.supplier.UserSupplier.getUser;
+import static com.bank.authorization.supplier.UserSupplier.getUsers;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -30,8 +35,12 @@ class UserServiceTest extends ParentTest {
     private static UserDto userDto;
     private static UserEntity user;
     private static UserDto userUpdateDto;
-    private static UserEntity userUpdate;
+    private static UserEntity updateUser;
     private static List<UserEntity> users;
+    private static final String UPDATE_USER_NOT_FOUND_EXCEPTION_MESSAGE =
+            "Обновление невозможно, пользователь не найден!";
+    private static final String INCORRECT_PARAMETER_EXCEPTION_MESSAGE =
+            "Ошибка в переданных параметрах, пользователь(и) не найден(ы)";
 
     @InjectMocks
     private UserServiceImpl service;
@@ -43,22 +52,24 @@ class UserServiceTest extends ParentTest {
     private UserMapperImpl mapper;
 
     @BeforeAll
-    static void init() {
+    static void setUp() {
         userDto = getUserDto(ONE, ROLE_USER, PASSWORD, ONE);
 
         userUpdateDto = getUserDto(null, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
 
         user = getUser(ONE, ROLE_USER, PASSWORD, ONE);
 
-        userUpdate = getUser(ONE, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
+        UserEntity userTwo = getUser(TWO, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
 
-        users = getUsers(user);
+        updateUser = getUser(ONE, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
+
+        users = getUsers(user, userTwo);
     }
 
     @Test
-    @DisplayName("сохранение позитивный сценарий")
-    void saveTest() {
-        doReturn(user).when(repository).save(any());
+    @DisplayName("сохранение, позитивный сценарий")
+    void savePositiveTest() {
+        repositorySaveMock();
 
         final UserDto result = service.save(userDto);
 
@@ -67,25 +78,27 @@ class UserServiceTest extends ParentTest {
             assertEquals(user.getRole(), result.getRole());
             assertEquals(user.getPassword(), result.getPassword());
             assertEquals(user.getProfileId(), result.getProfileId());
-        });
+        }
+        );
     }
 
     @Test
-    @DisplayName("сохранение негативный сценарий")
+    @DisplayName("сохранение, негативный сценарий")
     void saveNegativeTest() {
-        doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
+        String message = "Entity не должна быть null";
+        doThrow(new IllegalArgumentException(message)).when(repository).save(any());
 
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.save(null)
+        final var exception = assertThrows(
+                IllegalArgumentException.class, () -> service.save(null)
         );
 
-        assertEquals("Недопустимые параметры", exception.getMessage());
+        assertEquals(message, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение позитивный сценарий")
-    void readTest() {
-        doReturn(Optional.of(user)).when(repository).findById(anyLong());
+    @DisplayName("чтение, позитивный сценарий")
+    void readPositiveTest() {
+        repositoryFindByIdMock();
 
         final UserDto result = service.read(ONE);
 
@@ -94,24 +107,40 @@ class UserServiceTest extends ParentTest {
             assertEquals(user.getRole(), result.getRole());
             assertEquals(user.getPassword(), result.getPassword());
             assertEquals(user.getProfileId(), result.getProfileId());
-        });
+        }
+        );
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
-    void readNegativeTest() {
-        doReturn(Optional.empty()).when(repository).findById(anyLong());
+    @DisplayName("чтение по несуществующему id, негативный сценарий")
+    void readNoUserNegativeTest() {
+        repositoryFindByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> service.read(ONE));
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(ONE)
+        );
 
-        assertEquals("Пользователь с данным идентификатором не найден!", exception.getMessage());
+        assertEquals("Пользователь с данным id не найден!", exception.getMessage());
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
-    void updateTest() {
-        doReturn(Optional.of(user)).when(repository).findById(anyLong());
-        doReturn(userUpdate).when(repository).save(any());
+    @DisplayName("чтение по null-идентификатору, негативный сценарий")
+    void readNullIdNegativeTest() {
+        String message = "Данный id не должен быть null!";
+        doThrow(new IllegalArgumentException(message)).when(repository).findById(any());
+
+        final var exception = assertThrows(
+                IllegalArgumentException.class, () -> service.read(null)
+        );
+
+        assertEquals(message, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, позитивный сценарий")
+    void updatePositiveTest() {
+        repositoryFindByIdMock();
+        doReturn(updateUser).when(repository).save(any());
 
         final UserDto result = service.update(ONE, userUpdateDto);
 
@@ -124,10 +153,10 @@ class UserServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление с не пустым id и null")
-    void updateWithIdAndNullTest() {
-        doReturn(user).when(repository).save(any());
-        doReturn(Optional.of(user)).when(repository).findById(anyLong());
+    @DisplayName("обновление, на вход подан dto null, позитивный сценарий")
+    void updateDtoNullPositiveTest() {
+        repositorySaveMock();
+        repositoryFindByIdMock();
 
         final UserDto result = service.update(ONE, null);
 
@@ -140,42 +169,94 @@ class UserServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() {
-        doReturn(Optional.empty()).when(repository).findById(anyLong());
+    @DisplayName("обновление несуществующего пользователя, негативный сценарий")
+    void updateNoUserNegativeTest() {
+        repositoryFindByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.update(ONE, new UserDto())
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, new UserDto())
         );
 
-        assertEquals("Обновление невозможно, пользователь не найден!", exception.getMessage());
+        assertEquals(UPDATE_USER_NOT_FOUND_EXCEPTION_MESSAGE, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение всех позитивный сценарий")
-    void readAllTest() {
+    @DisplayName("обновление null-пользователя, негативный сценарий")
+    void updateNullUserNegativeTest() {
+        doReturn(Optional.empty()).when(repository).findById(any());
+
+        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> service.update(null, new UserDto())
+        );
+
+        assertEquals(UPDATE_USER_NOT_FOUND_EXCEPTION_MESSAGE, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
+    void readAllPositiveTest() {
         doReturn(users).when(repository).findAllById(any());
 
-        final List<UserDto> result = service.readAll(List.of(ONE));
+        final List<UserDto> result = service.readAll(List.of(ONE, TWO));
+
+        final UserEntity firstUserInList = users.get(0);
+        final UserEntity secondUserInList = users.get(1);
+
+        final UserDto firstUserInReadList = result.get(0);
+        final UserDto secondUserInReadList = result.get(1);
 
         assertAll(() -> {
             assertEquals(users.size(), result.size());
-            assertEquals(users.get(0).getId(), result.get(0).getId());
-            assertEquals(users.get(0).getRole(), result.get(0).getRole());
-            assertEquals(users.get(0).getPassword(), result.get(0).getPassword());
-            assertEquals(users.get(0).getProfileId(), result.get(0).getProfileId());
+            assertEquals(firstUserInList.getId(), firstUserInReadList.getId());
+            assertEquals(firstUserInList.getRole(), firstUserInReadList.getRole());
+            assertEquals(firstUserInList.getPassword(), firstUserInReadList.getPassword());
+            assertEquals(firstUserInList.getProfileId(), firstUserInReadList.getProfileId());
+            assertEquals(secondUserInList.getId(), secondUserInReadList.getId());
+            assertEquals(secondUserInList.getRole(), secondUserInReadList.getRole());
+            assertEquals(secondUserInList.getPassword(), secondUserInReadList.getPassword());
+            assertEquals(secondUserInList.getProfileId(), secondUserInReadList.getProfileId());
         });
     }
 
     @Test
-    @DisplayName("чтение всех негативный сценарий")
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
     void readAllNegativeTest() {
-        doReturn(List.of(new UserEntity())).when(repository).findAllById(any());
+        repositoryFindAllByIdMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.readAll(List.of(ONE, TWO))
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(List.of(ONE, TWO))
         );
 
-        assertEquals("Ошибка в переданных параметрах, пользователи(ь) не найден(ы)", exception.getMessage());
+        assertEquals(INCORRECT_PARAMETER_EXCEPTION_MESSAGE, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("чтение всех c id равным null, негативный сценарий")
+    void readAllNegativeTestWithNullId() {
+        repositoryFindAllByIdMock();
+
+        final List<Long> ids = new ArrayList<>(Arrays.asList(null, ONE));
+
+        final EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(ids)
+        );
+
+        assertEquals(INCORRECT_PARAMETER_EXCEPTION_MESSAGE, exception.getMessage());
+    }
+
+    private void repositorySaveMock() {
+        doReturn(user).when(repository).save(any());
+    }
+
+    private void repositoryFindByIdMock() {
+        doReturn(Optional.of(user)).when(repository).findById(anyLong());
+    }
+
+    private void repositoryFindByIdEmptyMock() {
+        doReturn(Optional.empty()).when(repository).findById(anyLong());
+    }
+
+    private void repositoryFindAllByIdMock() {
+        doReturn(List.of(new UserEntity())).when(repository).findAllById(any());
     }
 }

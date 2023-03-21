@@ -7,8 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.bank.authorization.supplier.UserSupplier.getUserDto;
+import static com.bank.authorization.supplier.UserSupplier.getUser;
+import static com.bank.authorization.supplier.UserSupplier.getUsers;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -16,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserMapperTest extends ParentTest {
 
-    private final UserMapper MAPPER = new UserMapperImpl();
+    private UserMapper mapper;
 
     private UserEntity user;
     private UserDto userDto;
@@ -24,7 +29,9 @@ class UserMapperTest extends ParentTest {
     private List<UserEntity> users;
 
     @BeforeEach
-    void init() {
+    void setUp() {
+        mapper = new UserMapperImpl();
+
         userDto = getUserDto(ONE, ROLE_USER, PASSWORD, ONE);
 
         userUpdateDto = getUserDto(null, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
@@ -35,9 +42,9 @@ class UserMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity позитивный сценарий")
+    @DisplayName("маппинг к entity")
     void toEntityTest() {
-        final UserEntity result = MAPPER.toEntity(userDto);
+        final UserEntity result = mapper.toEntity(userDto);
 
         assertAll(() -> {
             assertNotEquals(userDto.getId(), result.getId());
@@ -48,15 +55,15 @@ class UserMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity с параметром null")
+    @DisplayName("маппинг к entity, на вход подан null")
     void toEntityNullTest() {
-        assertNull(MAPPER.toEntity(null));
+        assertNull(mapper.toEntity(null));
     }
 
     @Test
-    @DisplayName("маппинг к дто позитивный сценарий")
+    @DisplayName("маппинг к dto")
     void toDtoTest() {
-        final UserDto result = MAPPER.toDto(user);
+        final UserDto result = mapper.toDto(user);
 
         assertAll(() -> {
             assertEquals(user.getId(), result.getId());
@@ -67,15 +74,15 @@ class UserMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к дто с параметром null")
+    @DisplayName("маппинг к dto, на вход подан null")
     void toDtoNullTest() {
-        assertNull(MAPPER.toDto(null));
+        assertNull(mapper.toDto(null));
     }
 
     @Test
-    @DisplayName("слияние и маппинг к entity позитивный сценарий")
-    void mergeToEntityPositiveTest() {
-        final UserEntity result = MAPPER.mergeToEntity(userUpdateDto, user);
+    @DisplayName("слияние в entity")
+    void mergeToEntityTest() {
+        final UserEntity result = mapper.mergeToEntity(userUpdateDto, user);
 
         assertAll(() -> {
             assertNotEquals(userUpdateDto.getId(), result.getId());
@@ -86,9 +93,9 @@ class UserMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("слияние и маппинг к entity с параметром null")
+    @DisplayName("слияние в entity, на вход подан null")
     void mergeToEntityNullTest() {
-        final UserEntity result = MAPPER.mergeToEntity(null, user);
+        final UserEntity result = mapper.mergeToEntity(null, user);
 
         assertAll(() -> {
             assertEquals(ONE, result.getId());
@@ -99,22 +106,45 @@ class UserMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку дто позитивный сценарий")
+    @DisplayName("маппинг к списку dto")
     void toDtoListTest() {
-        final List<UserDto> result = MAPPER.toDtoList(users);
+        final List<UserDto> result = mapper.toDtoList(users);
+
+        final UserEntity userEntity = users.get(0);
+        final UserDto userDto = result.get(0);
 
         assertAll(() -> {
             assertEquals(users.size(), result.size());
-            assertEquals(users.get(0).getId(), result.get(0).getId());
-            assertEquals(users.get(0).getRole(), result.get(0).getRole());
-            assertEquals(users.get(0).getPassword(), result.get(0).getPassword());
-            assertEquals(users.get(0).getProfileId(), result.get(0).getProfileId());
+            assertEquals(userEntity.getId(), userDto.getId());
+            assertEquals(userEntity.getRole(), userDto.getRole());
+            assertEquals(userEntity.getPassword(), userDto.getPassword());
+            assertEquals(userEntity.getProfileId(), userDto.getProfileId());
         });
     }
 
     @Test
-    @DisplayName("маппинг к списку дто c параметром null")
+    @DisplayName("маппинг к списку dto, на вход подан null")
     void toDtoListNullTest() {
-        assertNull(MAPPER.toDtoList(null));
+        assertNull(mapper.toDtoList(null));
+    }
+
+    @Test
+    @DisplayName("маппинг к списку dto c параметрами user и null")
+    void toDtoListUserEntityAndNullTest() {
+        final List<UserEntity> users = new ArrayList<>(Arrays.asList(user, null));
+
+        final List<UserDto> result = mapper.toDtoList(users);
+
+        final UserEntity userEntity = users.get(0);
+        final UserDto userDto = result.get(0);
+
+        assertAll(() -> {
+            assertEquals(users.size(), result.size());
+            assertEquals(userEntity.getId(), userDto.getId());
+            assertEquals(userEntity.getRole(), userDto.getRole());
+            assertEquals(userEntity.getPassword(), userDto.getPassword());
+            assertEquals(userEntity.getProfileId(), userDto.getProfileId());
+            assertNull(result.get(1));
+        });
     }
 }
