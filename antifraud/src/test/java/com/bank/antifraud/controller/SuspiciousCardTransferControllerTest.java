@@ -141,7 +141,7 @@ public class SuspiciousCardTransferControllerTest extends ParentTest {
         mock.perform(
                         get("/suspicious/card/transfer/{id}", ONE_AND_HALF))
                 .andExpectAll(
-                        status().isInternalServerError());
+                        status().is4xxClientError());
     }
 
 
@@ -205,8 +205,8 @@ public class SuspiciousCardTransferControllerTest extends ParentTest {
         mock.perform(
                         get("/suspicious/card/transfer?id=6&id=4&id=String"))
                 .andExpectAll(
-                        status().isInternalServerError(),
-                        content().string("Ошибка на стороне сервера.")
+                        status().is4xxClientError(),
+                        content().string("Некорректно указан id")
                 );
     }
 

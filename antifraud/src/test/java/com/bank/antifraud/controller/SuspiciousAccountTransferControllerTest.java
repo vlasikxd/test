@@ -143,7 +143,7 @@ public class SuspiciousAccountTransferControllerTest extends ParentTest {
         mockMvc.perform(
                         get("/suspicious/account/transfer/{id}", ONE_AND_HALF))
                 .andExpectAll(
-                        status().isInternalServerError());
+                        status().is4xxClientError());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class SuspiciousAccountTransferControllerTest extends ParentTest {
 
         mockMvc.perform(
                         get("/suspicious/account/transfer?id=6&id=4&id=String"))
-                .andExpectAll(status().isInternalServerError());
+                .andExpectAll(status().is4xxClientError());
     }
 
     @Test
