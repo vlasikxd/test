@@ -11,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import javax.lang.model.UnknownEntityException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.net.UnknownServiceException;
 import java.util.List;
 
 /**

@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class SwaggerConfig {
     static {
-        var schema = new Schema<LocalTime>();
+        final var schema = new Schema<LocalTime>();
         schema.example(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         SpringDocUtils.getConfig().replaceWithSchema(LocalTime.class, schema);
     }
