@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,156 +50,195 @@ public class ProfileServiceTest extends ParentTest {
     static void init() {
         ProfileSupplier profileSupplier = new ProfileSupplier();
 
-        profile = profileSupplier.getEntity(ONE, ONE, WHITESPACE, WHITESPACE, ONE, ONE, null, null);
+        profile = profileSupplier.getEntity(ONE, ONE, WHITESPACE, WHITESPACE);
 
-        updatedProfile = profileSupplier.getEntity(null, TWO, WHITESPACE, WHITESPACE, TWO, TWO, null, null);
+        updatedProfile = profileSupplier.getEntity(ONE, TWO, WHITESPACE, WHITESPACE);
 
-        updatedProfileDto = profileSupplier.getDto(null, TWO, WHITESPACE, WHITESPACE, TWO, TWO, null, null);
+        updatedProfileDto = profileSupplier.getDto(ONE, TWO, WHITESPACE, WHITESPACE);
     }
 
     @Test
-    @DisplayName("сохранение позитивный сценарий")
-    void saveTest() {
-        repositorySaveMock();
+    @DisplayName("сохранение, позитивный сценарий")
+    void savePositiveTest() {
+        saveMock();
 
         final ProfileDto result = service.save(updatedProfileDto);
 
-        assertAll(() -> {
-            assertNull(result.getPassport());
-            assertNull(result.getActualRegistration());
-            assertEquals(updatedProfile.getId(), result.getId());
-            assertEquals(updatedProfileDto.getInn(), result.getInn());
-            assertEquals(updatedProfileDto.getEmail(), result.getEmail());
-            assertEquals(updatedProfileDto.getSnils(), result.getSnils());
-            assertEquals(updatedProfileDto.getNameOnCard(), result.getNameOnCard());
-            assertEquals(updatedProfileDto.getPhoneNumber(), result.getPhoneNumber());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getPassport());
+                    assertNull(result.getActualRegistration());
+                    assertEquals(updatedProfile.getId(), result.getId());
+                    assertEquals(updatedProfileDto.getInn(), result.getInn());
+                    assertEquals(updatedProfileDto.getEmail(), result.getEmail());
+                    assertEquals(updatedProfileDto.getSnils(), result.getSnils());
+                    assertEquals(updatedProfileDto.getNameOnCard(), result.getNameOnCard());
+                    assertEquals(updatedProfileDto.getPhoneNumber(), result.getPhoneNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("сохранение негативный сценарий")
+    @DisplayName("сохранение, негативный сценарий")
     void saveNegativeTest() {
-        doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
+        final String exceptionMessage = "Entity must not be null";
+        doThrow(new IllegalArgumentException(exceptionMessage)).when(repository).save(any());
 
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.save(null)
+        final var exception = assertThrows(
+                IllegalArgumentException.class, () -> service.save(null)
         );
 
-        assertEquals("Недопустимые параметры", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение позитивный сценарий")
-    void readTest() {
-        repositoryFindByIdMock();
+    @DisplayName("чтение, позитивный сценарий")
+    void readPositiveTest() {
+        findByIdMock();
 
         final ProfileDto result = service.read(ONE);
 
-        assertAll(() -> {
-            assertNull(result.getPassport());
-            assertNull(result.getActualRegistration());
-            assertEquals(profile.getId(), result.getId());
-            assertEquals(profile.getInn(), result.getInn());
-            assertEquals(profile.getEmail(), result.getEmail());
-            assertEquals(profile.getSnils(), result.getSnils());
-            assertEquals(profile.getNameOnCard(), result.getNameOnCard());
-            assertEquals(profile.getPhoneNumber(), result.getPhoneNumber());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getPassport());
+                    assertNull(result.getActualRegistration());
+                    assertEquals(profile.getId(), result.getId());
+                    assertEquals(profile.getInn(), result.getInn());
+                    assertEquals(profile.getEmail(), result.getEmail());
+                    assertEquals(profile.getSnils(), result.getSnils());
+                    assertEquals(profile.getNameOnCard(), result.getNameOnCard());
+                    assertEquals(profile.getPhoneNumber(), result.getPhoneNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
-    void readNegativeTest() {
-        repositoryFindByIdEmptyMock();
+    @DisplayName("чтение, id равен null, негативный сценарий")
+    void readIdNullNegativeTest() {
+        final String exceptionMessage = "profile с данным id не найден!";
+        findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> service.read(ONE));
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(null)
+        );
 
-        assertEquals("profile с данным идентификатором не найден!", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
-    void updateTest() {
-        repositorySaveMock();
-        repositoryFindByIdMock();
+    @DisplayName("чтение по несуществующему id, негативный сценарий")
+    void readNotExistIdNegativeTest() {
+        final String exceptionMessage = "profile с данным id не найден!";
+        findByIdEmptyMock();
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(ONE)
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, позитивный сценарий")
+    void updatePositiveTest() {
+        saveMock();
+        findByIdMock();
 
         final ProfileDto result = service.update(ONE, updatedProfileDto);
 
-        assertAll(() -> {
-            assertNull(result.getPassport());
-            assertNull(result.getActualRegistration());
-            assertEquals(updatedProfile.getId(), result.getId());
-            assertEquals(updatedProfileDto.getInn(), result.getInn());
-            assertEquals(updatedProfileDto.getEmail(), result.getEmail());
-            assertEquals(updatedProfileDto.getSnils(), result.getSnils());
-            assertEquals(updatedProfileDto.getNameOnCard(), result.getNameOnCard());
-            assertEquals(updatedProfileDto.getPhoneNumber(), result.getPhoneNumber());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getPassport());
+                    assertNull(result.getActualRegistration());
+                    assertEquals(updatedProfile.getId(), result.getId());
+                    assertEquals(updatedProfileDto.getInn(), result.getInn());
+                    assertEquals(updatedProfileDto.getEmail(), result.getEmail());
+                    assertEquals(updatedProfileDto.getSnils(), result.getSnils());
+                    assertEquals(updatedProfileDto.getNameOnCard(), result.getNameOnCard());
+                    assertEquals(updatedProfileDto.getPhoneNumber(), result.getPhoneNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("обновление, где dto равен null")
-    void updateWithIdAndNullTest() {
+    @DisplayName("обновление, id равен null, негативный сценарий")
+    void updateNullIdNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, profile не найден!";
+        findByIdEmptyMock();
+
+        final EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(null, updatedProfileDto)
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, dto равен null, позитивный сценарий")
+    void updateNullDtoPositiveTest() {
         doReturn(profile).when(repository).save(any());
-        repositoryFindByIdMock();
+        findByIdMock();
 
         final ProfileDto result = service.update(ONE, null);
 
-        assertAll(() -> {
-            assertNull(result.getPassport());
-            assertNull(result.getActualRegistration());
-            assertEquals(profile.getId(), result.getId());
-            assertEquals(profile.getInn(), result.getInn());
-            assertEquals(profile.getEmail(), result.getEmail());
-            assertEquals(profile.getSnils(), result.getSnils());
-            assertEquals(profile.getNameOnCard(), result.getNameOnCard());
-            assertEquals(profile.getPhoneNumber(), result.getPhoneNumber());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getPassport());
+                    assertNull(result.getActualRegistration());
+                    assertEquals(profile.getId(), result.getId());
+                    assertEquals(profile.getInn(), result.getInn());
+                    assertEquals(profile.getEmail(), result.getEmail());
+                    assertEquals(profile.getSnils(), result.getSnils());
+                    assertEquals(profile.getNameOnCard(), result.getNameOnCard());
+                    assertEquals(profile.getPhoneNumber(), result.getPhoneNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() {
-        repositoryFindByIdEmptyMock();
+    @DisplayName("обновление несуществующих данных, негативный сценарий")
+    void updateNoProfileNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, profile не найден!";
+        findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.update(ONE, new ProfileDto())
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, new ProfileDto())
         );
 
-        assertEquals("Обновление невозможно, profile не найден!", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение по списку id позитивный сценарий")
-    void readAllTest() {
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
+    void readAllPositiveTest() {
         final List<ProfileDto> profiles = readAllTestPrepare();
         final var zeroProfile = profiles.get(0);
         final var firstProfile = profiles.get(1);
 
-        assertAll(() -> {
-            assertNull(zeroProfile.getPassport());
-            assertNull(firstProfile.getPassport());
-            assertNull(firstProfile.getActualRegistration());
-            assertNull(zeroProfile.getActualRegistration());
-
-            assertEquals(TWO, profiles.size());
-            assertEquals(profile.getId(), zeroProfile.getId());
-            assertEquals(profile.getInn(), zeroProfile.getInn());
-            assertEquals(profile.getEmail(), zeroProfile.getEmail());
-            assertEquals(profile.getSnils(), zeroProfile.getSnils());
-            assertEquals(profile.getNameOnCard(), zeroProfile.getNameOnCard());
-            assertEquals(profile.getPhoneNumber(), zeroProfile.getPhoneNumber());
-            assertEquals(updatedProfile.getId(), firstProfile.getId());
-            assertEquals(updatedProfile.getInn(), firstProfile.getInn());
-            assertEquals(updatedProfile.getEmail(), firstProfile.getEmail());
-            assertEquals(updatedProfile.getSnils(), firstProfile.getSnils());
-            assertEquals(updatedProfile.getNameOnCard(), firstProfile.getNameOnCard());
-            assertEquals(updatedProfile.getPhoneNumber(), firstProfile.getPhoneNumber());
-        });
+        assertAll(
+                () -> {
+                    assertNull(zeroProfile.getPassport());
+                    assertNull(firstProfile.getPassport());
+                    assertNull(firstProfile.getActualRegistration());
+                    assertNull(zeroProfile.getActualRegistration());
+                    assertEquals(TWO, profiles.size());
+                    assertEquals(profile.getId(), zeroProfile.getId());
+                    assertEquals(profile.getInn(), zeroProfile.getInn());
+                    assertEquals(profile.getEmail(), zeroProfile.getEmail());
+                    assertEquals(profile.getSnils(), zeroProfile.getSnils());
+                    assertEquals(profile.getNameOnCard(), zeroProfile.getNameOnCard());
+                    assertEquals(profile.getPhoneNumber(), zeroProfile.getPhoneNumber());
+                    assertEquals(updatedProfile.getId(), firstProfile.getId());
+                    assertEquals(updatedProfile.getInn(), firstProfile.getInn());
+                    assertEquals(updatedProfile.getEmail(), firstProfile.getEmail());
+                    assertEquals(updatedProfile.getSnils(), firstProfile.getSnils());
+                    assertEquals(updatedProfile.getNameOnCard(), firstProfile.getNameOnCard());
+                    assertEquals(updatedProfile.getPhoneNumber(), firstProfile.getPhoneNumber());
+                }
+        );
     }
 
     private List<ProfileDto> readAllTestPrepare() {
-
         doReturn(List.of(profile, updatedProfile))
                 .when(repository)
                 .findAllById(any());
@@ -206,26 +247,40 @@ public class ProfileServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id негативный сценарий")
-    void readAllNegativeTest() {
+    @DisplayName("чтение по списку id, id равен null, негативный сценарий")
+    void readAllIdNullNegativeTest() {
+        final String exceptionMessage = "Ошибка в переданных параметрах, profile не существуют(ет)";
         doReturn(List.of(new ProfileEntity())).when(repository).findAllById(any());
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.readAll(List.of(ONE, TWO))
-        );
+        final List<Long> ids = new ArrayList<>(Arrays.asList(null, ONE));
 
-        assertEquals("Ошибка в переданных параметрах, profile не существуют(ет)", exception.getMessage());
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(ids));
+
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
-    private void repositorySaveMock() {
+    @Test
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
+    void readAllNotExistIdsNegativeTest() {
+        final String exceptionMessage = "Ошибка в переданных параметрах, profile не существуют(ет)";
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(List.of(ONE, TWO))
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    private void saveMock() {
         doReturn(updatedProfile).when(repository).save(any());
     }
 
-    private void repositoryFindByIdMock() {
-        doReturn(Optional.of(profile)).when(repository).findById(ONE);
+    private void findByIdMock() {
+        doReturn(Optional.of(profile)).when(repository).findById(any());
     }
 
-    private void repositoryFindByIdEmptyMock() {
-        doReturn(Optional.empty()).when(repository).findById(ONE);
+    private void findByIdEmptyMock() {
+        doReturn(Optional.empty()).when(repository).findById(any());
     }
 }

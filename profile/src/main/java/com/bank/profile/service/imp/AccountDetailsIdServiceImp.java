@@ -34,7 +34,7 @@ public class AccountDetailsIdServiceImp implements AccountDetailsIdService {
     @Override
     public AccountDetailsIdDto read(Long id) {
         final AccountDetailsIdEntity accountDetailsId = repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("accountDetailsId с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("accountDetailsId с данным id не найден!")
         );
         return mapper.toDto(accountDetailsId);
     }

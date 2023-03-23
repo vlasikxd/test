@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,176 +49,213 @@ public class RegistrationServiceTest extends ParentTest {
     static void init() {
         RegistrationSupplier registrationSupplier = new RegistrationSupplier();
 
-        registration = registrationSupplier.getEntity(ONE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, TWO);
+        registration = registrationSupplier.getEntity(ONE, WHITESPACE, TWO);
 
-        updatedRegistration = registrationSupplier.getEntity(ONE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, ONE);
+        updatedRegistration = registrationSupplier.getEntity(ONE, WHITESPACE, ONE);
 
-        updatedRegistrationDto = registrationSupplier.getDto(ONE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, ONE);
+        updatedRegistrationDto = registrationSupplier.getDto(ONE, WHITESPACE, ONE);
     }
 
     @Test
-    @DisplayName("сохранение позитивный сценарий")
-    void saveTest() {
-        repositorySaveMock();
+    @DisplayName("сохранение, позитивный сценарий")
+    void savePositiveTest() {
+        saveMock();
 
         final RegistrationDto result = service.save(updatedRegistrationDto);
 
-        assertAll(() -> {
-            assertEquals(updatedRegistration.getId(), result.getId());
-            assertEquals(updatedRegistrationDto.getCity(), result.getCity());
-            assertEquals(updatedRegistrationDto.getIndex(), result.getIndex());
-            assertEquals(updatedRegistrationDto.getRegion(), result.getRegion());
-            assertEquals(updatedRegistrationDto.getStreet(), result.getStreet());
-            assertEquals(updatedRegistrationDto.getCountry(), result.getCountry());
-            assertEquals(updatedRegistrationDto.getDistrict(), result.getDistrict());
-            assertEquals(updatedRegistrationDto.getLocality(), result.getLocality());
-            assertEquals(updatedRegistrationDto.getHouseBlock(), result.getHouseBlock());
-            assertEquals(updatedRegistrationDto.getFlatNumber(), result.getFlatNumber());
-            assertEquals(updatedRegistrationDto.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(updatedRegistration.getId(), result.getId());
+                    assertEquals(updatedRegistrationDto.getCity(), result.getCity());
+                    assertEquals(updatedRegistrationDto.getIndex(), result.getIndex());
+                    assertEquals(updatedRegistrationDto.getRegion(), result.getRegion());
+                    assertEquals(updatedRegistrationDto.getStreet(), result.getStreet());
+                    assertEquals(updatedRegistrationDto.getCountry(), result.getCountry());
+                    assertEquals(updatedRegistrationDto.getDistrict(), result.getDistrict());
+                    assertEquals(updatedRegistrationDto.getLocality(), result.getLocality());
+                    assertEquals(updatedRegistrationDto.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(updatedRegistrationDto.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(updatedRegistrationDto.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("сохранение негативный сценарий")
+    @DisplayName("сохранение, негативный сценарий")
     void saveNegativeTest() {
-        doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
+        final String exceptionMessage = "Entity must not be null";
+        doThrow(new IllegalArgumentException(exceptionMessage)).when(repository).save(any());
 
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.save(null)
+        final var exception = assertThrows(
+                IllegalArgumentException.class, () -> service.save(null)
         );
 
-        assertEquals("Недопустимые параметры", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение позитивный сценарий")
-    void readTest() {
-        repositoryFindByIdMock();
+    @DisplayName("чтение, позитивный сценарий")
+    void readPositiveTest() {
+        findByIdMock();
 
         final RegistrationDto result = service.read(ONE);
 
-        assertAll(() -> {
-            assertEquals(registration.getId(), result.getId());
-            assertEquals(registration.getCity(), result.getCity());
-            assertEquals(registration.getIndex(), result.getIndex());
-            assertEquals(registration.getRegion(), result.getRegion());
-            assertEquals(registration.getStreet(), result.getStreet());
-            assertEquals(registration.getCountry(), result.getCountry());
-            assertEquals(registration.getDistrict(), result.getDistrict());
-            assertEquals(registration.getLocality(), result.getLocality());
-            assertEquals(registration.getHouseBlock(), result.getHouseBlock());
-            assertEquals(registration.getFlatNumber(), result.getFlatNumber());
-            assertEquals(registration.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(registration.getId(), result.getId());
+                    assertEquals(registration.getCity(), result.getCity());
+                    assertEquals(registration.getIndex(), result.getIndex());
+                    assertEquals(registration.getRegion(), result.getRegion());
+                    assertEquals(registration.getStreet(), result.getStreet());
+                    assertEquals(registration.getCountry(), result.getCountry());
+                    assertEquals(registration.getDistrict(), result.getDistrict());
+                    assertEquals(registration.getLocality(), result.getLocality());
+                    assertEquals(registration.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(registration.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(registration.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
-    void readNegativeTest() {
-        repositoryFindByIdEmptyMock();
+    @DisplayName("чтение, id равен null, негативный сценарий")
+    void readIdNullNegativeTest() {
+        final String exceptionMessage = "registration с данным id не найден!";
+        findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> service.read(ONE));
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(null)
+        );
 
-        assertEquals("registration с данным идентификатором не найден!", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
-    void updateTest() {
-        repositorySaveMock();
-        repositoryFindByIdMock();
+    @DisplayName("чтение по несуществующему id, негативный сценарий")
+    void readNotExistIdNegativeTest() {
+        final String exceptionMessage = "registration с данным id не найден!";
+        findByIdEmptyMock();
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(ONE)
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, позитивный сценарий")
+    void updatePositiveTest() {
+        saveMock();
+        findByIdMock();
 
         final RegistrationDto result = service.update(ONE, updatedRegistrationDto);
 
-        assertAll(() -> {
-            assertEquals(updatedRegistration.getId(), result.getId());
-            assertEquals(updatedRegistrationDto.getCity(), result.getCity());
-            assertEquals(updatedRegistrationDto.getIndex(), result.getIndex());
-            assertEquals(updatedRegistrationDto.getRegion(), result.getRegion());
-            assertEquals(updatedRegistrationDto.getStreet(), result.getStreet());
-            assertEquals(updatedRegistrationDto.getCountry(), result.getCountry());
-            assertEquals(updatedRegistrationDto.getDistrict(), result.getDistrict());
-            assertEquals(updatedRegistrationDto.getLocality(), result.getLocality());
-            assertEquals(updatedRegistrationDto.getHouseBlock(), result.getHouseBlock());
-            assertEquals(updatedRegistrationDto.getFlatNumber(), result.getFlatNumber());
-            assertEquals(updatedRegistrationDto.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(updatedRegistration.getId(), result.getId());
+                    assertEquals(updatedRegistrationDto.getCity(), result.getCity());
+                    assertEquals(updatedRegistrationDto.getIndex(), result.getIndex());
+                    assertEquals(updatedRegistrationDto.getRegion(), result.getRegion());
+                    assertEquals(updatedRegistrationDto.getStreet(), result.getStreet());
+                    assertEquals(updatedRegistrationDto.getCountry(), result.getCountry());
+                    assertEquals(updatedRegistrationDto.getDistrict(), result.getDistrict());
+                    assertEquals(updatedRegistrationDto.getLocality(), result.getLocality());
+                    assertEquals(updatedRegistrationDto.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(updatedRegistrationDto.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(updatedRegistrationDto.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("обновление, где dto равен null")
-    void updateWithIdAndNullTest() {
+    @DisplayName("обновление, id равен null, негативный сценарий")
+    void updateNullIdNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, registration не найден!";
+        findByIdEmptyMock();
+
+        final EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(null, updatedRegistrationDto)
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, dto равен null, позитивный сценарий")
+    void updateNullDtoPositiveTest() {
         doReturn(registration).when(repository).save(any());
-        repositoryFindByIdMock();
+        findByIdMock();
 
         final RegistrationDto result = service.update(ONE, null);
 
-        assertAll(() -> {
-            assertEquals(registration.getId(), result.getId());
-            assertEquals(registration.getCity(), result.getCity());
-            assertEquals(registration.getIndex(), result.getIndex());
-            assertEquals(registration.getRegion(), result.getRegion());
-            assertEquals(registration.getStreet(), result.getStreet());
-            assertEquals(registration.getCountry(), result.getCountry());
-            assertEquals(registration.getDistrict(), result.getDistrict());
-            assertEquals(registration.getLocality(), result.getLocality());
-            assertEquals(registration.getHouseBlock(), result.getHouseBlock());
-            assertEquals(registration.getFlatNumber(), result.getFlatNumber());
-            assertEquals(registration.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(registration.getId(), result.getId());
+                    assertEquals(registration.getCity(), result.getCity());
+                    assertEquals(registration.getIndex(), result.getIndex());
+                    assertEquals(registration.getRegion(), result.getRegion());
+                    assertEquals(registration.getStreet(), result.getStreet());
+                    assertEquals(registration.getCountry(), result.getCountry());
+                    assertEquals(registration.getDistrict(), result.getDistrict());
+                    assertEquals(registration.getLocality(), result.getLocality());
+                    assertEquals(registration.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(registration.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(registration.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() {
-        repositoryFindByIdEmptyMock();
+    @DisplayName("обновление несуществующих данных, негативный сценарий")
+    void updateNoRegistrationNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, registration не найден!";
+        findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.update(ONE, new RegistrationDto())
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, new RegistrationDto())
         );
 
-        assertEquals("Обновление невозможно, registration не найден!", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение по списку id позитивный сценарий")
-    void readAllTest() {
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
+    void readAllPositiveTest() {
         final List<RegistrationDto> registrations = readAllTestPrepare();
         final var zeroRegistration = registrations.get(0);
         final var firstRegistration = registrations.get(1);
 
-        assertAll(() -> {
-            assertEquals(TWO, registrations.size());
-            assertEquals(registration.getId(), zeroRegistration.getId());
-            assertEquals(registration.getCity(), zeroRegistration.getCity());
-            assertEquals(registration.getIndex(), zeroRegistration.getIndex());
-            assertEquals(registration.getRegion(), zeroRegistration.getRegion());
-            assertEquals(registration.getStreet(), zeroRegistration.getStreet());
-            assertEquals(registration.getCountry(), zeroRegistration.getCountry());
-            assertEquals(registration.getDistrict(), zeroRegistration.getDistrict());
-            assertEquals(registration.getLocality(), zeroRegistration.getLocality());
-            assertEquals(registration.getHouseBlock(), zeroRegistration.getHouseBlock());
-            assertEquals(registration.getFlatNumber(), zeroRegistration.getFlatNumber());
-            assertEquals(registration.getHouseNumber(), zeroRegistration.getHouseNumber());
-            assertEquals(updatedRegistration.getId(), firstRegistration.getId());
-            assertEquals(updatedRegistration.getCity(), firstRegistration.getCity());
-            assertEquals(updatedRegistration.getIndex(), firstRegistration.getIndex());
-            assertEquals(updatedRegistration.getRegion(), firstRegistration.getRegion());
-            assertEquals(updatedRegistration.getStreet(), firstRegistration.getStreet());
-            assertEquals(updatedRegistration.getCountry(), firstRegistration.getCountry());
-            assertEquals(updatedRegistration.getDistrict(), firstRegistration.getDistrict());
-            assertEquals(updatedRegistration.getLocality(), firstRegistration.getLocality());
-            assertEquals(updatedRegistration.getHouseBlock(), firstRegistration.getHouseBlock());
-            assertEquals(updatedRegistration.getFlatNumber(), firstRegistration.getFlatNumber());
-            assertEquals(updatedRegistration.getHouseNumber(), firstRegistration.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(TWO, registrations.size());
+                    assertEquals(registration.getId(), zeroRegistration.getId());
+                    assertEquals(registration.getCity(), zeroRegistration.getCity());
+                    assertEquals(registration.getIndex(), zeroRegistration.getIndex());
+                    assertEquals(registration.getRegion(), zeroRegistration.getRegion());
+                    assertEquals(registration.getStreet(), zeroRegistration.getStreet());
+                    assertEquals(registration.getCountry(), zeroRegistration.getCountry());
+                    assertEquals(registration.getDistrict(), zeroRegistration.getDistrict());
+                    assertEquals(registration.getLocality(), zeroRegistration.getLocality());
+                    assertEquals(registration.getHouseBlock(), zeroRegistration.getHouseBlock());
+                    assertEquals(registration.getFlatNumber(), zeroRegistration.getFlatNumber());
+                    assertEquals(registration.getHouseNumber(), zeroRegistration.getHouseNumber());
+                    assertEquals(updatedRegistration.getId(), firstRegistration.getId());
+                    assertEquals(updatedRegistration.getCity(), firstRegistration.getCity());
+                    assertEquals(updatedRegistration.getIndex(), firstRegistration.getIndex());
+                    assertEquals(updatedRegistration.getRegion(), firstRegistration.getRegion());
+                    assertEquals(updatedRegistration.getStreet(), firstRegistration.getStreet());
+                    assertEquals(updatedRegistration.getCountry(), firstRegistration.getCountry());
+                    assertEquals(updatedRegistration.getDistrict(), firstRegistration.getDistrict());
+                    assertEquals(updatedRegistration.getLocality(), firstRegistration.getLocality());
+                    assertEquals(updatedRegistration.getHouseBlock(), firstRegistration.getHouseBlock());
+                    assertEquals(updatedRegistration.getFlatNumber(), firstRegistration.getFlatNumber());
+                    assertEquals(updatedRegistration.getHouseNumber(), firstRegistration.getHouseNumber());
+                }
+        );
     }
 
     private List<RegistrationDto> readAllTestPrepare() {
-
         doReturn(List.of(registration, updatedRegistration))
                 .when(repository)
                 .findAllById(any());
@@ -225,26 +264,40 @@ public class RegistrationServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id негативный сценарий")
-    void readAllNegativeTest() {
+    @DisplayName("чтение по списку id, id равен null, негативный сценарий")
+    void readAllIdNullNegativeTest() {
+        final String exceptionMessage = "Ошибка в переданных параметрах, registration не существуют(ет)";
         doReturn(List.of(new RegistrationEntity())).when(repository).findAllById(any());
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.readAll(List.of(ONE, TWO))
-        );
+        final List<Long> ids = new ArrayList<>(Arrays.asList(null, ONE));
 
-        assertEquals("Ошибка в переданных параметрах, registration не существуют(ет)", exception.getMessage());
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(ids));
+
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
-    private void repositorySaveMock() {
+    @Test
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
+    void readAllNotExistIdsNegativeTest() {
+        final String exceptionMessage = "Ошибка в переданных параметрах, registration не существуют(ет)";
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(List.of(ONE, TWO))
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    private void saveMock() {
         doReturn(updatedRegistration).when(repository).save(any());
     }
 
-    private void repositoryFindByIdMock() {
-        doReturn(Optional.of(registration)).when(repository).findById(ONE);
+    private void findByIdMock() {
+        doReturn(Optional.of(registration)).when(repository).findById(any());
     }
 
-    private void repositoryFindByIdEmptyMock() {
-        doReturn(Optional.empty()).when(repository).findById(ONE);
+    private void findByIdEmptyMock() {
+        doReturn(Optional.empty()).when(repository).findById(any());
     }
 }

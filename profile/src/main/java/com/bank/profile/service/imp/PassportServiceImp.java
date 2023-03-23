@@ -34,7 +34,7 @@ public class PassportServiceImp implements PassportService {
     @Override
     public PassportDto read(Long id) {
         final PassportEntity passport = repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("passport с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("passport с данным id не найден!")
         );
         return mapper.toDto(passport);
     }

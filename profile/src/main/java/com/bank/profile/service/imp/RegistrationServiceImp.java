@@ -34,7 +34,7 @@ public class RegistrationServiceImp implements RegistrationService {
     @Override
     public RegistrationDto read(Long id) {
         final RegistrationEntity registration = repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("registration с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("registration с данным id не найден!")
         );
         return mapper.toDto(registration);
     }

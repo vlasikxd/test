@@ -122,11 +122,13 @@ public class RestHandlerException {
     }
 
     /**
+     * * @param exception {@link MethodArgumentTypeMismatchException}
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatchException() {
+    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException exception) {
+        log.error(exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Некорректно указан id");
     }
-
 }
