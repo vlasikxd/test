@@ -14,8 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -26,12 +27,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @WebMvcTest(ActualRegistrationController.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -39,11 +40,8 @@ public class ActualRegistrationControllerTest extends ParentTest {
 
     private static ActualRegistrationDto actualRegistration;
     private static ActualRegistrationSupplier actualRegistrationSupplier;
-
     private final ObjectMapper mapper;
-    private final MockMvc mock;
-
-    private ResultActions response;
+    private final MockMvc mockMvc;
 
     @MockBean
     private ActualRegistrationService service;
@@ -53,62 +51,74 @@ public class ActualRegistrationControllerTest extends ParentTest {
         actualRegistrationSupplier = new ActualRegistrationSupplier();
 
         actualRegistration = actualRegistrationSupplier.getDto(
-                ONE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, WHITESPACE, WHITESPACE, TWO
+                ONE, WHITESPACE, TWO
         );
     }
 
     @Test
-    @DisplayName("сохранение позитивный сценарий")
-    void saveTest() throws Exception {
+    @DisplayName("сохранение, позитивный сценарий")
+    void createPositiveTest() throws Exception {
         doReturn(actualRegistration).when(service).save(any());
 
-        response = mock.perform(post("/actual_registration")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(actualRegistration))
-        );
+        final int index = getIntFromLong(actualRegistration.getIndex());
 
-        final int actualRegistrationIndex = getIntFromLong(actualRegistration.getIndex());
-
-        response.andExpectAll(
-                status().isOk(),
-                jsonPath("$.index", is(actualRegistrationIndex)),
-                jsonPath("$.city", is(actualRegistration.getCity())),
-                jsonPath("$.region", is(actualRegistration.getRegion())),
-                jsonPath("$.street", is(actualRegistration.getStreet())),
-                jsonPath("$.country", is(actualRegistration.getCountry())),
-                jsonPath("$.district", is(actualRegistration.getDistrict())),
-                jsonPath("$.locality", is(actualRegistration.getLocality())),
-                jsonPath("$.houseBlock", is(actualRegistration.getHouseBlock())),
-                jsonPath("$.flatNumber", is(actualRegistration.getFlatNumber())),
-                jsonPath("$.houseNumber", is(actualRegistration.getHouseNumber()))
-        );
+        mockMvc.perform(post("/actual_registration")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(actualRegistration)))
+                .andExpectAll(status().isOk(),
+                        jsonPath("$.index", is(index)),
+                        jsonPath("$.city", is(actualRegistration.getCity())),
+                        jsonPath("$.region", is(actualRegistration.getRegion())),
+                        jsonPath("$.street", is(actualRegistration.getStreet())),
+                        jsonPath("$.country", is(actualRegistration.getCountry())),
+                        jsonPath("$.district", is(actualRegistration.getDistrict())),
+                        jsonPath("$.locality", is(actualRegistration.getLocality())),
+                        jsonPath("$.houseBlock", is(actualRegistration.getHouseBlock())),
+                        jsonPath("$.flatNumber", is(actualRegistration.getFlatNumber())),
+                        jsonPath("$.houseNumber", is(actualRegistration.getHouseNumber()))
+                );
     }
 
     @Test
-    @DisplayName("сохранение негативный сценарий")
-    void saveNegativeTest() throws Exception {
-        doThrow(new ValidationException("Неверные данные")).when(service).save(any());
+    @DisplayName("сохранение неверных данных, негативный сценарий")
+    void createIncorrectDataNegativeTest() throws Exception {
+        final String exceptionMessage = "Неверные данные";
 
-        response = mock.perform(post("/actual_registration")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(actualRegistration))
-        );
+        doThrow(new ValidationException(exceptionMessage)).when(service).save(any());
 
-        response.andExpectAll(status().isUnprocessableEntity(),
-                content().string("Неверные данные")
-        );
+        mockMvc.perform(post("/actual_registration")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(actualRegistration)))
+                .andExpectAll(status().isUnprocessableEntity(),
+                        content().string(exceptionMessage)
+                );
     }
 
     @Test
-    @DisplayName("чтение позитивный сценарий")
-    void readTest() throws Exception {
+    @SuppressWarnings("all")
+    @DisplayName("сохранение некорректного json, негативный сценарий")
+    void createIncorrectJsonNegativeTest() throws Exception {
+        final String exceptionMessage = "Некорректный json";
+
+        doThrow(new HttpMessageNotReadableException(exceptionMessage)).when(service).save(any());
+
+        mockMvc.perform(post("/actual_registration")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpectAll(status().isBadRequest(),
+                        content().string(exceptionMessage)
+                );
+    }
+
+    @Test
+    @DisplayName("чтение, позитивный сценарий")
+    void readPositiveTest() throws Exception {
         doReturn(actualRegistration).when(service).read(any());
 
         final int actualRegistrationId = getIntFromLong(actualRegistration.getId());
         final int actualRegistrationIndex = getIntFromLong(actualRegistration.getIndex());
 
-        mock.perform(get("/actual_registration/{id}", ONE))
+        mockMvc.perform(get("/actual_registration/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(actualRegistrationId)),
                         jsonPath("$.index", is(actualRegistrationIndex)),
@@ -125,20 +135,34 @@ public class ActualRegistrationControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
-    void readNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Пользователя нет")).when(service).read(any());
+    @DisplayName("чтение несуществующего id, негативный сценарий")
+    void readNotExistIdNegativeTest() throws Exception {
+        final String exceptionMessage = "accountDetailsId с данным идентификатором не найден!";
 
-        mock.perform(get("/actual_registration/{id}", ONE))
+        doThrow(new EntityNotFoundException(exceptionMessage)).when(service).read(any());
+
+        mockMvc.perform(get("/actual_registration/{id}", ONE))
                 .andExpectAll(
                         status().isNotFound(),
-                        content().string("Пользователя нет")
+                        content().string(exceptionMessage)
                 );
     }
 
     @Test
-    @DisplayName("чтение по нескольким id позитивный сценарий")
-    void readAllTest() throws Exception {
+    @DisplayName("чтение по некорректному id, негативный сценарий")
+    void readIncorrectIdNegativeTest() throws Exception {
+        doThrow(MethodArgumentTypeMismatchException.class).when(service).read(any());
+
+        mockMvc.perform(get("/actual_registration/{id}", "id"))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string("Некорректно указан id")
+                );
+    }
+
+    @Test
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
+    void readAllPositiveTest() throws Exception {
         final List<ActualRegistrationDto> actualRegistrations = returnActualRegistrations();
 
         final var zeroActualRegistration = actualRegistrations.get(0);
@@ -152,7 +176,7 @@ public class ActualRegistrationControllerTest extends ParentTest {
 
         doReturn(actualRegistrations).when(service).readAll(any());
 
-        mock.perform(get("/actual_registration?id=1&id=2")).andExpectAll(status().isOk(),
+        mockMvc.perform(get("/actual_registration?id=1&id=2")).andExpectAll(status().isOk(),
                 jsonPath("$", hasSize(actualRegistrations.size())),
                 jsonPath("$.[0].id", is(zeroActualRegistrationId)),
                 jsonPath("$.[0].index", is(zeroActualRegistrationIndex)),
@@ -181,66 +205,93 @@ public class ActualRegistrationControllerTest extends ParentTest {
 
     private List<ActualRegistrationDto> returnActualRegistrations() {
         return List.of(
-                actualRegistrationSupplier.getDto(ONE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                        WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, TWO
+                actualRegistrationSupplier.getDto(ONE, WHITESPACE, TWO
                 ),
-                actualRegistrationSupplier.getDto(TWO, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                        WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, TWO
+                actualRegistrationSupplier.getDto(TWO, WHITESPACE, TWO
                 )
         );
     }
 
     @Test
-    @DisplayName("чтение по нескольким id негативный сценарий")
-    void readAllNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Ошибка в параметрах")).when(service).readAll(any());
+    @DisplayName("чтение по нескольким id, негативный сценарий")
+    void readAllNoUserNegativeTest() throws Exception {
+        final String exceptionMessage = "Ошибка в переданных параметрах, пользователи(ь) не найден(ы)";
 
-        mock.perform(get("/actual_registration?id=1"))
+        doThrow(new EntityNotFoundException(exceptionMessage))
+                .when(service).readAll(any());
+
+        mockMvc.perform(get("/actual_registration?id=1"))
                 .andExpectAll(status().isNotFound(),
-                        content().string("Ошибка в параметрах")
+                        content().string(exceptionMessage)
                 );
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
-    void updateTest() throws Exception {
-        doReturn(actualRegistration).when(service).update(anyLong(), any());
+    @DisplayName("чтение по нескольким некорректным id, негативный сценарий")
+    void readAllIncorrectIdNegativeTest() throws Exception {
+        doThrow(MethodArgumentTypeMismatchException.class).when(service).readAll(any());
 
-        response = mock.perform(put("/actual_registration/{id}", ONE)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(actualRegistration))
-        );
+        mockMvc.perform(get("/actual_registration?id=1&id=id"))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string("Некорректно указан id")
+                );
+    }
+
+    @Test
+    @DisplayName("обновление, позитивный сценарий")
+    void updatePositiveTest() throws Exception {
+        doReturn(actualRegistration).when(service).update(anyLong(), any());
 
         final int actualRegistrationId = getIntFromLong(actualRegistration.getId());
         final int actualRegistrationIndex = getIntFromLong(actualRegistration.getIndex());
 
-        response.andExpectAll(status().isOk(),
-                jsonPath("$.id", is(actualRegistrationId)),
-                jsonPath("$.index", is(actualRegistrationIndex)),
-                jsonPath("$.city", is(actualRegistration.getCity())),
-                jsonPath("$.region", is(actualRegistration.getRegion())),
-                jsonPath("$.street", is(actualRegistration.getStreet())),
-                jsonPath("$.country", is(actualRegistration.getCountry())),
-                jsonPath("$.district", is(actualRegistration.getDistrict())),
-                jsonPath("$.locality", is(actualRegistration.getLocality())),
-                jsonPath("$.houseBlock", is(actualRegistration.getHouseBlock())),
-                jsonPath("$.flatNumber", is(actualRegistration.getFlatNumber())),
-                jsonPath("$.houseNumber", is(actualRegistration.getHouseNumber()))
-        );
+        mockMvc.perform(put("/actual_registration/{id}", ONE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(actualRegistration)))
+                .andExpectAll(status().isOk(),
+                        jsonPath("$.id", is(actualRegistrationId)),
+                        jsonPath("$.index", is(actualRegistrationIndex)),
+                        jsonPath("$.city", is(actualRegistration.getCity())),
+                        jsonPath("$.region", is(actualRegistration.getRegion())),
+                        jsonPath("$.street", is(actualRegistration.getStreet())),
+                        jsonPath("$.country", is(actualRegistration.getCountry())),
+                        jsonPath("$.district", is(actualRegistration.getDistrict())),
+                        jsonPath("$.locality", is(actualRegistration.getLocality())),
+                        jsonPath("$.houseBlock", is(actualRegistration.getHouseBlock())),
+                        jsonPath("$.flatNumber", is(actualRegistration.getFlatNumber())),
+                        jsonPath("$.houseNumber", is(actualRegistration.getHouseNumber()))
+                );
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Обновление невозможно")).when(service).update(anyLong(), any());
+    @DisplayName("обновление несуществующего accountDetailsId, негативный сценарий")
+    void updateNoRegistrationIdNegativeTest() throws Exception {
+        final String exceptionMessage = "Обновление невозможно, пользователь не найден!";
 
-        response = mock.perform(put("/actual_registration/{id}", ONE)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(actualRegistration))
-        );
+        doThrow(new EntityNotFoundException(exceptionMessage)).when(service).update(anyLong(), any());
 
-        response.andExpectAll(status().isNotFound(),
-                content().string("Обновление невозможно")
-        );
+        mockMvc.perform(put("/actual_registration/{id}", ONE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(actualRegistration)))
+                .andExpectAll(status().isNotFound(),
+                        content().string(exceptionMessage)
+                );
+    }
+
+    @Test
+    @SuppressWarnings("all")
+    @DisplayName("обновление некорректного json, негативный сценарий")
+    void updateIncorrectJsonNegativeTest() throws Exception {
+        final String exceptionMessage = "Некорректный json";
+
+        doThrow(new HttpMessageNotReadableException(exceptionMessage)).when(service).update(anyLong(), any());
+
+        mockMvc.perform(put("/actual_registration/{id}", TWO)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpectAll(status().isBadRequest(),
+                        content().string(exceptionMessage)
+                );
     }
 }

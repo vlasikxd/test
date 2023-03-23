@@ -34,7 +34,7 @@ public class ProfileServiceImp implements ProfileService {
     @Override
     public ProfileDto read(Long id) {
         final ProfileEntity profile = repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("profile с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("profile с данным id не найден!")
         );
         return mapper.toDto(profile);
     }

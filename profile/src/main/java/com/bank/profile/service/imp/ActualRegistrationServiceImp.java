@@ -35,7 +35,7 @@ public class ActualRegistrationServiceImp implements ActualRegistrationService {
     @Override
     public ActualRegistrationDto read(Long id) {
         final ActualRegistrationEntity actualRegistration = repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("actualRegistration с данным идентификатором не найден!")
+                () -> new EntityNotFoundException("actualRegistration с данным id не найден!")
         );
         return mapper.toDto(actualRegistration);
     }

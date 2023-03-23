@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +43,7 @@ public class AccountDetailsIdServiceTest extends ParentTest {
 
     @Spy
     private AccountDetailsIdMapperImpl mapper;
+
     @Spy
     private EntityListValidator validator;
 
@@ -49,152 +52,205 @@ public class AccountDetailsIdServiceTest extends ParentTest {
         AccountDetailsIdSupplier accountDetailsIdSupplier = new AccountDetailsIdSupplier();
 
         accountDetails = accountDetailsIdSupplier.getEntity(ONE, TWO, null);
+
         updatedAccountDetails = accountDetailsIdSupplier.getEntity(ONE, ONE, null);
 
         updatedAccountDetailsDto = accountDetailsIdSupplier.getDto(ONE, ONE, null);
     }
 
     @Test
-    @DisplayName("сохранение позитивный сценарий")
-    void saveTest() {
-        repositorySaveMock();
+    @DisplayName("сохранение, позитивный сценарий")
+    void savePositiveTest() {
+        saveMock();
 
         final AccountDetailsIdDto result = service.save(updatedAccountDetailsDto);
 
-        assertAll(() -> {
-            assertNull(result.getProfile());
-            assertEquals(updatedAccountDetailsDto.getId(), result.getId());
-            assertEquals(updatedAccountDetailsDto.getAccountId(), result.getAccountId());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getProfile());
+                    assertEquals(updatedAccountDetailsDto.getId(), result.getId());
+                    assertEquals(updatedAccountDetailsDto.getAccountId(), result.getAccountId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("сохранение негативный сценарий")
+    @DisplayName("сохранение, негативный сценарий")
     void saveNegativeTest() {
-        doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
+        final String exceptionMessage = "Entity must not be null";
+        doThrow(new IllegalArgumentException(exceptionMessage)).when(repository).save(any());
 
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.save(null)
+        final var exception = assertThrows(
+                IllegalArgumentException.class, () -> service.save(null)
         );
 
-        assertEquals("Недопустимые параметры", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение позитивный сценарий")
-    void readTest() {
-        repositoryFindByIdMock();
+    @DisplayName("чтение, позитивный сценарий")
+    void readPositiveTest() {
+        findByIdMock();
 
         final AccountDetailsIdDto result = service.read(ONE);
 
-        assertAll(() -> {
-            assertNull(result.getProfile());
-            assertEquals(accountDetails.getId(), result.getId());
-            assertEquals(accountDetails.getAccountId(), result.getAccountId());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getProfile());
+                    assertEquals(accountDetails.getId(), result.getId());
+                    assertEquals(accountDetails.getAccountId(), result.getAccountId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
-    void readNegativeTest() {
-        repositoryFindByIdEmptyMock();
+    @DisplayName("чтение по несуществующему id, негативный сценарий")
+    void readNotExistTdNegativeTest() {
+        final String exceptionMessage = "accountDetailsId с данным id не найден!";
+        findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> service.read(ONE));
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(ONE)
+        );
 
-        assertEquals("accountDetailsId с данным идентификатором не найден!", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
-    void updateTest() {
-        repositorySaveMock();
-        repositoryFindByIdMock();
+    @DisplayName("чтение, id равен null, негативный сценарий")
+    void readIdNullNegativeTest() {
+        final String exceptionMessage = "accountDetailsId с данным id не найден!";
+        findByIdEmptyMock();
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(null)
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, позитивный сценарий")
+    void updatePositiveTest() {
+        saveMock();
+        findByIdMock();
 
         final AccountDetailsIdDto result = service.update(ONE, updatedAccountDetailsDto);
 
-        assertAll(() -> {
-            assertNull(result.getProfile());
-            assertEquals(accountDetails.getId(), result.getId());
-            assertEquals(updatedAccountDetailsDto.getAccountId(), result.getAccountId());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getProfile());
+                    assertEquals(accountDetails.getId(), result.getId());
+                    assertEquals(updatedAccountDetailsDto.getAccountId(), result.getAccountId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("обновление, где dto равен null")
-    void updateNullTest() {
+    @DisplayName("обновление, id равен null, негативный сценарий")
+    void updateNullIdNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, accountDetailsId не найден!";
+        findByIdEmptyMock();
+
+        final EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(null, updatedAccountDetailsDto)
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, dto равен null, позитивный сценарий")
+    void updateNullDtoPositiveTest() {
         doReturn(accountDetails).when(repository).save(any());
-        repositoryFindByIdMock();
+        findByIdMock();
 
         final AccountDetailsIdDto result = service.update(ONE, null);
 
-        assertAll(() -> {
-            assertNull(result.getProfile());
-            assertEquals(accountDetails.getId(), result.getId());
-            assertEquals(accountDetails.getAccountId(), result.getAccountId());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getProfile());
+                    assertEquals(accountDetails.getId(), result.getId());
+                    assertEquals(accountDetails.getAccountId(), result.getAccountId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() {
-        repositoryFindByIdEmptyMock();
+    @DisplayName("обновление несуществующих данных, негативный сценарий")
+    void updateNoAccountDetailsIdNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, accountDetailsId не найден!";
+        findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.update(ONE, new AccountDetailsIdDto())
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, new AccountDetailsIdDto())
         );
 
-        assertEquals("Обновление невозможно, accountDetailsId не найден!", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение по списку id позитивный сценарий")
-    void readAllTest() {
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
+    void readAllPositiveTest() {
         final List<AccountDetailsIdDto> accountDetailsIds = readAllTestPrepare();
-        final var zeroAccountDetails = accountDetailsIds.get(0);
         final var oneAccountDetails = accountDetailsIds.get(1);
+        final var zeroAccountDetails = accountDetailsIds.get(0);
 
-        assertAll(() -> {
-            assertNull(zeroAccountDetails.getProfile());
-            assertNull(oneAccountDetails.getProfile());
-
-            assertEquals(TWO, accountDetailsIds.size());
-            assertEquals(accountDetails.getId(), zeroAccountDetails.getId());
-            assertEquals(updatedAccountDetails.getId(), oneAccountDetails.getId());
-            assertEquals(accountDetails.getAccountId(), zeroAccountDetails.getAccountId());
-            assertEquals(updatedAccountDetails.getAccountId(), oneAccountDetails.getAccountId());
-        });
+        assertAll(
+                () -> {
+                    assertNull(zeroAccountDetails.getProfile());
+                    assertNull(oneAccountDetails.getProfile());
+                    assertEquals(TWO, accountDetailsIds.size());
+                    assertEquals(accountDetails.getId(), zeroAccountDetails.getId());
+                    assertEquals(updatedAccountDetails.getId(), oneAccountDetails.getId());
+                    assertEquals(accountDetails.getAccountId(), zeroAccountDetails.getAccountId());
+                    assertEquals(updatedAccountDetails.getAccountId(), oneAccountDetails.getAccountId());
+                }
+        );
     }
 
     private List<AccountDetailsIdDto> readAllTestPrepare() {
-        doReturn(List.of(accountDetails, updatedAccountDetails))
-                .when(repository)
-                .findAllById(any());
+        doReturn(List.of(accountDetails, updatedAccountDetails)).when(repository).findAllById(any());
 
         return service.readAll(List.of(ONE, TWO));
     }
 
     @Test
-    @DisplayName("чтение по списку id негативный сценарий")
-    void readAllNegativeTest() {
+    @DisplayName("чтение по списку id, id равен null, негативный сценарий")
+    void readAllIdNullNegativeTest() {
+        final String exceptionMessage = "Ошибка в переданных параметрах, accountDetailsId не существуют(ет)";
         doReturn(List.of(new AccountDetailsIdEntity())).when(repository).findAllById(any());
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.readAll(List.of(ONE, TWO))
+        final List<Long> ids = new ArrayList<>(Arrays.asList(null, ONE));
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(ids)
         );
 
-        assertEquals("Ошибка в переданных параметрах, accountDetailsId не существуют(ет)",
-                exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
-    private void repositorySaveMock() {
+    @Test
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
+    void readAllNotExistIdsNegativeTest() {
+        final String exceptionMessage = "Ошибка в переданных параметрах, accountDetailsId не существуют(ет)";
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(List.of(ONE, TWO))
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    private void saveMock() {
         doReturn(updatedAccountDetails).when(repository).save(any());
     }
 
-    private void repositoryFindByIdMock() {
-        doReturn(Optional.of(accountDetails)).when(repository).findById(ONE);
+    private void findByIdMock() {
+        doReturn(Optional.of(accountDetails)).when(repository).findById(any());
     }
 
-    private void repositoryFindByIdEmptyMock() {
-        doReturn(Optional.empty()).when(repository).findById(ONE);
+    private void findByIdEmptyMock() {
+        doReturn(Optional.empty()).when(repository).findById(any());
     }
 }

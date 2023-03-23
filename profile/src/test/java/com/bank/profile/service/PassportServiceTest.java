@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,194 +50,231 @@ public class PassportServiceTest extends ParentTest {
     static void init() {
         PassportSupplier passportSupplier = new PassportSupplier();
 
-        passport = passportSupplier.getEntity(ONE, INT_ONE, ONE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                LOCAL_DATE, WHITESPACE, WHITESPACE, LOCAL_DATE, INT_ONE, LOCAL_DATE, null);
+        passport = passportSupplier.getEntity(ONE, WHITESPACE, WHITESPACE, LOCAL_DATE, null);
 
-        updatedPassport = passportSupplier.getEntity(null, INT_ONE, TWO, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, LOCAL_DATE, WHITESPACE, WHITESPACE, LOCAL_DATE, INT_ONE, LOCAL_DATE, null);
+        updatedPassport = passportSupplier.getEntity(ONE, WHITESPACE, WHITESPACE, LOCAL_DATE, null);
 
-        updatedPassportDto = passportSupplier.getDto(null, INT_ONE, TWO, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, LOCAL_DATE, WHITESPACE, WHITESPACE, LOCAL_DATE, INT_ONE, LOCAL_DATE, null);
+        updatedPassportDto = passportSupplier.getDto(ONE, WHITESPACE, WHITESPACE, LOCAL_DATE, null);
     }
 
     @Test
-    @DisplayName("сохранение позитивный сценарий")
-    void saveTest() {
-        repositorySaveMock();
+    @DisplayName("сохранение, позитивный сценарий")
+    void savePositiveTest() {
+        saveMock();
 
         final PassportDto result = service.save(updatedPassportDto);
 
-        assertAll(() -> {
-            assertNull(result.getRegistration());
-            assertEquals(updatedPassport.getId(), result.getId());
-            assertEquals(updatedPassportDto.getSeries(), result.getSeries());
-            assertEquals(updatedPassportDto.getNumber(), result.getNumber());
-            assertEquals(updatedPassportDto.getGender(), result.getGender());
-            assertEquals(updatedPassportDto.getLastName(), result.getLastName());
-            assertEquals(updatedPassportDto.getIssuedBy(), result.getIssuedBy());
-            assertEquals(updatedPassportDto.getFirstName(), result.getFirstName());
-            assertEquals(updatedPassportDto.getBirthDate(), result.getBirthDate());
-            assertEquals(updatedPassportDto.getMiddleName(), result.getMiddleName());
-            assertEquals(updatedPassportDto.getBirthPlace(), result.getBirthPlace());
-            assertEquals(updatedPassportDto.getDateOfIssue(), result.getDateOfIssue());
-            assertEquals(updatedPassportDto.getDivisionCode(), result.getDivisionCode());
-            assertEquals(updatedPassportDto.getExpirationDate(), result.getExpirationDate());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getRegistration());
+                    assertEquals(updatedPassport.getId(), result.getId());
+                    assertEquals(updatedPassportDto.getSeries(), result.getSeries());
+                    assertEquals(updatedPassportDto.getNumber(), result.getNumber());
+                    assertEquals(updatedPassportDto.getGender(), result.getGender());
+                    assertEquals(updatedPassportDto.getLastName(), result.getLastName());
+                    assertEquals(updatedPassportDto.getIssuedBy(), result.getIssuedBy());
+                    assertEquals(updatedPassportDto.getFirstName(), result.getFirstName());
+                    assertEquals(updatedPassportDto.getBirthDate(), result.getBirthDate());
+                    assertEquals(updatedPassportDto.getMiddleName(), result.getMiddleName());
+                    assertEquals(updatedPassportDto.getBirthPlace(), result.getBirthPlace());
+                    assertEquals(updatedPassportDto.getDateOfIssue(), result.getDateOfIssue());
+                    assertEquals(updatedPassportDto.getDivisionCode(), result.getDivisionCode());
+                    assertEquals(updatedPassportDto.getExpirationDate(), result.getExpirationDate());
+                }
+        );
     }
 
     @Test
-    @DisplayName("сохранение негативный сценарий")
+    @DisplayName("сохранение, негативный сценарий")
     void saveNegativeTest() {
-        doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
+        final String exceptionMessage = "Entity must not be null";
+        doThrow(new IllegalArgumentException(exceptionMessage)).when(repository).save(any());
 
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.save(null)
+        final var exception = assertThrows(
+                IllegalArgumentException.class, () -> service.save(null)
         );
 
-        assertEquals("Недопустимые параметры", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение позитивный сценарий")
-    void readTest() {
-        repositoryFindByIdMock();
+    @DisplayName("чтение, позитивный сценарий")
+    void readPositiveTest() {
+        findByIdMock();
 
         final PassportDto result = service.read(ONE);
 
-        assertAll(() -> {
-            assertNull(passport.getRegistration());
-            assertEquals(passport.getId(), result.getId());
-            assertEquals(passport.getSeries(), result.getSeries());
-            assertEquals(passport.getNumber(), result.getNumber());
-            assertEquals(passport.getGender(), result.getGender());
-            assertEquals(passport.getLastName(), result.getLastName());
-            assertEquals(passport.getIssuedBy(), result.getIssuedBy());
-            assertEquals(passport.getFirstName(), result.getFirstName());
-            assertEquals(passport.getBirthDate(), result.getBirthDate());
-            assertEquals(passport.getMiddleName(), result.getMiddleName());
-            assertEquals(passport.getBirthPlace(), result.getBirthPlace());
-            assertEquals(passport.getDateOfIssue(), result.getDateOfIssue());
-            assertEquals(passport.getDivisionCode(), result.getDivisionCode());
-            assertEquals(passport.getExpirationDate(), result.getExpirationDate());
-        });
+        assertAll(
+                () -> {
+                    assertNull(passport.getRegistration());
+                    assertEquals(passport.getId(), result.getId());
+                    assertEquals(passport.getSeries(), result.getSeries());
+                    assertEquals(passport.getNumber(), result.getNumber());
+                    assertEquals(passport.getGender(), result.getGender());
+                    assertEquals(passport.getLastName(), result.getLastName());
+                    assertEquals(passport.getIssuedBy(), result.getIssuedBy());
+                    assertEquals(passport.getFirstName(), result.getFirstName());
+                    assertEquals(passport.getBirthDate(), result.getBirthDate());
+                    assertEquals(passport.getMiddleName(), result.getMiddleName());
+                    assertEquals(passport.getBirthPlace(), result.getBirthPlace());
+                    assertEquals(passport.getDateOfIssue(), result.getDateOfIssue());
+                    assertEquals(passport.getDivisionCode(), result.getDivisionCode());
+                    assertEquals(passport.getExpirationDate(), result.getExpirationDate());
+                }
+        );
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
-    void readNegativeTest() {
-        repositoryFindByIdEmptyMock();
+    @DisplayName("чтение, id равен null, негативный сценарий")
+    void readIdNullNegativeTest() {
+        final String exceptionMessage = "passport с данным id не найден!";
+        findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> service.read(ONE));
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(null)
+        );
 
-        assertEquals("passport с данным идентификатором не найден!", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
-    void updateTest() {
-        repositorySaveMock();
-        repositoryFindByIdMock();
+    @DisplayName("чтение по несуществующему id, негативный сценарий")
+    void readNotExistIdNegativeTest() {
+        final String exceptionMessage = "passport с данным id не найден!";
+        findByIdEmptyMock();
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.read(ONE)
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, позитивный сценарий")
+    void updatePositiveTest() {
+        saveMock();
+        findByIdMock();
 
         final PassportDto result = service.update(ONE, updatedPassportDto);
 
-        assertAll(() -> {
-            assertNull(result.getRegistration());
-            assertEquals(updatedPassport.getId(), result.getId());
-            assertEquals(updatedPassportDto.getSeries(), result.getSeries());
-            assertEquals(updatedPassportDto.getNumber(), result.getNumber());
-            assertEquals(updatedPassportDto.getGender(), result.getGender());
-            assertEquals(updatedPassportDto.getLastName(), result.getLastName());
-            assertEquals(updatedPassportDto.getIssuedBy(), result.getIssuedBy());
-            assertEquals(updatedPassportDto.getFirstName(), result.getFirstName());
-            assertEquals(updatedPassportDto.getBirthDate(), result.getBirthDate());
-            assertEquals(updatedPassportDto.getMiddleName(), result.getMiddleName());
-            assertEquals(updatedPassportDto.getBirthPlace(), result.getBirthPlace());
-            assertEquals(updatedPassportDto.getDateOfIssue(), result.getDateOfIssue());
-            assertEquals(updatedPassportDto.getDivisionCode(), result.getDivisionCode());
-            assertEquals(updatedPassportDto.getExpirationDate(), result.getExpirationDate());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getRegistration());
+                    assertEquals(updatedPassport.getId(), result.getId());
+                    assertEquals(updatedPassportDto.getSeries(), result.getSeries());
+                    assertEquals(updatedPassportDto.getNumber(), result.getNumber());
+                    assertEquals(updatedPassportDto.getGender(), result.getGender());
+                    assertEquals(updatedPassportDto.getLastName(), result.getLastName());
+                    assertEquals(updatedPassportDto.getIssuedBy(), result.getIssuedBy());
+                    assertEquals(updatedPassportDto.getFirstName(), result.getFirstName());
+                    assertEquals(updatedPassportDto.getBirthDate(), result.getBirthDate());
+                    assertEquals(updatedPassportDto.getMiddleName(), result.getMiddleName());
+                    assertEquals(updatedPassportDto.getBirthPlace(), result.getBirthPlace());
+                    assertEquals(updatedPassportDto.getDateOfIssue(), result.getDateOfIssue());
+                    assertEquals(updatedPassportDto.getDivisionCode(), result.getDivisionCode());
+                    assertEquals(updatedPassportDto.getExpirationDate(), result.getExpirationDate());
+                }
+        );
     }
 
     @Test
-    @DisplayName("обновление, где dto равен null")
-    void updateWithIdAndNullTest() {
+    @DisplayName("обновление, id равен null, негативный сценарий")
+    void updateNullIdNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, passport не найден!";
+        findByIdEmptyMock();
+
+        final EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(null, updatedPassportDto)
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("обновление, dto равен null, позитивный сценарий")
+    void updateNullDtoPositiveTest() {
         doReturn(passport).when(repository).save(any());
-        repositoryFindByIdMock();
+        findByIdMock();
 
         final PassportDto result = service.update(ONE, null);
 
-        assertAll(() -> {
-            assertNull(passport.getRegistration());
-            assertEquals(passport.getId(), result.getId());
-            assertEquals(passport.getSeries(), result.getSeries());
-            assertEquals(passport.getNumber(), result.getNumber());
-            assertEquals(passport.getGender(), result.getGender());
-            assertEquals(passport.getLastName(), result.getLastName());
-            assertEquals(passport.getIssuedBy(), result.getIssuedBy());
-            assertEquals(passport.getFirstName(), result.getFirstName());
-            assertEquals(passport.getBirthDate(), result.getBirthDate());
-            assertEquals(passport.getMiddleName(), result.getMiddleName());
-            assertEquals(passport.getBirthPlace(), result.getBirthPlace());
-            assertEquals(passport.getDateOfIssue(), result.getDateOfIssue());
-            assertEquals(passport.getDivisionCode(), result.getDivisionCode());
-            assertEquals(passport.getExpirationDate(), result.getExpirationDate());
-        });
+        assertAll(
+                () -> {
+                    assertNull(passport.getRegistration());
+                    assertEquals(passport.getId(), result.getId());
+                    assertEquals(passport.getSeries(), result.getSeries());
+                    assertEquals(passport.getNumber(), result.getNumber());
+                    assertEquals(passport.getGender(), result.getGender());
+                    assertEquals(passport.getLastName(), result.getLastName());
+                    assertEquals(passport.getIssuedBy(), result.getIssuedBy());
+                    assertEquals(passport.getFirstName(), result.getFirstName());
+                    assertEquals(passport.getBirthDate(), result.getBirthDate());
+                    assertEquals(passport.getMiddleName(), result.getMiddleName());
+                    assertEquals(passport.getBirthPlace(), result.getBirthPlace());
+                    assertEquals(passport.getDateOfIssue(), result.getDateOfIssue());
+                    assertEquals(passport.getDivisionCode(), result.getDivisionCode());
+                    assertEquals(passport.getExpirationDate(), result.getExpirationDate());
+                }
+        );
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() {
-        repositoryFindByIdEmptyMock();
+    @DisplayName("обновление несуществующих данных, негативный сценарий")
+    void updateNoPassportNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, passport не найден!";
+        findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.update(ONE, new PassportDto())
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, new PassportDto())
         );
 
-        assertEquals("Обновление невозможно, passport не найден!", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение по списку id позитивный сценарий")
-    void readAllTest() {
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
+    void readAllPositiveTest() {
         final List<PassportDto> passports = readAllTestPrepare();
         final var zeroPassport = passports.get(0);
         final var firstPassport = passports.get(1);
 
-        assertAll(() -> {
-            assertEquals(TWO, passports.size());
-            assertNull(zeroPassport.getRegistration());
-            assertEquals(passport.getId(), zeroPassport.getId());
-            assertEquals(passport.getSeries(), zeroPassport.getSeries());
-            assertEquals(passport.getNumber(), zeroPassport.getNumber());
-            assertEquals(passport.getGender(), zeroPassport.getGender());
-            assertEquals(passport.getLastName(), zeroPassport.getLastName());
-            assertEquals(passport.getIssuedBy(), zeroPassport.getIssuedBy());
-            assertEquals(passport.getFirstName(), zeroPassport.getFirstName());
-            assertEquals(passport.getBirthDate(), zeroPassport.getBirthDate());
-            assertEquals(passport.getMiddleName(), zeroPassport.getMiddleName());
-            assertEquals(passport.getBirthPlace(), zeroPassport.getBirthPlace());
-            assertEquals(passport.getDateOfIssue(), zeroPassport.getDateOfIssue());
-            assertEquals(passport.getDivisionCode(), zeroPassport.getDivisionCode());
-            assertEquals(passport.getExpirationDate(), zeroPassport.getExpirationDate());
-            assertNull(firstPassport.getRegistration());
-            assertEquals(updatedPassport.getId(), firstPassport.getId());
-            assertEquals(updatedPassport.getSeries(), firstPassport.getSeries());
-            assertEquals(updatedPassport.getNumber(), firstPassport.getNumber());
-            assertEquals(updatedPassport.getGender(), firstPassport.getGender());
-            assertEquals(updatedPassport.getLastName(), firstPassport.getLastName());
-            assertEquals(updatedPassport.getIssuedBy(), firstPassport.getIssuedBy());
-            assertEquals(updatedPassport.getFirstName(), firstPassport.getFirstName());
-            assertEquals(updatedPassport.getBirthDate(), firstPassport.getBirthDate());
-            assertEquals(updatedPassport.getMiddleName(), firstPassport.getMiddleName());
-            assertEquals(updatedPassport.getBirthPlace(), firstPassport.getBirthPlace());
-            assertEquals(updatedPassport.getDateOfIssue(), firstPassport.getDateOfIssue());
-            assertEquals(updatedPassport.getDivisionCode(), firstPassport.getDivisionCode());
-            assertEquals(updatedPassport.getExpirationDate(), firstPassport.getExpirationDate());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(TWO, passports.size());
+                    assertNull(zeroPassport.getRegistration());
+                    assertEquals(passport.getId(), zeroPassport.getId());
+                    assertEquals(passport.getSeries(), zeroPassport.getSeries());
+                    assertEquals(passport.getNumber(), zeroPassport.getNumber());
+                    assertEquals(passport.getGender(), zeroPassport.getGender());
+                    assertEquals(passport.getLastName(), zeroPassport.getLastName());
+                    assertEquals(passport.getIssuedBy(), zeroPassport.getIssuedBy());
+                    assertEquals(passport.getFirstName(), zeroPassport.getFirstName());
+                    assertEquals(passport.getBirthDate(), zeroPassport.getBirthDate());
+                    assertEquals(passport.getMiddleName(), zeroPassport.getMiddleName());
+                    assertEquals(passport.getBirthPlace(), zeroPassport.getBirthPlace());
+                    assertEquals(passport.getDateOfIssue(), zeroPassport.getDateOfIssue());
+                    assertEquals(passport.getDivisionCode(), zeroPassport.getDivisionCode());
+                    assertEquals(passport.getExpirationDate(), zeroPassport.getExpirationDate());
+                    assertNull(firstPassport.getRegistration());
+                    assertEquals(updatedPassport.getId(), firstPassport.getId());
+                    assertEquals(updatedPassport.getSeries(), firstPassport.getSeries());
+                    assertEquals(updatedPassport.getNumber(), firstPassport.getNumber());
+                    assertEquals(updatedPassport.getGender(), firstPassport.getGender());
+                    assertEquals(updatedPassport.getLastName(), firstPassport.getLastName());
+                    assertEquals(updatedPassport.getIssuedBy(), firstPassport.getIssuedBy());
+                    assertEquals(updatedPassport.getFirstName(), firstPassport.getFirstName());
+                    assertEquals(updatedPassport.getBirthDate(), firstPassport.getBirthDate());
+                    assertEquals(updatedPassport.getMiddleName(), firstPassport.getMiddleName());
+                    assertEquals(updatedPassport.getBirthPlace(), firstPassport.getBirthPlace());
+                    assertEquals(updatedPassport.getDateOfIssue(), firstPassport.getDateOfIssue());
+                    assertEquals(updatedPassport.getDivisionCode(), firstPassport.getDivisionCode());
+                    assertEquals(updatedPassport.getExpirationDate(), firstPassport.getExpirationDate());
+                }
+        );
     }
 
     private List<PassportDto> readAllTestPrepare() {
-
         doReturn(List.of(passport, updatedPassport))
                 .when(repository)
                 .findAllById(any());
@@ -244,26 +283,41 @@ public class PassportServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение всех негативный сценарий")
-    void readAllNegativeTest() {
+    @DisplayName("чтение по списку id, id равен null, негативный сценарий")
+    void readAllIdNullNegativeTest() {
+        final String exceptionMessage = "Ошибка в переданных параметрах, passport не существуют(ет)";
         doReturn(List.of(new PassportEntity())).when(repository).findAllById(any());
 
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.readAll(List.of(ONE, TWO))
+        final List<Long> ids = new ArrayList<>(Arrays.asList(null, ONE));
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(ids)
         );
 
-        assertEquals("Ошибка в переданных параметрах, passport не существуют(ет)", exception.getMessage());
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
-    private void repositorySaveMock() {
+    @Test
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
+    void readAllNotExistIdsNegativeTest() {
+        final String exceptionMessage = "Ошибка в переданных параметрах, passport не существуют(ет)";
+
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.readAll(List.of(ONE, TWO))
+        );
+
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+    private void saveMock() {
         doReturn(updatedPassport).when(repository).save(any());
     }
 
-    private void repositoryFindByIdMock() {
-        doReturn(Optional.of(passport)).when(repository).findById(ONE);
+    private void findByIdMock() {
+        doReturn(Optional.of(passport)).when(repository).findById(any());
     }
 
-    private void repositoryFindByIdEmptyMock() {
-        doReturn(Optional.empty()).when(repository).findById(ONE);
+    private void findByIdEmptyMock() {
+        doReturn(Optional.empty()).when(repository).findById(any());
     }
 }

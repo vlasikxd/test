@@ -18,171 +18,180 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class ActualRegistrationMapperTest extends ParentTest {
 
     private static ActualRegistrationMapper mapper;
-
-    private static ActualRegistrationEntity registration;
-    private static ActualRegistrationDto registrationDto;
-    private static ActualRegistrationDto registrationUpdateDto;
+    private static ActualRegistrationEntity actualRegistration;
+    private static ActualRegistrationDto actualRegistrationDto;
+    private static ActualRegistrationDto updateRegistrationDto;
 
     @BeforeAll
     static void init() {
         mapper = new ActualRegistrationMapperImpl();
+
         ActualRegistrationSupplier actualRegistrationSupplier = new ActualRegistrationSupplier();
 
-        registrationDto = actualRegistrationSupplier.getDto(ONE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, TWO);
+        actualRegistrationDto = actualRegistrationSupplier.getDto(ONE, WHITESPACE, TWO);
 
-        registrationUpdateDto = actualRegistrationSupplier.getDto(null, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, TWO);
+        updateRegistrationDto = actualRegistrationSupplier.getDto(null, WHITESPACE, TWO);
 
-        registration = actualRegistrationSupplier.getEntity(ONE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE,
-                WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, WHITESPACE, TWO);
+        actualRegistration = actualRegistrationSupplier.getEntity(ONE, WHITESPACE, TWO);
     }
 
     @Test
-    @DisplayName("маппинг к entity позитивный сценарий")
+    @DisplayName("маппинг к entity")
     void toEntityTest() {
-        final ActualRegistrationEntity result = mapper.toEntity(registrationDto);
+        final ActualRegistrationEntity result = mapper.toEntity(actualRegistrationDto);
 
-        assertAll(() -> {
-            assertNull(result.getId());
-            assertEquals(registrationDto.getCity(), result.getCity());
-            assertEquals(registrationDto.getIndex(), result.getIndex());
-            assertEquals(registrationDto.getRegion(), result.getRegion());
-            assertEquals(registrationDto.getStreet(), result.getStreet());
-            assertEquals(registrationDto.getCountry(), result.getCountry());
-            assertEquals(registrationDto.getDistrict(), result.getDistrict());
-            assertEquals(registrationDto.getLocality(), result.getLocality());
-            assertEquals(registrationDto.getHouseBlock(), result.getHouseBlock());
-            assertEquals(registrationDto.getFlatNumber(), result.getFlatNumber());
-            assertEquals(registrationDto.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.getId());
+                    assertEquals(actualRegistrationDto.getCity(), result.getCity());
+                    assertEquals(actualRegistrationDto.getIndex(), result.getIndex());
+                    assertEquals(actualRegistrationDto.getRegion(), result.getRegion());
+                    assertEquals(actualRegistrationDto.getStreet(), result.getStreet());
+                    assertEquals(actualRegistrationDto.getCountry(), result.getCountry());
+                    assertEquals(actualRegistrationDto.getDistrict(), result.getDistrict());
+                    assertEquals(actualRegistrationDto.getLocality(), result.getLocality());
+                    assertEquals(actualRegistrationDto.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(actualRegistrationDto.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(actualRegistrationDto.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг к entity с параметром null")
+    @DisplayName("маппинг к entity, на вход подан null")
     void toEntityNullTest() {
         assertNull(mapper.toEntity(null));
     }
 
     @Test
-    @DisplayName("маппинг к dto позитивный сценарий")
+    @DisplayName("маппинг к dto")
     void toDtoTest() {
-        final ActualRegistrationDto result = mapper.toDto(registration);
+        final ActualRegistrationDto result = mapper.toDto(actualRegistration);
 
-        assertAll(() -> {
-            assertEquals(registrationDto.getId(), result.getId());
-            assertEquals(registrationDto.getCity(), result.getCity());
-            assertEquals(registrationDto.getIndex(), result.getIndex());
-            assertEquals(registrationDto.getRegion(), result.getRegion());
-            assertEquals(registrationDto.getStreet(), result.getStreet());
-            assertEquals(registrationDto.getCountry(), result.getCountry());
-            assertEquals(registrationDto.getDistrict(), result.getDistrict());
-            assertEquals(registrationDto.getLocality(), result.getLocality());
-            assertEquals(registrationDto.getHouseBlock(), result.getHouseBlock());
-            assertEquals(registrationDto.getFlatNumber(), result.getFlatNumber());
-            assertEquals(registrationDto.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(actualRegistrationDto.getId(), result.getId());
+                    assertEquals(actualRegistrationDto.getCity(), result.getCity());
+                    assertEquals(actualRegistrationDto.getIndex(), result.getIndex());
+                    assertEquals(actualRegistrationDto.getRegion(), result.getRegion());
+                    assertEquals(actualRegistrationDto.getStreet(), result.getStreet());
+                    assertEquals(actualRegistrationDto.getCountry(), result.getCountry());
+                    assertEquals(actualRegistrationDto.getDistrict(), result.getDistrict());
+                    assertEquals(actualRegistrationDto.getLocality(), result.getLocality());
+                    assertEquals(actualRegistrationDto.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(actualRegistrationDto.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(actualRegistrationDto.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг к dto с параметром null")
+    @DisplayName("маппинг к dto, на вход подан null")
     void toDtoNullTest() {
         assertNull(mapper.toDto(null));
     }
 
     @Test
-    @DisplayName("слияние в entity позитивный сценарий")
-    void mergeToEntityPositiveTest() {
-        final ActualRegistrationEntity result = mapper.mergeToEntity(registrationUpdateDto, registration);
+    @DisplayName("слияние в entity")
+    void mergeToEntityTest() {
+        final ActualRegistrationEntity result = mapper.mergeToEntity(updateRegistrationDto, actualRegistration);
 
-        assertAll(() -> {
-            assertEquals(registration.getId(), result.getId());
-            assertEquals(registration.getCity(), result.getCity());
-            assertEquals(registration.getIndex(), result.getIndex());
-            assertEquals(registration.getRegion(), result.getRegion());
-            assertEquals(registration.getStreet(), result.getStreet());
-            assertEquals(registration.getCountry(), result.getCountry());
-            assertEquals(registration.getDistrict(), result.getDistrict());
-            assertEquals(registration.getLocality(), result.getLocality());
-            assertEquals(registration.getHouseBlock(), result.getHouseBlock());
-            assertEquals(registration.getFlatNumber(), result.getFlatNumber());
-            assertEquals(registration.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(actualRegistration.getId(), result.getId());
+                    assertEquals(actualRegistration.getCity(), result.getCity());
+                    assertEquals(actualRegistration.getIndex(), result.getIndex());
+                    assertEquals(actualRegistration.getRegion(), result.getRegion());
+                    assertEquals(actualRegistration.getStreet(), result.getStreet());
+                    assertEquals(actualRegistration.getCountry(), result.getCountry());
+                    assertEquals(actualRegistration.getDistrict(), result.getDistrict());
+                    assertEquals(actualRegistration.getLocality(), result.getLocality());
+                    assertEquals(actualRegistration.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(actualRegistration.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(actualRegistration.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("слияние в entity, где dto равен null")
+    @DisplayName("слияние в entity, на вход подан null")
     void mergeToEntityNullTest() {
-        final ActualRegistrationEntity result = mapper.mergeToEntity(null, registration);
+        final ActualRegistrationEntity result = mapper.mergeToEntity(null, actualRegistration);
 
-        assertAll(() -> {
-            assertEquals(registration.getId(), result.getId());
-            assertEquals(registration.getCity(), result.getCity());
-            assertEquals(registration.getIndex(), result.getIndex());
-            assertEquals(registration.getRegion(), result.getRegion());
-            assertEquals(registration.getStreet(), result.getStreet());
-            assertEquals(registration.getCountry(), result.getCountry());
-            assertEquals(registration.getDistrict(), result.getDistrict());
-            assertEquals(registration.getLocality(), result.getLocality());
-            assertEquals(registration.getHouseBlock(), result.getHouseBlock());
-            assertEquals(registration.getFlatNumber(), result.getFlatNumber());
-            assertEquals(registration.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(actualRegistration.getId(), result.getId());
+                    assertEquals(actualRegistration.getCity(), result.getCity());
+                    assertEquals(actualRegistration.getIndex(), result.getIndex());
+                    assertEquals(actualRegistration.getRegion(), result.getRegion());
+                    assertEquals(actualRegistration.getStreet(), result.getStreet());
+                    assertEquals(actualRegistration.getCountry(), result.getCountry());
+                    assertEquals(actualRegistration.getDistrict(), result.getDistrict());
+                    assertEquals(actualRegistration.getLocality(), result.getLocality());
+                    assertEquals(actualRegistration.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(actualRegistration.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(actualRegistration.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг к списку dto позитивный сценарий")
+    @DisplayName("маппинг к списку dto")
     void toDtoListTest() {
-        final List<ActualRegistrationDto> actualRegistrations = mapper.toDtoList(List.of(registration));
+        final List<ActualRegistrationDto> actualRegistrations = mapper.toDtoList(List.of(actualRegistration));
 
         final ActualRegistrationDto result = actualRegistrations.get(0);
 
-        assertAll(() -> {
-            assertEquals(ONE, actualRegistrations.size());
-            assertEquals(registration.getId(), result.getId());
-            assertEquals(registration.getCity(), result.getCity());
-            assertEquals(registration.getIndex(), result.getIndex());
-            assertEquals(registration.getRegion(), result.getRegion());
-            assertEquals(registration.getStreet(), result.getStreet());
-            assertEquals(registration.getCountry(), result.getCountry());
-            assertEquals(registration.getDistrict(), result.getDistrict());
-            assertEquals(registration.getLocality(), result.getLocality());
-            assertEquals(registration.getHouseBlock(), result.getHouseBlock());
-            assertEquals(registration.getFlatNumber(), result.getFlatNumber());
-            assertEquals(registration.getHouseNumber(), result.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(ONE, actualRegistrations.size());
+                    assertEquals(actualRegistration.getId(), result.getId());
+                    assertEquals(actualRegistration.getCity(), result.getCity());
+                    assertEquals(actualRegistration.getIndex(), result.getIndex());
+                    assertEquals(actualRegistration.getRegion(), result.getRegion());
+                    assertEquals(actualRegistration.getStreet(), result.getStreet());
+                    assertEquals(actualRegistration.getCountry(), result.getCountry());
+                    assertEquals(actualRegistration.getDistrict(), result.getDistrict());
+                    assertEquals(actualRegistration.getLocality(), result.getLocality());
+                    assertEquals(actualRegistration.getHouseBlock(), result.getHouseBlock());
+                    assertEquals(actualRegistration.getFlatNumber(), result.getFlatNumber());
+                    assertEquals(actualRegistration.getHouseNumber(), result.getHouseNumber());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг к списку dto c параметром null")
+    @DisplayName("маппинг к списку dto, на вход подан null")
     void toDtoListNullTest() {
         assertNull(mapper.toDtoList(null));
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, где один из элементов списка равен null")
+    @DisplayName("маппинг к списку dto, один из элементов списка null")
     void toListDtoElementNullTest() {
         final List<ActualRegistrationEntity> actualRegistrations = new ArrayList<>();
-        actualRegistrations.add(registration);
+        actualRegistrations.add(actualRegistration);
         actualRegistrations.add(null);
 
         final List<ActualRegistrationDto> actually = mapper.toDtoList(actualRegistrations);
         final var zeroIndexResult = actually.get(0);
 
-        assertAll(() -> {
-            assertNull(actually.get(1));
-            assertEquals(TWO, actually.size());
-            assertEquals(registration.getId(), zeroIndexResult.getId());
-            assertEquals(registration.getCity(), zeroIndexResult.getCity());
-            assertEquals(registration.getIndex(), zeroIndexResult.getIndex());
-            assertEquals(registration.getRegion(), zeroIndexResult.getRegion());
-            assertEquals(registration.getStreet(), zeroIndexResult.getStreet());
-            assertEquals(registration.getCountry(), zeroIndexResult.getCountry());
-            assertEquals(registration.getDistrict(), zeroIndexResult.getDistrict());
-            assertEquals(registration.getLocality(), zeroIndexResult.getLocality());
-            assertEquals(registration.getHouseBlock(), zeroIndexResult.getHouseBlock());
-            assertEquals(registration.getFlatNumber(), zeroIndexResult.getFlatNumber());
-            assertEquals(registration.getHouseNumber(), zeroIndexResult.getHouseNumber());
-        });
+        assertAll(
+                () -> {
+                    assertNull(actually.get(1));
+                    assertEquals(TWO, actually.size());
+                    assertEquals(actualRegistration.getId(), zeroIndexResult.getId());
+                    assertEquals(actualRegistration.getCity(), zeroIndexResult.getCity());
+                    assertEquals(actualRegistration.getIndex(), zeroIndexResult.getIndex());
+                    assertEquals(actualRegistration.getRegion(), zeroIndexResult.getRegion());
+                    assertEquals(actualRegistration.getStreet(), zeroIndexResult.getStreet());
+                    assertEquals(actualRegistration.getCountry(), zeroIndexResult.getCountry());
+                    assertEquals(actualRegistration.getDistrict(), zeroIndexResult.getDistrict());
+                    assertEquals(actualRegistration.getLocality(), zeroIndexResult.getLocality());
+                    assertEquals(actualRegistration.getHouseBlock(), zeroIndexResult.getHouseBlock());
+                    assertEquals(actualRegistration.getFlatNumber(), zeroIndexResult.getFlatNumber());
+                    assertEquals(actualRegistration.getHouseNumber(), zeroIndexResult.getHouseNumber());
+                }
+        );
     }
 }
