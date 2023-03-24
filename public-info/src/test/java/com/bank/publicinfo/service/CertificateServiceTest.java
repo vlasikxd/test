@@ -9,6 +9,7 @@ import com.bank.publicinfo.service.impl.CertificateServiceImpl;
 import com.bank.publicinfo.supplier.CertificateSupplier;
 import com.bank.publicinfo.validator.Validator;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-
 public class CertificateServiceTest extends ParentTest {
 
     private static CertificateEntity certificate;
@@ -112,7 +112,7 @@ public class CertificateServiceTest extends ParentTest {
 
     @Test
     @DisplayName("обновление, позитивный сценарий")
-    void updateTest() {
+    void updatePositiveTest() {
         saveMock();
         findByIdMock();
 

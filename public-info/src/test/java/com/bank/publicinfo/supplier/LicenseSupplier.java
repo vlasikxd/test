@@ -4,6 +4,8 @@ import com.bank.publicinfo.dto.BankDetailsDto;
 import com.bank.publicinfo.dto.LicenseDto;
 import com.bank.publicinfo.entity.BankDetailsEntity;
 import com.bank.publicinfo.entity.LicenseEntity;
+import org.junit.jupiter.api.Disabled;
+
 
 public class LicenseSupplier {
 

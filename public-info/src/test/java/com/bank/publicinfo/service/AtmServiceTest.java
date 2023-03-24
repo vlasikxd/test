@@ -9,6 +9,7 @@ import com.bank.publicinfo.service.impl.AtmServiceImpl;
 import com.bank.publicinfo.supplier.AtmSupplier;
 import com.bank.publicinfo.validator.Validator;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-
 public class AtmServiceTest extends ParentTest {
 
     private static AtmEntity atm;
@@ -51,11 +51,11 @@ public class AtmServiceTest extends ParentTest {
     static void init() {
         AtmSupplier atmSupplier = new AtmSupplier();
 
-        atm = atmSupplier.getEntity(ONE, SPACE, TIME, TIME, TRUE, null);
+        atm = atmSupplier.getEntity(ONE, SPACE, TRUE, null);
 
-        updateAtm = atmSupplier.getEntity(ONE, SPACE, TIME, TIME, TRUE, null);
+        updateAtm = atmSupplier.getEntity(ONE, SPACE, TRUE, null);
 
-        updateAtmDto = atmSupplier.getDto(ONE, SPACE, TIME, TIME, TRUE, null);
+        updateAtmDto = atmSupplier.getDto(ONE, SPACE, TRUE, null);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class AtmServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение, позитивный сценарий")
+    @DisplayName("Чтение, позитивный сценарий")
     void readPositiveTest() {
         findByIdMock();
 
@@ -111,7 +111,7 @@ public class AtmServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
+    @DisplayName("Чтение, негативный сценарий")
     void readNegativeTest() {
         findByIdEmptyMock();
 
@@ -123,7 +123,7 @@ public class AtmServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, позитивный сценарий")
+    @DisplayName("Обновление, позитивный сценарий")
     void updatePositiveTest() {
         saveMock();
         findByIdMock();
@@ -163,7 +163,7 @@ public class AtmServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
+    @DisplayName("Обновление, негативный сценарий")
     void updateNegativeTest() {
         findByIdEmptyMock();
 
@@ -175,7 +175,7 @@ public class AtmServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id, позитивный сценарий")
+    @DisplayName("Чтение по списку id, позитивный сценарий")
     void readAllPositiveTest() {
         final List<AtmDto> atms = readAllTestPrepare();
 
@@ -210,7 +210,7 @@ public class AtmServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id, негативный сценарий")
+    @DisplayName("Чтение по списку id, негативный сценарий")
     void readAllNegativeTest() {
         doReturn(List.of(new AtmEntity())).when(repository).findAllById(any());
 

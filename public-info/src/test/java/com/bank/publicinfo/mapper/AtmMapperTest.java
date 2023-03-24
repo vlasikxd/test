@@ -5,6 +5,7 @@ import com.bank.publicinfo.dto.AtmDto;
 import com.bank.publicinfo.entity.AtmEntity;
 import com.bank.publicinfo.supplier.AtmSupplier;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,6 @@ import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class AtmMapperTest extends ParentTest {
 
     private static AtmMapper mapper;
@@ -32,11 +32,11 @@ public class AtmMapperTest extends ParentTest {
 
         AtmSupplier atmSupplier = new AtmSupplier();
 
-        atmDto = atmSupplier.getDto(ONE, SPACE, TIME, TIME, TRUE, null);
+        atmDto = atmSupplier.getDto(ONE, SPACE, TRUE, null);
 
-        atmUpdateDto = atmSupplier.getDto(null, SPACE, TIME, TIME, TRUE, null);
+        atmUpdateDto = atmSupplier.getDto(null, SPACE, TRUE, null);
 
-        atm = atmSupplier.getEntity(ONE, SPACE, TIME, TIME, TRUE, null);
+        atm = atmSupplier.getEntity(ONE, SPACE, TRUE, null);
     }
 
     @Test

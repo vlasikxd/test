@@ -84,6 +84,16 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
+    @DisplayName("Сохранение, передан pdf, негативный сценарий")
+    void saveWrongMediaTypeNegativeTest() throws Exception {
+        mockMvc.perform(
+                post("/license")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .content(mapper.writeValueAsString(license))
+        ).andExpectAll(status().is5xxServerError());
+    }
+
+    @Test
     @DisplayName("Чтение, позитивный сценарий")
     void readPositiveTest() throws Exception {
         doReturn(license).when(service).read(any());
@@ -112,6 +122,15 @@ public class LicenseControllerTest extends ParentTest {
                         status().isNotFound(),
                         content().string(errorMessage)
                 );
+    }
+
+    @Test
+    @DisplayName("Чтение, в id передана строка, негативный сценарий")
+    void readWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(get("/license/" + wrongId))
+                .andExpectAll(status().is4xxClientError());
     }
 
     @Test
@@ -156,9 +175,19 @@ public class LicenseControllerTest extends ParentTest {
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
-        mockMvc.perform(get("/license?id=1")).andExpectAll(status().isNotFound(),
+        mockMvc.perform(get("/license?id=1")
+        ).andExpectAll(status().isNotFound(),
                 content().string(errorMessage)
         );
+    }
+
+    @Test
+    @DisplayName("Чтение по нескольким id, в id передана строка, негативный сценарий")
+    void readAllWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(get("/license?id=1&id=" + wrongId))
+                .andExpectAll(status().is4xxClientError());
     }
 
     @Test
@@ -192,5 +221,16 @@ public class LicenseControllerTest extends ParentTest {
         ).andExpectAll(status().isNotFound(),
                 content().string(errorMessage)
         );
+    }
+
+    @Test
+    @DisplayName("Обновление, в id передана строка, негативный сценарий")
+    void updateWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(put("/license/" + wrongId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(license))
+        ).andExpectAll(status().is4xxClientError());
     }
 }

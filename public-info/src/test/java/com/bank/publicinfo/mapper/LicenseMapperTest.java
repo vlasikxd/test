@@ -5,6 +5,7 @@ import com.bank.publicinfo.dto.LicenseDto;
 import com.bank.publicinfo.entity.LicenseEntity;
 import com.bank.publicinfo.supplier.LicenseSupplier;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class LicenseMapperTest extends ParentTest {
 
     private static LicenseMapper mapper;

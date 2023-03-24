@@ -9,6 +9,7 @@ import com.bank.publicinfo.service.impl.BranchServiceImpl;
 import com.bank.publicinfo.supplier.BranchSupplier;
 import com.bank.publicinfo.validator.Validator;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-
 public class BranchServiceTest extends ParentTest {
 
     private static BranchEntity branch;
@@ -48,11 +48,11 @@ public class BranchServiceTest extends ParentTest {
     static void init() {
         BranchSupplier branchSupplier = new BranchSupplier();
 
-        branch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        branch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE);
 
-        updateBranch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        updateBranch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE);
 
-        updateBranchDto = branchSupplier.getDto(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        updateBranchDto = branchSupplier.getDto(ONE, SPACE, TWO, SPACE);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class BranchServiceTest extends ParentTest {
 
     @Test
     @DisplayName("обновление, позитивный сценарий")
-    void updateTest() {
+    void updatePositiveTest() {
         saveMock();
         findByIdMock();
 

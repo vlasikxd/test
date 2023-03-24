@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static java.lang.Boolean.TRUE;
@@ -43,6 +44,7 @@ public class AtmControllerTest extends ParentTest {
     private final ObjectMapper mapper;
     private final MockMvc mockMvc;
 
+
     @MockBean
     private AtmService service;
 
@@ -50,24 +52,21 @@ public class AtmControllerTest extends ParentTest {
     static void init() {
         atmSupplier = new AtmSupplier();
 
-        atm = atmSupplier.getDto(ONE, SPACE, TIME, TIME, TRUE, null);
+        atm = atmSupplier.getDto(ONE, SPACE, TRUE, null);
     }
 
     @Test
     @DisplayName("Сохранение, позитивный сценарий")
-    void saveTest() throws Exception {
+    void savePositiveTest() throws Exception {
         doReturn(atm).when(service).save(any());
-
-        final String startOfWork = LocalTimeToString(atm.getStartOfWork());
-        final String endOfWork = LocalTimeToString(atm.getEndOfWork());
 
         mockMvc.perform(post("/atm")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(atm))
         ).andExpectAll(status().isOk(),
                 jsonPath("$.address", is(atm.getAddress())),
-                jsonPath("$.startOfWork", is(startOfWork)),
-                jsonPath("$.endOfWork", is(endOfWork)),
+                jsonPath("$.startOfWork", is(atm.getStartOfWork().toString())),
+                jsonPath("$.endOfWork", is(atm.getEndOfWork().toString())),
                 jsonPath("$.allHours", is(atm.getAllHours())),
                 jsonPath("$.branch", is(atm.getBranch()))
         );
@@ -77,6 +76,7 @@ public class AtmControllerTest extends ParentTest {
     @DisplayName("Сохранение, негативный сценарий")
     void saveNegativeTest() throws Exception {
         String errorMessage = "Неверные данные";
+
         doThrow(new ValidationException(errorMessage)).when(service).save(any());
 
         mockMvc.perform(post("/atm")
@@ -88,20 +88,27 @@ public class AtmControllerTest extends ParentTest {
     }
 
     @Test
+    @DisplayName("Сохранение, передан pdf, негативный сценарий")
+    void saveWrongMediaTypeNegativeTest() throws Exception {
+        mockMvc.perform(post("/atm")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .content(mapper.writeValueAsString(atm))
+        ).andExpectAll(status().is5xxServerError());
+    }
+
+    @Test
     @DisplayName("Чтение, позитивный сценарий")
-    void readTest() throws Exception {
+    void readPositiveTest() throws Exception {
         doReturn(atm).when(service).read(any());
 
         final int id = getIntFromLong(atm.getId());
-        final String startOfWork = LocalTimeToString(atm.getStartOfWork());
-        final String endOfWork = LocalTimeToString(atm.getEndOfWork());
 
         mockMvc.perform(get("/atm/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
                         jsonPath("$.address", is(atm.getAddress())),
-                        jsonPath("$.startOfWork", is(startOfWork)),
-                        jsonPath("$.endOfWork", is(endOfWork)),
+                        jsonPath("$.startOfWork", is(atm.getStartOfWork().toString())),
+                        jsonPath("$.endOfWork", is(atm.getEndOfWork().toString())),
                         jsonPath("$.allHours", is(atm.getAllHours())),
                         jsonPath("$.branch", is(atm.getBranch()))
                 );
@@ -122,9 +129,18 @@ public class AtmControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, позитивный сценарий")
-    void readAll() throws Exception {
+    @DisplayName("Чтение, в id передана строка, негативный сценарий")
+    void readWrongIdNegativeTest() throws Exception {
 
+        String wrongId = "test";
+
+        mockMvc.perform(get("/atm/" + wrongId))
+                .andExpectAll(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Чтение по нескольким id, позитивный сценарий")
+    void readAllPositiveTest() throws Exception {
         final List<AtmDto> atms = returnAtms();
 
         doReturn(atms).when(service).readAll(any());
@@ -133,25 +149,21 @@ public class AtmControllerTest extends ParentTest {
         final AtmDto oneAtm = atms.get(1);
 
         final int zeroId = getIntFromLong(zeroAtm.getId());
-        final String zeroStartOfWork = LocalTimeToString(zeroAtm.getStartOfWork());
-        final String zeroEndOfWork = LocalTimeToString(zeroAtm.getEndOfWork());
 
         final int oneId = getIntFromLong(oneAtm.getId());
-        final String oneStartOfWork = LocalTimeToString(oneAtm.getStartOfWork());
-        final String oneEndOfWork = LocalTimeToString(oneAtm.getEndOfWork());
 
         mockMvc.perform(get("/atm?id=1&id=2"))
                 .andExpectAll(status().isOk(),
                         jsonPath("$", hasSize(atms.size())),
                         jsonPath("$.[0].id", is(zeroId)),
-                        jsonPath("$.[0].startOfWork", is(zeroStartOfWork)),
-                        jsonPath("$.[0].endOfWork", is(zeroEndOfWork)),
+                        jsonPath("$.[0].startOfWork", is(zeroAtm.getStartOfWork().format(DateTimeFormatter.ISO_TIME))),
+                        jsonPath("$.[0].endOfWork", is(zeroAtm.getEndOfWork().format(DateTimeFormatter.ISO_TIME))),
                         jsonPath("$.[0].address", is(zeroAtm.getAddress())),
                         jsonPath("$.[0].allHours", is(zeroAtm.getAllHours())),
                         jsonPath("$.[0].branch", is(zeroAtm.getBranch())),
                         jsonPath("$.[1].id", is(oneId)),
-                        jsonPath("$.[1].startOfWork", is(oneStartOfWork)),
-                        jsonPath("$.[1].endOfWork", is(oneEndOfWork)),
+                        jsonPath("$.[1].startOfWork", is(oneAtm.getStartOfWork().format(DateTimeFormatter.ISO_TIME))),
+                        jsonPath("$.[1].endOfWork", is(oneAtm.getEndOfWork().format(DateTimeFormatter.ISO_TIME))),
                         jsonPath("$.[1].address", is(oneAtm.getAddress())),
                         jsonPath("$.[1].allHours", is(oneAtm.getAllHours())),
                         jsonPath("$.[1].branch", is(oneAtm.getBranch()))
@@ -160,8 +172,8 @@ public class AtmControllerTest extends ParentTest {
 
     private List<AtmDto> returnAtms() {
         return List.of(
-                atmSupplier.getDto(ONE, SPACE, TIME, TIME, TRUE, null),
-                atmSupplier.getDto(ONE, SPACE, TIME, TIME, TRUE, null)
+                atmSupplier.getDto(ONE, SPACE, TRUE, null),
+                atmSupplier.getDto(ONE, SPACE, TRUE, null)
         );
     }
 
@@ -173,19 +185,27 @@ public class AtmControllerTest extends ParentTest {
         doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
         mockMvc.perform(get("/atm?id=1"))
-                .andExpectAll(status().isNotFound(),
+                .andExpectAll(
+                        status().isNotFound(),
                         content().string(errorMessage)
                 );
     }
 
     @Test
+    @DisplayName("Чтение по нескольким id, в id передана строка, негативный сценарий")
+    void readAllWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(get("/atm?id=1&id=" + wrongId))
+                .andExpectAll(status().is4xxClientError());
+    }
+
+    @Test
     @DisplayName("Обновление, позитивный сценарий")
-    void updateTest() throws Exception {
+    void updatePositiveTest() throws Exception {
         doReturn(atm).when(service).update(anyLong(), any());
 
         final int id = getIntFromLong(atm.getId());
-        final String startOfWork = LocalTimeToString(atm.getStartOfWork());
-        final String endOfWork = LocalTimeToString(atm.getEndOfWork());
 
         mockMvc.perform(put("/atm/{id}", ONE).
                 contentType(MediaType.APPLICATION_JSON)
@@ -193,15 +213,15 @@ public class AtmControllerTest extends ParentTest {
         ).andExpectAll(status().isOk(),
                 jsonPath("$.id", is(id)),
                 jsonPath("$.address", is(atm.getAddress())),
-                jsonPath("$.startOfWork", is(startOfWork)),
-                jsonPath("$.endOfWork", is(endOfWork)),
+                jsonPath("$.startOfWork", is(atm.getStartOfWork().format(DateTimeFormatter.ISO_TIME))),
+                jsonPath("$.endOfWork", is(atm.getEndOfWork().format(DateTimeFormatter.ISO_TIME))),
                 jsonPath("$.allHours", is(atm.getAllHours())),
                 jsonPath("$.branch", is(atm.getBranch()))
         );
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
+    @DisplayName("Обновление, негативный сценарий")
     void updateNegativeTest() throws Exception {
         String errorMessage = "Обновление невозможно";
 
@@ -211,8 +231,19 @@ public class AtmControllerTest extends ParentTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(atm))
         ).andExpectAll(status().isNotFound(),
-                content().string(errorMessage)
-        );
+                content().string(errorMessage));
+    }
+
+    @Test
+    @DisplayName("Обновление, в id передана строка, негативный сценарий")
+    void updateWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+
+        mockMvc.perform(put("/atm/" + wrongId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(atm))
+        ).andExpectAll(status().is4xxClientError());
     }
 }
 

@@ -9,6 +9,7 @@ import com.bank.publicinfo.service.impl.BankDetailsServiceImpl;
 import com.bank.publicinfo.supplier.BankDetailsSupplier;
 import com.bank.publicinfo.validator.Validator;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-
 public class BankDetailsServiceTest extends ParentTest {
 
     private static BankDetailsEntity bankDetails;
@@ -50,11 +50,11 @@ public class BankDetailsServiceTest extends ParentTest {
     static void init() {
         BankDetailsSupplier bankDetailsSupplier = new BankDetailsSupplier();
 
-        bankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        bankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO);
 
-        updateBankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        updateBankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO);
 
-        updateBankDetailsDto = bankDetailsSupplier.getDto(ONE, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        updateBankDetailsDto = bankDetailsSupplier.getDto(ONE, TWO, TWO, TWO);
     }
 
     @Test
@@ -181,7 +181,7 @@ public class BankDetailsServiceTest extends ParentTest {
 
     @Test
     @DisplayName("чтение по списку id, позитивный сценарий")
-    void readAllTest() {
+    void readAllPositiveTest() {
         final List<BankDetailsDto> bankDetailsList = readAllTestPrepare();
 
         final var zeroBankDetails = bankDetailsList.get(0);

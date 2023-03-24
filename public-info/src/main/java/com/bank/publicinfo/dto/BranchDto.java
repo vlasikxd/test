@@ -1,5 +1,6 @@
 package com.bank.publicinfo.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +21,8 @@ public class BranchDto implements Serializable {
     String address;
     Long phoneNumber;
     String city;
+    @JsonFormat(pattern = "HH:mm:ss")
     LocalTime startOfWork;
+    @JsonFormat(pattern = "HH:mm:ss")
     LocalTime endOfWork;
 }

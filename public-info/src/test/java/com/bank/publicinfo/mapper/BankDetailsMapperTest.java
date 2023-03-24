@@ -5,6 +5,7 @@ import com.bank.publicinfo.dto.BankDetailsDto;
 import com.bank.publicinfo.entity.BankDetailsEntity;
 import com.bank.publicinfo.supplier.BankDetailsSupplier;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class BankDetailsMapperTest extends ParentTest {
 
     private static BankDetailsMapper mapper;
@@ -31,11 +31,11 @@ public class BankDetailsMapperTest extends ParentTest {
 
         BankDetailsSupplier bankDetailsSupplier = new BankDetailsSupplier();
 
-        bankDetailsDto = bankDetailsSupplier.getDto(ONE, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        bankDetailsDto = bankDetailsSupplier.getDto(ONE, TWO, TWO, TWO);
 
-        bankDetailsUpdateDto = bankDetailsSupplier.getDto(null, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        bankDetailsUpdateDto = bankDetailsSupplier.getDto(null, TWO, TWO, TWO);
 
-        bankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        bankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO);
     }
 
     @Test

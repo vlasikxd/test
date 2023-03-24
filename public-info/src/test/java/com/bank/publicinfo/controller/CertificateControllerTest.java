@@ -54,7 +54,7 @@ public class CertificateControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Сохранение, позитивный сценарий")
-    void saveTest() throws Exception {
+    void savePositiveTest() throws Exception {
         doReturn(certificate).when(service).save(any());
 
         final int photo = getIntFromByte(certificate.getPhoto());
@@ -84,8 +84,18 @@ public class CertificateControllerTest extends ParentTest {
     }
 
     @Test
+    @DisplayName("Сохранение, передан pdf, негативный сценарий")
+    void saveWrongMediaTypeNegativeTest() throws Exception {
+        mockMvc.perform(
+                post("/certificate")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .content(mapper.writeValueAsString(certificate))
+        ).andExpectAll(status().is5xxServerError());
+    }
+
+    @Test
     @DisplayName("Чтение, позитивный сценарий")
-    void readTest() throws Exception {
+    void readPositiveTest() throws Exception {
         doReturn(certificate).when(service).read(any());
 
         final int photo = getIntFromByte(certificate.getPhoto());
@@ -111,6 +121,15 @@ public class CertificateControllerTest extends ParentTest {
                         status().isNotFound(),
                         content().string(errorMessage)
                 );
+    }
+
+    @Test
+    @DisplayName("Чтение, в id передана строка, негативный сценарий")
+    void readWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(get("/certificate/" + wrongId))
+                .andExpectAll(status().is4xxClientError());
     }
 
     @Test
@@ -161,8 +180,17 @@ public class CertificateControllerTest extends ParentTest {
     }
 
     @Test
+    @DisplayName("Чтение по нескольким id, в id передана строка, негативный сценарий")
+    void readAllWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(get("/certificate?id=1&id=" + wrongId))
+                .andExpectAll(status().is4xxClientError());
+    }
+
+    @Test
     @DisplayName("Обновление, позитивный сценарий")
-    void updateTest() throws Exception {
+    void updatePositiveTest() throws Exception {
         doReturn(certificate).when(service).update(anyLong(), any());
 
         final int photo = getIntFromByte(certificate.getPhoto());
@@ -190,5 +218,16 @@ public class CertificateControllerTest extends ParentTest {
         ).andExpectAll(status().isNotFound(),
                 content().string(errorMessage)
         );
+    }
+
+    @Test
+    @DisplayName("Обновление, в id передана строка, негативный сценарий")
+    void updateWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(put("/certificate/" + wrongId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(certificate))
+        ).andExpectAll(status().is4xxClientError());
     }
 }

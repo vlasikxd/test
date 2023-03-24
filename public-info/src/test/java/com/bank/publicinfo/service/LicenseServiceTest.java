@@ -9,6 +9,7 @@ import com.bank.publicinfo.service.impl.LicenseServiceImpl;
 import com.bank.publicinfo.supplier.LicenseSupplier;
 import com.bank.publicinfo.validator.Validator;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-
 public class LicenseServiceTest extends ParentTest {
 
     private static LicenseEntity license;
@@ -114,7 +114,7 @@ public class LicenseServiceTest extends ParentTest {
 
     @Test
     @DisplayName("обновление, позитивный сценарий")
-    void updateTest() {
+    void updatePositiveTest() {
         saveMock();
         findByIdMock();
 
@@ -158,7 +158,7 @@ public class LicenseServiceTest extends ParentTest {
 
     @Test
     @DisplayName("чтение по списку id, позитивный сценарий")
-    void readAllTest() {
+    void readAllPositiveTest() {
 
         final List<LicenseDto> licenses = readAllTestPrepare();
         final var zeroLicense = licenses.get(0);

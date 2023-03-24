@@ -5,6 +5,7 @@ import com.bank.publicinfo.dto.BranchDto;
 import com.bank.publicinfo.entity.BranchEntity;
 import com.bank.publicinfo.supplier.BranchSupplier;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class BranchMapperTest extends ParentTest {
 
     private static BranchMapper mapper;
@@ -31,11 +31,11 @@ public class BranchMapperTest extends ParentTest {
 
         BranchSupplier branchSupplier = new BranchSupplier();
 
-        branchDto = branchSupplier.getDto(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        branchDto = branchSupplier.getDto(ONE, SPACE, TWO, SPACE);
 
-        branchUpdateDto = branchSupplier.getDto(null, SPACE, TWO, SPACE, TIME, TIME);
+        branchUpdateDto = branchSupplier.getDto(ONE, SPACE, TWO, SPACE);
 
-        branch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        branch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE);
     }
 
     @Test

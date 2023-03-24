@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -51,12 +50,12 @@ public class BankDetailsControllerTest extends ParentTest {
     static void init() {
         bankDetailsSupplier = new BankDetailsSupplier();
 
-        bankDetails = bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE, INT_ONE, SPACE, SPACE, SPACE);
+        bankDetails = bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE);
     }
 
     @Test
     @DisplayName("Сохранение позитивный сценарий")
-    void saveTest() throws Exception {
+    void savePositiveTest() throws Exception {
         doReturn(bankDetails).when(service).save(any());
 
         final int id = getIntFromLong(bankDetails.getId());
@@ -91,13 +90,22 @@ public class BankDetailsControllerTest extends ParentTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(bankDetails))
         ).andExpectAll(status().isUnprocessableEntity(),
-                content().string(errorMessage)
-        );
+                content().string(errorMessage));
+    }
+
+    @Test
+    @DisplayName("Сохранение, передан pdf, негативный сценарий")
+    void saveWrongMediaTypeNegativeTest() throws Exception {
+
+        mockMvc.perform(post("/bank-details")
+                .contentType(MediaType.APPLICATION_PDF)
+                .content(mapper.writeValueAsString(bankDetails))
+        ).andExpectAll(status().is5xxServerError());
     }
 
     @Test
     @DisplayName("Чтение, позитивный сценарий")
-    void readTest() throws Exception {
+    void readPositiveTest() throws Exception {
         doReturn(bankDetails).when(service).read(any());
 
         final int id = getIntFromLong(bankDetails.getId());
@@ -133,8 +141,17 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    @DisplayName("Чтение, в id передана строка, негативный сценарий")
+    void readWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(get("/bank-details/" + wrongId))
+                .andExpectAll(status().is4xxClientError());
+    }
+
+    @Test
     @DisplayName("Чтение по нескольким id, позитивный сценарий")
-    void readAllTest() throws Exception {
+    void readAllPositiveTest() throws Exception {
         final List<BankDetailsDto> bankDetailsList = returnBankDetailsList();
 
         doReturn(bankDetailsList).when(service).readAll(any());
@@ -176,8 +193,8 @@ public class BankDetailsControllerTest extends ParentTest {
 
     private List<BankDetailsDto> returnBankDetailsList() {
         return List.of(
-                bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE, INT_ONE, SPACE, SPACE, SPACE),
-                bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE, INT_ONE, SPACE, SPACE, SPACE)
+                bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE),
+                bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE)
         );
     }
 
@@ -190,13 +207,21 @@ public class BankDetailsControllerTest extends ParentTest {
 
         mockMvc.perform(get("/bank-details?id=1"))
                 .andExpectAll(status().isNotFound(),
-                        content().string(errorMessage)
-                );
+                        content().string(errorMessage));
+    }
+
+    @Test
+    @DisplayName("Чтение по нескольким id, в id передана строка, негативный сценарий")
+    void readAllWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(get("/bank-details?id=1&id=" + wrongId))
+                .andExpectAll(status().is4xxClientError());
     }
 
     @Test
     @DisplayName("Обновление, позитивный сценарий")
-    void updateTest() throws Exception {
+    void updatePositiveTest() throws Exception {
         doReturn(bankDetails).when(service).update(anyLong(), any());
 
         final int id = getIntFromLong(bankDetails.getId());
@@ -230,7 +255,17 @@ public class BankDetailsControllerTest extends ParentTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(bankDetails))
         ).andExpectAll(status().isNotFound(),
-                content().string(errorMessage)
-        );
+                content().string(errorMessage));
+    }
+
+    @Test
+    @DisplayName("Обновление, в id передана строка, негативный сценарий")
+    void updateWrongIdNegativeTest() throws Exception {
+        String wrongId = "test";
+
+        mockMvc.perform(put("/bank-details/" + wrongId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(bankDetails))
+        ).andExpectAll(status().is4xxClientError());
     }
 }
