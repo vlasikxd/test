@@ -22,7 +22,4 @@ public abstract class ParentTest {
         return value.intValue();
     }
 
-    protected String LocalTimeToString(LocalTime time) {
-        return time.toString();
-    }
 }

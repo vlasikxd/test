@@ -103,8 +103,6 @@ public class BranchControllerTest extends ParentTest {
 
         final int id = getIntFromLong(branch.getId());
         final int phoneNumber = getIntFromLong(branch.getPhoneNumber());
-        final String startOfWork = LocalTimeToString(branch.getStartOfWork());
-        final String endOfWork = LocalTimeToString(branch.getEndOfWork());
 
         mockMvc.perform(get("/branch/{id}", ONE))
                 .andExpectAll(status().isOk(),
