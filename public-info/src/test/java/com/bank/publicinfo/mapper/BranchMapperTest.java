@@ -5,7 +5,6 @@ import com.bank.publicinfo.dto.BranchDto;
 import com.bank.publicinfo.entity.BranchEntity;
 import com.bank.publicinfo.supplier.BranchSupplier;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

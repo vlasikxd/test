@@ -9,7 +9,6 @@ import com.bank.publicinfo.service.impl.BranchServiceImpl;
 import com.bank.publicinfo.supplier.BranchSupplier;
 import com.bank.publicinfo.validator.Validator;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -5,7 +5,6 @@ import com.bank.publicinfo.dto.AtmDto;
 import com.bank.publicinfo.entity.AtmEntity;
 import com.bank.publicinfo.supplier.AtmSupplier;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

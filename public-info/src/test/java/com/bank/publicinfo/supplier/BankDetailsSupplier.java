@@ -2,7 +2,6 @@ package com.bank.publicinfo.supplier;
 
 import com.bank.publicinfo.dto.BankDetailsDto;
 import com.bank.publicinfo.entity.BankDetailsEntity;
-import org.junit.jupiter.api.Disabled;
 
 
 public class BankDetailsSupplier {

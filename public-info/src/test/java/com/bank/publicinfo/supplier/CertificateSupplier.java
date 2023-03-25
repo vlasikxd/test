@@ -4,7 +4,6 @@ import com.bank.publicinfo.dto.BankDetailsDto;
 import com.bank.publicinfo.dto.CertificateDto;
 import com.bank.publicinfo.entity.BankDetailsEntity;
 import com.bank.publicinfo.entity.CertificateEntity;
-import org.junit.jupiter.api.Disabled;
 
 
 public class CertificateSupplier {
