@@ -53,7 +53,7 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение, позитивный сценарий")
+    @DisplayName("cохранение, позитивный сценарий")
     void savePositiveTest() throws Exception {
         doReturn(branch).when(service).save(any());
 
@@ -63,16 +63,16 @@ public class BranchControllerTest extends ParentTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isOk(),
-                jsonPath("$.address", is(branch.getAddress())),
-                jsonPath("$.phoneNumber", is(phoneNumber)),
                 jsonPath("$.city", is(branch.getCity())),
-                jsonPath("$.startOfWork", is(branch.getStartOfWork().toString())),
-                jsonPath("$.endOfWork", is(branch.getEndOfWork().toString()))
+                jsonPath("$.phoneNumber", is(phoneNumber)),
+                jsonPath("$.address", is(branch.getAddress())),
+                jsonPath("$.endOfWork", is(toStringLocalTime(branch.getEndOfWork()))),
+                jsonPath("$.startOfWork", is(toStringLocalTime(branch.getStartOfWork())))
         );
     }
 
     @Test
-    @DisplayName("Сохранение, негативный сценарий")
+    @DisplayName("сохранение, негативный сценарий")
     void saveNegativeTest() throws Exception {
         String errorMessage = "Неверные данные";
 
@@ -87,7 +87,7 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение, передан pdf, негативный сценарий")
+    @DisplayName("сохранение, передан pdf, негативный сценарий")
     void saveWrongMediaTypeNegativeTest() throws Exception {
         mockMvc.perform(
                 post("/branch")
@@ -97,7 +97,7 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение, позитивный сценарий")
+    @DisplayName("чтение, позитивный сценарий")
     void readPositiveTest() throws Exception {
         doReturn(branch).when(service).read(any());
 
@@ -107,16 +107,16 @@ public class BranchControllerTest extends ParentTest {
         mockMvc.perform(get("/branch/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
-                        jsonPath("$.address", is(branch.getAddress())),
-                        jsonPath("$.phoneNumber", is(phoneNumber)),
                         jsonPath("$.city", is(branch.getCity())),
-                        jsonPath("$.startOfWork", is(branch.getStartOfWork().toString())),
-                        jsonPath("$.endOfWork", is(branch.getEndOfWork().toString()))
+                        jsonPath("$.phoneNumber", is(phoneNumber)),
+                        jsonPath("$.address", is(branch.getAddress())),
+                        jsonPath("$.endOfWork", is(toStringLocalTime(branch.getEndOfWork()))),
+                        jsonPath("$.startOfWork", is(toStringLocalTime(branch.getStartOfWork())))
                 );
     }
 
     @Test
-    @DisplayName("Чтение, негативный сценарий")
+    @DisplayName("чтение, негативный сценарий")
     void readNegativeTest() throws Exception {
         String errorMessage = "Отделения банка нет";
 
@@ -130,24 +130,22 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение, в id передана строка, негативный сценарий")
+    @DisplayName("чтение по некорректному id, негативный сценарий")
     void readWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(get("/branch/" + wrongId))
+        mockMvc.perform(get("/branch/test"))
                 .andExpectAll(status().is4xxClientError());
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, позитивный сценарий")
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
     void readAllPositiveTest() throws Exception {
 
         final List<BranchDto> branches = returnBranches();
 
         doReturn(branches).when(service).readAll(any());
 
-        final BranchDto zeroBranch = branches.get(0);
         final BranchDto oneBranch = branches.get(1);
+        final BranchDto zeroBranch = branches.get(0);
 
         final int zeroId = getIntFromLong(zeroBranch.getId());
         final int zeroPhoneNumber = getIntFromLong(zeroBranch.getPhoneNumber());
@@ -159,17 +157,17 @@ public class BranchControllerTest extends ParentTest {
                 .andExpectAll(status().isOk(),
                         jsonPath("$", hasSize(branches.size())),
                         jsonPath("$.[0].id", is(zeroId)),
-                        jsonPath("$.[0].address", is(zeroBranch.getAddress())),
-                        jsonPath("$.[0].phoneNumber", is(zeroPhoneNumber)),
                         jsonPath("$.[0].city", is(zeroBranch.getCity())),
-                        jsonPath("$.[0].startOfWork", is(zeroBranch.getStartOfWork().toString())),
-                        jsonPath("$.[0].endOfWork", is(zeroBranch.getEndOfWork().toString())),
+                        jsonPath("$.[0].phoneNumber", is(zeroPhoneNumber)),
+                        jsonPath("$.[0].address", is(zeroBranch.getAddress())),
+                        jsonPath("$.[0].endOfWork", is(toStringLocalTime(zeroBranch.getEndOfWork()))),
+                        jsonPath("$.[0].startOfWork", is(toStringLocalTime(zeroBranch.getStartOfWork()))),
                         jsonPath("$.[1].id", is(oneId)),
-                        jsonPath("$.[1].address", is(oneBranch.getAddress())),
-                        jsonPath("$.[1].phoneNumber", is(onePhoneNumber)),
                         jsonPath("$.[1].city", is(oneBranch.getCity())),
-                        jsonPath("$.[1].startOfWork", is(oneBranch.getStartOfWork().toString())),
-                        jsonPath("$.[1].endOfWork", is(oneBranch.getEndOfWork().toString()))
+                        jsonPath("$.[1].phoneNumber", is(onePhoneNumber)),
+                        jsonPath("$.[1].address", is(oneBranch.getAddress())),
+                        jsonPath("$.[1].endOfWork", is(toStringLocalTime(oneBranch.getEndOfWork()))),
+                        jsonPath("$.[1].startOfWork", is(toStringLocalTime(oneBranch.getStartOfWork())))
                 );
     }
 
@@ -181,9 +179,9 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, негативный сценарий")
-    void readAllNegativeTest() throws Exception {
-        String errorMessage = "Ошибка в параметрах";
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
+    void readAllNoIdNegativeTest() throws Exception {
+        final String errorMessage = "Ошибка в параметрах";
         doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
         mockMvc.perform(get("/branch?id=1")).andExpectAll(status().isNotFound(),
@@ -191,16 +189,14 @@ public class BranchControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, в id передана строка, негативный сценарий")
+    @DisplayName("чтение по нескольким id, один из id некорректен негативный сценарий")
     void readAllWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(get("/branch?id=1&id=" + wrongId))
+        mockMvc.perform(get("/branch?id=1&id=test"))
                 .andExpectAll(status().is4xxClientError());
     }
 
     @Test
-    @DisplayName("Обновление, позитивный сценарий")
+    @DisplayName("обновление, позитивный сценарий")
     void updatePositiveTest() throws Exception {
         doReturn(branch).when(service).update(anyLong(), any());
 
@@ -212,17 +208,17 @@ public class BranchControllerTest extends ParentTest {
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isOk(),
                 jsonPath("$.id", is(id)),
-                jsonPath("$.address", is(branch.getAddress())),
-                jsonPath("$.phoneNumber", is(phoneNumber)),
                 jsonPath("$.city", is(branch.getCity())),
-                jsonPath("$.startOfWork", is(branch.getStartOfWork().toString())),
-                jsonPath("$.endOfWork", is(branch.getEndOfWork().toString()))
+                jsonPath("$.phoneNumber", is(phoneNumber)),
+                jsonPath("$.address", is(branch.getAddress())),
+                jsonPath("$.endOfWork", is(toStringLocalTime(branch.getEndOfWork()))),
+                jsonPath("$.startOfWork", is(toStringLocalTime(branch.getStartOfWork())))
         );
     }
 
     @Test
-    @DisplayName("Обновление, негативный сценарий")
-    void updateNegativeTest() throws Exception {
+    @DisplayName("обновление по несуществующему id, негативный сценарий")
+    void updateNoIdNegativeTest() throws Exception {
         String errorMessage = "Обновление невозможно";
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).update(anyLong(), any());
@@ -233,12 +229,11 @@ public class BranchControllerTest extends ParentTest {
         ).andExpectAll(status().isNotFound(),
                 content().string(errorMessage));
     }
-    @Test
-    @DisplayName("Обновление, в id передана строка, негативный сценарий")
-    void updateWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
 
-        mockMvc.perform(put("/branch/" + wrongId)
+    @Test
+    @DisplayName("обновление по некорректному id, негативный сценарий")
+    void updateWrongIdNegativeTest() throws Exception {
+        mockMvc.perform(put("/branch/test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().is4xxClientError());

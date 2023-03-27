@@ -32,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// TODO починить тест и привести к виду AtmControllerTest
 @WebMvcTest(BankDetailsController.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class BankDetailsControllerTest extends ParentTest {
@@ -54,7 +53,7 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение позитивный сценарий")
+    @DisplayName("сохранение, позитивный сценарий")
     void savePositiveTest() throws Exception {
         doReturn(bankDetails).when(service).save(any());
 
@@ -81,8 +80,8 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение, негативный сценарий")
-    void saveNegativeTest() throws Exception {
+    @DisplayName("сохранение неверных данных, негативный сценарий")
+    void saveNoValidDataNegativeTest() throws Exception {
         String errorMessage = "Неверные данные";
         doThrow(new ValidationException(errorMessage)).when(service).save(any());
 
@@ -94,9 +93,8 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение, передан pdf, негативный сценарий")
+    @DisplayName("сохранение pdf вместо json, негативный сценарий")
     void saveWrongMediaTypeNegativeTest() throws Exception {
-
         mockMvc.perform(post("/bank-details")
                 .contentType(MediaType.APPLICATION_PDF)
                 .content(mapper.writeValueAsString(bankDetails))
@@ -104,7 +102,7 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение, позитивный сценарий")
+    @DisplayName("чтение, позитивный сценарий")
     void readPositiveTest() throws Exception {
         doReturn(bankDetails).when(service).read(any());
 
@@ -119,16 +117,16 @@ public class BankDetailsControllerTest extends ParentTest {
                         jsonPath("$.bik", is(bik)),
                         jsonPath("$.inn", is(inn)),
                         jsonPath("$.kpp", is(kpp)),
-                        jsonPath("$.corAccount", is(bankDetails.getCorAccount())),
+                        jsonPath("$.name", is(bankDetails.getName())),
                         jsonPath("$.city", is(bankDetails.getCity())),
-                        jsonPath("$.jointStockCompany", is(bankDetails.getJointStockCompany())),
-                        jsonPath("$.name", is(bankDetails.getName()))
+                        jsonPath("$.corAccount", is(bankDetails.getCorAccount())),
+                        jsonPath("$.jointStockCompany", is(bankDetails.getJointStockCompany()))
                 );
     }
 
     @Test
-    @DisplayName("Чтение, негативный сценарий")
-    void readNegativeTest() throws Exception {
+    @DisplayName("чтение несуществующего bank details, негативный сценарий")
+    void readNoBankDetailsNegativeTest() throws Exception {
         String errorMessage = "Информации нет";
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).read(any());
@@ -141,16 +139,14 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение, в id передана строка, негативный сценарий")
+    @DisplayName("чтение некорректного id, негативный сценарий")
     void readWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(get("/bank-details/" + wrongId))
+        mockMvc.perform(get("/bank-details/test"))
                 .andExpectAll(status().is4xxClientError());
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, позитивный сценарий")
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
     void readAllPositiveTest() throws Exception {
         final List<BankDetailsDto> bankDetailsList = returnBankDetailsList();
 
@@ -184,11 +180,11 @@ public class BankDetailsControllerTest extends ParentTest {
                         jsonPath("$.[1].bik", is(oneBik)),
                         jsonPath("$.[1].inn", is(oneInn)),
                         jsonPath("$.[1].kpp", is(oneKpp)),
-                        jsonPath("$.[1].corAccount", is(oneBankDetails.getCorAccount())),
+                        jsonPath("$.[1].name", is(oneBankDetails.getName())),
                         jsonPath("$.[1].city", is(oneBankDetails.getCity())),
-                        jsonPath("$.[1].jointStockCompany", is(oneBankDetails.getJointStockCompany())),
-                        jsonPath("$.[1].name", is(oneBankDetails.getName()))
-        );
+                        jsonPath("$.[1].corAccount", is(oneBankDetails.getCorAccount())),
+                        jsonPath("$.[1].jointStockCompany", is(oneBankDetails.getJointStockCompany()))
+                );
     }
 
     private List<BankDetailsDto> returnBankDetailsList() {
@@ -199,7 +195,7 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, негативный сценарий")
+    @DisplayName("чтение по нескольким id, негативный сценарий")
     void readAllNegativeTest() throws Exception {
         String errorMessage = "Ошибка в параметрах";
 
@@ -211,16 +207,14 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, в id передана строка, негативный сценарий")
+    @DisplayName("чтение по нескольким id, один из id некорректен, негативный сценарий")
     void readAllWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(get("/bank-details?id=1&id=" + wrongId))
+        mockMvc.perform(get("/bank-details?id=1&id=test"))
                 .andExpectAll(status().is4xxClientError());
     }
 
     @Test
-    @DisplayName("Обновление, позитивный сценарий")
+    @DisplayName("обновление, позитивный сценарий")
     void updatePositiveTest() throws Exception {
         doReturn(bankDetails).when(service).update(anyLong(), any());
 
@@ -237,16 +231,16 @@ public class BankDetailsControllerTest extends ParentTest {
                 jsonPath("$.bik", is(bik)),
                 jsonPath("$.inn", is(inn)),
                 jsonPath("$.kpp", is(kpp)),
-                jsonPath("$.corAccount", is(bankDetails.getCorAccount())),
+                jsonPath("$.name", is(bankDetails.getName())),
                 jsonPath("$.city", is(bankDetails.getCity())),
-                jsonPath("$.jointStockCompany", is(bankDetails.getJointStockCompany())),
-                jsonPath("$.name", is(bankDetails.getName()))
+                jsonPath("$.corAccount", is(bankDetails.getCorAccount())),
+                jsonPath("$.jointStockCompany", is(bankDetails.getJointStockCompany()))
         );
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
-    void updateNegativeTest() throws Exception {
+    @DisplayName("обновление несуществующего bank details, негативный сценарий")
+    void updateNoBankDetailsNegativeTest() throws Exception {
         String errorMessage = "Обновление невозможно";
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).update(anyLong(), any());
@@ -259,11 +253,9 @@ public class BankDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Обновление, в id передана строка, негативный сценарий")
+    @DisplayName("обновление, в id передана строка, негативный сценарий")
     void updateWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(put("/bank-details/" + wrongId)
+        mockMvc.perform(put("/bank-details/test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(bankDetails))
         ).andExpectAll(status().is4xxClientError());
