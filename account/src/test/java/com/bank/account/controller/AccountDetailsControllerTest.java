@@ -21,6 +21,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -49,11 +50,12 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @BeforeAll
     static void init() {
-        accountDetails = getAccountDetailsDto(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE, Boolean.TRUE, ONE);
+        accountDetails = AccountDetailsSupplier.getAccountDetailsDto(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE, Boolean.TRUE, ONE);
     }
 
+    //shouldReadAccountById
     @Test
-    @DisplayName("чтение позитивный сценарий")
+    @DisplayName("Чтение: позитивный сценарий")
     void readTest() throws Exception {
         doReturn(accountDetails).when(service).readById(any());
 
@@ -70,21 +72,49 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение негативный сценарий")
-    void readNegativeTest() throws Exception {
-        String massage = "Пользователя с таким id нет";
+    @DisplayName("Чтение: негативный сценарий 1")
+    void shouldFailReadByIdWhenUserNotFound() throws Exception {
+        String message = "Пользователя с таким id нет";
 
-        doThrow(new EntityNotFoundException(massage)).when(service).readById(any());
+        doThrow(new EntityNotFoundException(message)).when(service).readById(any());
 
         mock.perform(get("/details/{id}", ONE))
                 .andExpectAll(
                         status().isNotFound(),
-                        content().string(massage)
+                        content().string(message)
+                );
+    }
+
+
+    @Test
+    @DisplayName("Чтение: негативный сценарий 2")
+    void shouldFailReadByIdWhenBadId() throws Exception {
+
+       String message = "Некорректно указан id";
+
+       doThrow(new EntityNotFoundException(message)).when(service).readById(any());
+
+        mock.perform(get("/details/{id}", "foo"))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string(message)
+                        );
+    }
+
+    @Test
+    @DisplayName("Чтение: негативный сценарий 3 (id=null)")
+    void shouldFailReadByIdWhenIdIsNull() throws Exception {
+        String message = "Ошибка на стороне сервера.";
+
+        mock.perform(get("/details/{id}", (String) null))
+                .andExpectAll(
+                        status().isInternalServerError(),
+                        content().string(message)
                 );
     }
 
     @Test
-    @DisplayName("чтение по нескольким идентификаторам позитивный сценарий")
+    @DisplayName("Чтение по нескольким идентификаторам: позитивный сценарий")
     void readAllTest() throws Exception {
         doReturn(Collections.singletonList(accountDetails)).when(service).readAllById(any());
 
@@ -101,7 +131,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по нескольким идентификаторам негативный сценарий")
+    @DisplayName("Чтение по нескольким идентификаторам: негативный сценарий 1")
     void readAllNegativeTest() throws Exception {
         String massage = "Ошибка в переданных параметрах";
 
@@ -114,7 +144,37 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("создание позитивный сценарий")
+    @DisplayName("Чтение по нескольким идентификаторам: негативный сценарий 2")
+    void shouldFailReadAllByIdWhenBadId() throws Exception {
+
+        String message = "Некорректно указан id";
+
+        doThrow(new EntityNotFoundException(message)).when(service).readById(any());
+
+        mock.perform(get("/details/{id}", "foo"))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string(message)
+                );
+    }
+
+    @Test
+    @DisplayName("Чтение по нескольким идентификаторам: негативный сценарий 3 (id=null)")
+    void shouldFailReadAllByIdWhenIdIsNull() throws Exception {
+
+        String message = "Идентификатор не может быть null";
+
+        doThrow(new IllegalArgumentException(message)).when(service).readAllById(any());
+
+        mock.perform(get("/details?id="))
+                .andExpectAll(
+                        status().isUnprocessableEntity(),
+                        content().string(message)
+                );
+    }
+
+    @Test
+    @DisplayName("Создание: позитивный сценарий")
     void saveTest() throws Exception {
         doReturn(accountDetails).when(service).create(any());
 
@@ -132,29 +192,48 @@ public class AccountDetailsControllerTest extends ParentTest {
                 jsonPath("$.bankDetailsId", is(value(accountDetails.getBankDetailsId())))
         );
     }
-
+//todo переименовать названия негативных тестов в едином стиле
     @Test
-    @DisplayName("создание негативный сценарий")
+    @DisplayName("Создание негативный сценарий 1")
     void saveNegativeTest() throws Exception {
-        String massage = "Неверные данные";
+        String message = "Неверные данные";
 
-        doThrow(new ValidationException(massage)).when(service).create(any());
+        doThrow(new ValidationException(message)).when(service).create(any());
 
         response = mock.perform(post("/details")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(accountDetails)));
 
         response.andExpectAll(status().isUnprocessableEntity(),
-                content().string(massage)
+                content().string(message)
         );
     }
+
+    @Test
+    @DisplayName("Создание негативный сценарий 2")
+    void shouldFailSaveIfPostEmptyJson() throws Exception {
+        String message = "Неверный http-запрос";
+        String json = "";
+
+        doThrow(new ValidationException(message)).when(service).create(any());
+
+        response = mock.perform(post("/details")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json));
+
+        response.andExpectAll(status().isBadRequest(),
+                content().string(containsString("Required request body is missing")));
+
+
+    }
+
 
     private Integer value(Long value) {
         return value.intValue();
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
+    @DisplayName("Обновление: позитивный сценарий")
     void updateTest() throws Exception {
         doReturn(accountDetails).when(service).update(anyLong(), any());
 
@@ -174,7 +253,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление негативный сценарий")
+    @DisplayName("Обновление: негативный сценарий 1")
     void updateNegativeTest() throws Exception {
         String massage = "Обновление невозможно";
 
@@ -188,4 +267,37 @@ public class AccountDetailsControllerTest extends ParentTest {
                 content().string(massage)
         );
     }
+
+    @Test
+    @DisplayName("Обновление: негативный сценарий 2")
+    void updateNegativeTest_IdNotFound() throws Exception {
+        String message = "Запись не найдена";
+
+        doThrow(new EntityNotFoundException(message)).when(service).update(anyLong(), any());
+
+        response = mock.perform(put("/details/{id}", ONE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(accountDetails)));
+
+        response.andExpectAll(status().isNotFound(),
+                content().string(message)
+        );
+    }
+
+    @Test
+    @DisplayName("Обновление: негативный сценарий 3 (id=null)")
+    void updateNegativeTest_NullId() throws Exception {
+        String massage = "Ошибка на стороне сервера.";
+
+        response = mock.perform(put("/details/{id}", (Long) null)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(accountDetails)));
+
+        response.andExpectAll(status().isInternalServerError(),
+                content().string(massage)
+        );
+    }
+
+
+
 }
