@@ -10,7 +10,11 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.bank.account.ParentTest.AccountDetailsSupplier.*;
+import static com.bank.account.ParentTest.AccountDetailsSupplier.getAccountDetailsDto;
+import static com.bank.account.ParentTest.AccountDetailsSupplier.getAccountDetails;
+import static com.bank.account.ParentTest.AccountDetailsSupplier.getZeroElement;
+import static com.bank.account.ParentTest.AccountDetailsSupplier.getZeroEntityElement;
+import static com.bank.account.ParentTest.AccountDetailsSupplier.getAccountDetailsList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

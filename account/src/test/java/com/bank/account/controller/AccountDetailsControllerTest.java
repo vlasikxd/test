@@ -20,6 +20,7 @@ import javax.persistence.EntityNotFoundException;
 
 import java.util.Collections;
 
+import static com.bank.account.ParentTest.AccountDetailsSupplier.getAccountDetailsDto;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
@@ -50,7 +51,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @BeforeAll
     static void init() {
-        accountDetails = AccountDetailsSupplier.getAccountDetailsDto(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE, Boolean.TRUE, ONE);
+        accountDetails = getAccountDetailsDto(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE, Boolean.TRUE, ONE);
     }
 
     //shouldReadAccountById
@@ -73,7 +74,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Чтение: негативный сценарий 1")
-    void shouldFailReadByIdWhenUserNotFound() throws Exception {
+    void readNegativeTest1() throws Exception {
         String message = "Пользователя с таким id нет";
 
         doThrow(new EntityNotFoundException(message)).when(service).readById(any());
@@ -88,7 +89,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Чтение: негативный сценарий 2")
-    void shouldFailReadByIdWhenBadId() throws Exception {
+    void readNegativeTest2() throws Exception {
 
        String message = "Некорректно указан id";
 
@@ -103,7 +104,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Чтение: негативный сценарий 3 (id=null)")
-    void shouldFailReadByIdWhenIdIsNull() throws Exception {
+    void readNegativeTest3() throws Exception {
         String message = "Ошибка на стороне сервера.";
 
         mock.perform(get("/details/{id}", (String) null))
@@ -132,7 +133,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Чтение по нескольким идентификаторам: негативный сценарий 1")
-    void readAllNegativeTest() throws Exception {
+    void readAllNegativeTest1() throws Exception {
         String massage = "Ошибка в переданных параметрах";
 
         doThrow(new EntityNotFoundException(massage)).when(service).readAllById(any());
@@ -145,7 +146,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Чтение по нескольким идентификаторам: негативный сценарий 2")
-    void shouldFailReadAllByIdWhenBadId() throws Exception {
+    void readAllNegativeTest2() throws Exception {
 
         String message = "Некорректно указан id";
 
@@ -160,7 +161,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Чтение по нескольким идентификаторам: негативный сценарий 3 (id=null)")
-    void shouldFailReadAllByIdWhenIdIsNull() throws Exception {
+    void readAllNegativeTest3() throws Exception {
 
         String message = "Идентификатор не может быть null";
 
@@ -195,7 +196,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 //todo переименовать названия негативных тестов в едином стиле
     @Test
     @DisplayName("Создание негативный сценарий 1")
-    void saveNegativeTest() throws Exception {
+    void saveNegativeTest1() throws Exception {
         String message = "Неверные данные";
 
         doThrow(new ValidationException(message)).when(service).create(any());
@@ -211,7 +212,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Создание негативный сценарий 2")
-    void shouldFailSaveIfPostEmptyJson() throws Exception {
+    void saveNegativeTest2() throws Exception {
         String message = "Неверный http-запрос";
         String json = "";
 
@@ -254,7 +255,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Обновление: негативный сценарий 1")
-    void updateNegativeTest() throws Exception {
+    void updateNegativeTest1() throws Exception {
         String massage = "Обновление невозможно";
 
         doThrow(new EntityNotFoundException(massage)).when(service).update(anyLong(), any());
@@ -270,7 +271,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Обновление: негативный сценарий 2")
-    void updateNegativeTest_IdNotFound() throws Exception {
+    void updateNegativeTest2() throws Exception {
         String message = "Запись не найдена";
 
         doThrow(new EntityNotFoundException(message)).when(service).update(anyLong(), any());
@@ -286,7 +287,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("Обновление: негативный сценарий 3 (id=null)")
-    void updateNegativeTest_NullId() throws Exception {
+    void updateNegativeTest3() throws Exception {
         String massage = "Ошибка на стороне сервера.";
 
         response = mock.perform(put("/details/{id}", (Long) null)

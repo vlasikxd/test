@@ -42,7 +42,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     private AccountDetailsRepository repository;
 
     @Spy
-    private AccountDetailsMapperImpl mapper;
+    private AccountDetailsMapper mapper;
 
     @BeforeAll
     static void init() {
