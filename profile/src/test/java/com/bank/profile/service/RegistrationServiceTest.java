@@ -8,6 +8,7 @@ import com.bank.profile.repository.RegistrationRepository;
 import com.bank.profile.service.imp.RegistrationServiceImp;
 import com.bank.profile.supplier.RegistrationSupplier;
 import com.bank.profile.validator.EntityListValidator;
+import com.bank.profile.validator.DtoValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,16 +45,18 @@ public class RegistrationServiceTest extends ParentTest {
     private RegistrationMapperImpl mapper;
     @Spy
     private EntityListValidator validator;
+    @Spy
+    private DtoValidator<RegistrationDto> dtoValidator;
 
     @BeforeAll
     static void init() {
         RegistrationSupplier registrationSupplier = new RegistrationSupplier();
 
-        registration = registrationSupplier.getEntity(ONE, WHITESPACE, TWO);
+        registration = registrationSupplier.getEntity(ONE, WHITESPACE, NUMBER);
 
-        updatedRegistration = registrationSupplier.getEntity(ONE, WHITESPACE, ONE);
+        updatedRegistration = registrationSupplier.getEntity(ONE, WHITESPACE, NUMBER);
 
-        updatedRegistrationDto = registrationSupplier.getDto(ONE, WHITESPACE, ONE);
+        updatedRegistrationDto = registrationSupplier.getDto(ONE, WHITESPACE, NUMBER);
     }
 
     @Test
@@ -182,28 +185,16 @@ public class RegistrationServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, dto равен null, позитивный сценарий")
-    void updateNullDtoPositiveTest() {
-        doReturn(registration).when(repository).save(any());
-        findByIdMock();
+    @DisplayName("обновление, dto равен null, негативный сценарий")
+    void updateNullDtoNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, registration не найден!";
+        findByIdEmptyMock();
 
-        final RegistrationDto result = service.update(ONE, null);
-
-        assertAll(
-                () -> {
-                    assertEquals(registration.getId(), result.getId());
-                    assertEquals(registration.getCity(), result.getCity());
-                    assertEquals(registration.getIndex(), result.getIndex());
-                    assertEquals(registration.getRegion(), result.getRegion());
-                    assertEquals(registration.getStreet(), result.getStreet());
-                    assertEquals(registration.getCountry(), result.getCountry());
-                    assertEquals(registration.getDistrict(), result.getDistrict());
-                    assertEquals(registration.getLocality(), result.getLocality());
-                    assertEquals(registration.getHouseBlock(), result.getHouseBlock());
-                    assertEquals(registration.getFlatNumber(), result.getFlatNumber());
-                    assertEquals(registration.getHouseNumber(), result.getHouseNumber());
-                }
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, null)
         );
+
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test

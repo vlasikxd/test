@@ -1,11 +1,13 @@
 package com.bank.profile.service.imp;
 
+import com.bank.common.exception.ValidationException;
 import com.bank.profile.dto.ProfileDto;
 import com.bank.profile.mapper.ProfileMapper;
 import com.bank.profile.entity.ProfileEntity;
 import com.bank.profile.repository.ProfileRepository;
 import com.bank.profile.service.ProfileService;
 import com.bank.profile.validator.EntityListValidator;
+import com.bank.profile.validator.DtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -26,6 +28,7 @@ public class ProfileServiceImp implements ProfileService {
     ProfileRepository repository;
     ProfileMapper mapper;
     EntityListValidator validator;
+    DtoValidator<ProfileDto> dtoValidator;
 
     /**
      * @param id технический идентификатор для {@link ProfileEntity}.
@@ -47,6 +50,12 @@ public class ProfileServiceImp implements ProfileService {
     @Transactional
     public ProfileDto save(ProfileDto profileDto) {
         final ProfileEntity profile = repository.save(mapper.toEntity(profileDto));
+
+        dtoValidator.validate(
+                profileDto,
+                () -> new ValidationException("Сохранение невозможно, неверные данные")
+        );
+
         return mapper.toDto(profile);
     }
 
@@ -63,6 +72,11 @@ public class ProfileServiceImp implements ProfileService {
         final ProfileEntity profile = repository.save(
                 mapper.mergeToEntity(profileDto, profileEntityById)
         );
+        dtoValidator.validate(
+                profileDto,
+                () -> new ValidationException("Обновление невозможно, неверные данные")
+        );
+
         return mapper.toDto(profile);
     }
 

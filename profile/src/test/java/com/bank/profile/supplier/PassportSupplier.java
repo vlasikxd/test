@@ -12,15 +12,15 @@ public class PassportSupplier extends ParentTest {
 
     public PassportDto getDto(Long id, String lastName, String firstName,
                               LocalDate birthDate, RegistrationDto registration) {
-        return new PassportDto(id, INT_ONE, TWO, lastName, firstName, WHITESPACE, WHITESPACE, birthDate,
-                WHITESPACE, WHITESPACE, LOCAL_DATE, INT_ONE, LOCAL_DATE, registration
+        return new PassportDto(id, INT_ONE, NUMBER, lastName, firstName, WHITESPACE, GENDER, birthDate,
+                WHITESPACE, WHITESPACE, LOCAL_DATE, INT_TWO, LOCAL_DATE, registration
         );
     }
 
     public PassportEntity getEntity(Long id, String lastName, String firstName,
                                     LocalDate birthDate, RegistrationEntity registration) {
-        return new PassportEntity(id, INT_ONE, TWO, lastName, firstName, WHITESPACE, WHITESPACE, birthDate,
-                WHITESPACE, WHITESPACE, LOCAL_DATE, INT_ONE, LOCAL_DATE, registration
+        return new PassportEntity(id, INT_ONE, NUMBER, lastName, firstName, WHITESPACE, GENDER, birthDate,
+                WHITESPACE, WHITESPACE, LOCAL_DATE, INT_TWO, LOCAL_DATE, registration
         );
     }
 }

@@ -50,7 +50,7 @@ public class ProfileControllerTest extends ParentTest {
     static void init() {
         profileSupplier = new ProfileSupplier();
 
-        profile = profileSupplier.getDto(ONE, ONE, WHITESPACE, WHITESPACE);
+        profile = profileSupplier.getDto(ONE, PHONE_NUMBER, EMAIL, WHITESPACE);
     }
 
     @Test
@@ -62,8 +62,8 @@ public class ProfileControllerTest extends ParentTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(profile)))
                 .andExpectAll(status().isOk(),
-                        jsonPath("$.inn", is(getIntFromLong(profile.getInn()))),
-                        jsonPath("$.snils", is(getIntFromLong(profile.getSnils()))),
+                        jsonPath("$.inn", is(profile.getInn())),
+                        jsonPath("$.snils", is(profile.getSnils())),
                         jsonPath("$.phoneNumber", is(getIntFromLong(profile.getPhoneNumber()))),
                         jsonPath("$.email", is(profile.getEmail())),
                         jsonPath("$.passport", is(profile.getPassport())),
@@ -109,15 +109,13 @@ public class ProfileControllerTest extends ParentTest {
         doReturn(profile).when(service).read(any());
 
         final int id = getIntFromLong(profile.getId());
-        final int inn = getIntFromLong(profile.getInn());
-        final int snils = getIntFromLong(profile.getSnils());
         final int phoneNumber = getIntFromLong(profile.getPhoneNumber());
 
         mockMvc.perform(get("/profile/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
-                        jsonPath("$.inn", is(inn)),
-                        jsonPath("$.snils", is(snils)),
+                        jsonPath("$.inn", is(profile.getInn())),
+                        jsonPath("$.snils", is(profile.getSnils())),
                         jsonPath("$.phoneNumber", is(phoneNumber)),
                         jsonPath("$.email", is(profile.getEmail())),
                         jsonPath("$.passport", is(profile.getPassport())),
@@ -162,13 +160,9 @@ public class ProfileControllerTest extends ParentTest {
         final var oneProfile = profiles.get(1);
 
         final int zeroId = getIntFromLong(zeroProfile.getId());
-        final int zeroInn = getIntFromLong(zeroProfile.getInn());
-        final int zeroSnils = getIntFromLong(zeroProfile.getSnils());
         final int zeroPhoneNumber = getIntFromLong(zeroProfile.getPhoneNumber());
 
         final int oneId = getIntFromLong(oneProfile.getId());
-        final int oneInn = getIntFromLong(oneProfile.getInn());
-        final int oneSnils = getIntFromLong(oneProfile.getSnils());
         final int onePhoneNumber = getIntFromLong(oneProfile.getPhoneNumber());
 
         doReturn(profiles).when(service).readAll(any());
@@ -176,16 +170,16 @@ public class ProfileControllerTest extends ParentTest {
         mockMvc.perform(get("/profile?id=1&id=2")).andExpectAll(status().isOk(),
                 jsonPath("$", hasSize(profiles.size())),
                 jsonPath("$.[0].id", is(zeroId)),
-                jsonPath("$.[0].inn", is(zeroInn)),
-                jsonPath("$.[0].snils", is(zeroSnils)),
+                jsonPath("$.[0].inn", is(zeroProfile.getInn())),
+                jsonPath("$.[0].snils", is(zeroProfile.getSnils())),
                 jsonPath("$.[0].phoneNumber", is(zeroPhoneNumber)),
                 jsonPath("$.[0].email", is(zeroProfile.getEmail())),
                 jsonPath("$.[0].passport", is(zeroProfile.getPassport())),
                 jsonPath("$.[0].nameOnCard", is(zeroProfile.getNameOnCard())),
                 jsonPath("$.[0].actualRegistration", is(zeroProfile.getActualRegistration())),
                 jsonPath("$.[1].id", is(oneId)),
-                jsonPath("$.[1].inn", is(oneInn)),
-                jsonPath("$.[1].snils", is(oneSnils)),
+                jsonPath("$.[1].inn", is(oneProfile.getInn())),
+                jsonPath("$.[1].snils", is(oneProfile.getSnils())),
                 jsonPath("$.[1].phoneNumber", is(onePhoneNumber)),
                 jsonPath("$.[1].email", is(oneProfile.getEmail())),
                 jsonPath("$.[1].passport", is(oneProfile.getPassport())),
@@ -233,8 +227,6 @@ public class ProfileControllerTest extends ParentTest {
         doReturn(profile).when(service).update(anyLong(), any());
 
         final int id = getIntFromLong(profile.getId());
-        final int inn = getIntFromLong(profile.getInn());
-        final int snils = getIntFromLong(profile.getSnils());
         final int phoneNumber = getIntFromLong(profile.getPhoneNumber());
 
         mockMvc.perform(put("/profile/{id}", ONE)
@@ -242,8 +234,8 @@ public class ProfileControllerTest extends ParentTest {
                         .content(mapper.writeValueAsString(profile)))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
-                        jsonPath("$.inn", is(inn)),
-                        jsonPath("$.snils", is(snils)),
+                        jsonPath("$.inn", is(profile.getInn())),
+                        jsonPath("$.snils", is(profile.getSnils())),
                         jsonPath("$.phoneNumber", is(phoneNumber)),
                         jsonPath("$.email", is(profile.getEmail())),
                         jsonPath("$.passport", is(profile.getPassport())),

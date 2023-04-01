@@ -1,11 +1,13 @@
 package com.bank.profile.service.imp;
 
+import com.bank.common.exception.ValidationException;
 import com.bank.profile.dto.RegistrationDto;
 import com.bank.profile.entity.RegistrationEntity;
 import com.bank.profile.mapper.RegistrationMapper;
 import com.bank.profile.repository.RegistrationRepository;
 import com.bank.profile.service.RegistrationService;
 import com.bank.profile.validator.EntityListValidator;
+import com.bank.profile.validator.DtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -26,6 +28,7 @@ public class RegistrationServiceImp implements RegistrationService {
     RegistrationRepository repository;
     RegistrationMapper mapper;
     EntityListValidator validator;
+    DtoValidator<RegistrationDto> dtoValidator;
 
     /**
      * @param id технический идентификатор для {@link RegistrationEntity}.
@@ -47,6 +50,12 @@ public class RegistrationServiceImp implements RegistrationService {
     @Transactional
     public RegistrationDto save(RegistrationDto registrationDto) {
         final RegistrationEntity registration = repository.save(mapper.toEntity(registrationDto));
+
+        dtoValidator.validate(
+                registrationDto,
+                () -> new ValidationException("Сохранение невозможно, неверные данные")
+        );
+
         return mapper.toDto(registration);
     }
 
@@ -63,6 +72,11 @@ public class RegistrationServiceImp implements RegistrationService {
         final RegistrationEntity registration = repository.save(
                 mapper.mergeToEntity(registrationDto, registrationEntityById)
         );
+        dtoValidator.validate(
+                registrationDto,
+                () -> new ValidationException("Обновление невозможно, неверные данные")
+        );
+
         return mapper.toDto(registration);
     }
 

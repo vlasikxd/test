@@ -51,7 +51,7 @@ public class ActualRegistrationControllerTest extends ParentTest {
         actualRegistrationSupplier = new ActualRegistrationSupplier();
 
         actualRegistration = actualRegistrationSupplier.getDto(
-                ONE, WHITESPACE, TWO
+                ONE, WHITESPACE, NUMBER
         );
     }
 
