@@ -1,5 +1,6 @@
 package com.bank.profile.service.imp;
 
+import com.bank.common.exception.ValidationException;
 import com.bank.profile.dto.ActualRegistrationDto;
 import com.bank.profile.entity.AccountDetailsIdEntity;
 import com.bank.profile.mapper.ActualRegistrationMapper;
@@ -7,6 +8,7 @@ import com.bank.profile.entity.ActualRegistrationEntity;
 import com.bank.profile.repository.ActualRegistrationRepository;
 import com.bank.profile.service.ActualRegistrationService;
 import com.bank.profile.validator.EntityListValidator;
+import com.bank.profile.validator.DtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -27,6 +29,7 @@ public class ActualRegistrationServiceImp implements ActualRegistrationService {
     ActualRegistrationRepository repository;
     ActualRegistrationMapper mapper;
     EntityListValidator validator;
+    DtoValidator<ActualRegistrationDto> dtoValidator;
 
     /**
      * @param id технический идентификатор для {@link ActualRegistrationEntity}.
@@ -48,6 +51,12 @@ public class ActualRegistrationServiceImp implements ActualRegistrationService {
     @Transactional
     public ActualRegistrationDto save(ActualRegistrationDto actualRegistrationDto) {
         final ActualRegistrationEntity actualRegistration = repository.save(mapper.toEntity(actualRegistrationDto));
+
+        dtoValidator.validate(
+                actualRegistrationDto,
+                () -> new ValidationException("Сохранение невозможно, неверные данные")
+        );
+
         return mapper.toDto(actualRegistration);
     }
 
@@ -65,6 +74,11 @@ public class ActualRegistrationServiceImp implements ActualRegistrationService {
         final ActualRegistrationEntity registration = repository.save(
                 mapper.mergeToEntity(actualRegistrationDto, registrationById)
         );
+        dtoValidator.validate(
+                actualRegistrationDto,
+                () -> new ValidationException("Обновление невозможно, неверные данные")
+        );
+
         return mapper.toDto(registration);
     }
 

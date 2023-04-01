@@ -8,6 +8,7 @@ import com.bank.profile.repository.PassportRepository;
 import com.bank.profile.service.imp.PassportServiceImp;
 import com.bank.profile.supplier.PassportSupplier;
 import com.bank.profile.validator.EntityListValidator;
+import com.bank.profile.validator.DtoValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,8 @@ public class PassportServiceTest extends ParentTest {
     private PassportMapperImpl mapper;
     @Spy
     private EntityListValidator validator;
+    @Spy
+    private DtoValidator<PassportDto> dtoValidator;
 
     @BeforeAll
     static void init() {
@@ -184,7 +187,7 @@ public class PassportServiceTest extends ParentTest {
         final String exceptionMessage = "Обновление невозможно, passport не найден!";
         findByIdEmptyMock();
 
-        final EntityNotFoundException exception = assertThrows(
+        final var exception = assertThrows(
                 EntityNotFoundException.class, () -> service.update(null, updatedPassportDto)
         );
 
@@ -192,31 +195,16 @@ public class PassportServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, dto равен null, позитивный сценарий")
-    void updateNullDtoPositiveTest() {
-        doReturn(passport).when(repository).save(any());
-        findByIdMock();
+    @DisplayName("обновление, dto равен null, негативный сценарий")
+    void updateNullDtoNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, passport не найден!";
+        findByIdEmptyMock();
 
-        final PassportDto result = service.update(ONE, null);
-
-        assertAll(
-                () -> {
-                    assertNull(passport.getRegistration());
-                    assertEquals(passport.getId(), result.getId());
-                    assertEquals(passport.getSeries(), result.getSeries());
-                    assertEquals(passport.getNumber(), result.getNumber());
-                    assertEquals(passport.getGender(), result.getGender());
-                    assertEquals(passport.getLastName(), result.getLastName());
-                    assertEquals(passport.getIssuedBy(), result.getIssuedBy());
-                    assertEquals(passport.getFirstName(), result.getFirstName());
-                    assertEquals(passport.getBirthDate(), result.getBirthDate());
-                    assertEquals(passport.getMiddleName(), result.getMiddleName());
-                    assertEquals(passport.getBirthPlace(), result.getBirthPlace());
-                    assertEquals(passport.getDateOfIssue(), result.getDateOfIssue());
-                    assertEquals(passport.getDivisionCode(), result.getDivisionCode());
-                    assertEquals(passport.getExpirationDate(), result.getExpirationDate());
-                }
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, null)
         );
+
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test

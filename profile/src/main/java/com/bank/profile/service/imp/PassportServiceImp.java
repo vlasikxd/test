@@ -1,11 +1,13 @@
 package com.bank.profile.service.imp;
 
+import com.bank.common.exception.ValidationException;
 import com.bank.profile.dto.PassportDto;
 import com.bank.profile.entity.PassportEntity;
 import com.bank.profile.mapper.PassportMapper;
 import com.bank.profile.repository.PassportRepository;
 import com.bank.profile.service.PassportService;
 import com.bank.profile.validator.EntityListValidator;
+import com.bank.profile.validator.DtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -26,6 +28,7 @@ public class PassportServiceImp implements PassportService {
     PassportRepository repository;
     PassportMapper mapper;
     EntityListValidator validator;
+    DtoValidator<PassportDto> dtoValidator;
 
     /**
      * @param id технический идентификатор для {@link PassportEntity}.
@@ -47,6 +50,12 @@ public class PassportServiceImp implements PassportService {
     @Transactional
     public PassportDto save(PassportDto passportDto) {
         final PassportEntity passport = repository.save(mapper.toEntity(passportDto));
+
+        dtoValidator.validate(
+                passportDto,
+                () -> new ValidationException("Сохранение невозможно, неверные данные")
+        );
+
         return mapper.toDto(passport);
     }
 
@@ -63,6 +72,12 @@ public class PassportServiceImp implements PassportService {
         final PassportEntity actualRegistration = repository.save(
                 mapper.mergeToEntity(passportDto, passportEntityById)
         );
+
+        dtoValidator.validate(
+                passportDto,
+                () -> new ValidationException("Обновление невозможно, неверные данные")
+        );
+
         return mapper.toDto(actualRegistration);
     }
 

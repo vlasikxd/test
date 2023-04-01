@@ -8,6 +8,7 @@ import com.bank.profile.repository.ProfileRepository;
 import com.bank.profile.service.imp.ProfileServiceImp;
 import com.bank.profile.supplier.ProfileSupplier;
 import com.bank.profile.validator.EntityListValidator;
+import com.bank.profile.validator.DtoValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,16 +46,18 @@ public class ProfileServiceTest extends ParentTest {
     private ProfileMapperImpl mapper;
     @Spy
     private EntityListValidator validator;
+    @Spy
+    private DtoValidator<ProfileDto> dtoValidator;
 
     @BeforeAll
     static void init() {
         ProfileSupplier profileSupplier = new ProfileSupplier();
 
-        profile = profileSupplier.getEntity(ONE, ONE, WHITESPACE, WHITESPACE);
+        profile = profileSupplier.getEntity(ONE, PHONE_NUMBER, EMAIL, WHITESPACE);
 
-        updatedProfile = profileSupplier.getEntity(ONE, TWO, WHITESPACE, WHITESPACE);
+        updatedProfile = profileSupplier.getEntity(ONE, PHONE_NUMBER, EMAIL, WHITESPACE);
 
-        updatedProfileDto = profileSupplier.getDto(ONE, TWO, WHITESPACE, WHITESPACE);
+        updatedProfileDto = profileSupplier.getDto(ONE, PHONE_NUMBER, EMAIL, WHITESPACE);
     }
 
     @Test
@@ -174,25 +177,16 @@ public class ProfileServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, dto равен null, позитивный сценарий")
-    void updateNullDtoPositiveTest() {
-        doReturn(profile).when(repository).save(any());
-        findByIdMock();
+    @DisplayName("обновление, dto равен null, негативный сценарий")
+    void updateNullDtoNegativeTest() {
+        final String exceptionMessage = "Обновление невозможно, profile не найден!";
+        findByIdEmptyMock();
 
-        final ProfileDto result = service.update(ONE, null);
-
-        assertAll(
-                () -> {
-                    assertNull(result.getPassport());
-                    assertNull(result.getActualRegistration());
-                    assertEquals(profile.getId(), result.getId());
-                    assertEquals(profile.getInn(), result.getInn());
-                    assertEquals(profile.getEmail(), result.getEmail());
-                    assertEquals(profile.getSnils(), result.getSnils());
-                    assertEquals(profile.getNameOnCard(), result.getNameOnCard());
-                    assertEquals(profile.getPhoneNumber(), result.getPhoneNumber());
-                }
+        final var exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, null)
         );
+
+        assertEquals(exceptionMessage, exception.getMessage());
     }
 
     @Test

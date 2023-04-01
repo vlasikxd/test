@@ -50,7 +50,7 @@ public class RegistrationControllerTest extends ParentTest {
     static void init() {
         registrationSupplier = new RegistrationSupplier();
 
-        registration = registrationSupplier.getDto(ONE, WHITESPACE, TWO);
+        registration = registrationSupplier.getDto(ONE, WHITESPACE, NUMBER);
     }
 
     @Test

@@ -7,10 +7,10 @@ import com.bank.profile.entity.ProfileEntity;
 public class ProfileSupplier extends ParentTest {
 
     public ProfileDto getDto(Long id, Long phoneNumber, String email, String nameOnCard) {
-        return new ProfileDto(id, phoneNumber, email, nameOnCard, TWO, TWO, null, null);
+        return new ProfileDto(id, phoneNumber, email, nameOnCard, INN, SNILS, null, null);
     }
 
     public ProfileEntity getEntity(Long id, Long phoneNumber, String email, String nameOnCard) {
-        return new ProfileEntity(id, phoneNumber, email, nameOnCard, TWO, TWO, null, null);
+        return new ProfileEntity(id, phoneNumber, email, nameOnCard, INN, SNILS, null, null);
     }
 }
