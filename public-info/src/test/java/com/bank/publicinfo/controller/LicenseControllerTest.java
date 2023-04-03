@@ -53,24 +53,22 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение, позитивный сценарий")
+    @DisplayName("сохранение, позитивный сценарий")
     void savePositiveTest() throws Exception {
         doReturn(license).when(service).save(any());
-
-        final int photo = getIntFromByte(license.getPhoto());
 
         mockMvc.perform(post("/license")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(license))
         ).andExpectAll(status().isOk(),
-                jsonPath("$.photo", is(photo)),
+                jsonPath("$.photo", is(getIntFromByte(license.getPhoto()))),
                 jsonPath("$.bankDetails", is(license.getBankDetails()))
         );
     }
 
     @Test
-    @DisplayName("Сохранение, негативный сценарий")
-    void saveNegativeTest() throws Exception {
+    @DisplayName("сохранение некорректных данных, негативный сценарий")
+    void saveNoValidDataNegativeTest() throws Exception {
         String errorMessage = "Неверные данные";
 
         doThrow(new ValidationException(errorMessage)).when(service).save(any());
@@ -84,35 +82,33 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение, передан pdf, негативный сценарий")
+    @DisplayName("cохранение pdf вместо json, негативный сценарий")
     void saveWrongMediaTypeNegativeTest() throws Exception {
-        mockMvc.perform(
-                post("/license")
+        mockMvc.perform(post("/license")
                         .contentType(MediaType.APPLICATION_PDF)
                         .content(mapper.writeValueAsString(license))
         ).andExpectAll(status().is5xxServerError());
     }
 
     @Test
-    @DisplayName("Чтение, позитивный сценарий")
+    @DisplayName("чтение, позитивный сценарий")
     void readPositiveTest() throws Exception {
         doReturn(license).when(service).read(any());
 
-        final int photo = getIntFromByte(license.getPhoto());
         final int id = getIntFromLong(license.getId());
 
         mockMvc.perform(get("/license/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
-                        jsonPath("$.photo", is(photo)),
+                        jsonPath("$.photo", is(getIntFromByte(license.getPhoto()))),
                         jsonPath("$.bankDetails", is(license.getBankDetails()))
 
                 );
     }
 
     @Test
-    @DisplayName("Чтение, негативный сценарий")
-    void readNegativeTest() throws Exception {
+    @DisplayName("чтение несуществующей лицензии, негативный сценарий")
+    void readNoLicenseNegativeTest() throws Exception {
         String errorMessage = "Лицензии нет";
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).read(any());
@@ -125,18 +121,15 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение, в id передана строка, негативный сценарий")
+    @DisplayName("чтение некорректного id, негативный сценарий")
     void readWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(get("/license/" + wrongId))
+        mockMvc.perform(get("/license/test"))
                 .andExpectAll(status().is4xxClientError());
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, позитивный сценарий")
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
     void readAllPositiveTest() throws Exception {
-
         final List<LicenseDto> licenses = returnLicenses();
 
         doReturn(licenses).when(service).readAll(any());
@@ -144,19 +137,17 @@ public class LicenseControllerTest extends ParentTest {
         final LicenseDto zeroLicense = licenses.get(0);
         final LicenseDto oneLicense = licenses.get(1);
 
-        final int zeroPhoto = getIntFromByte(zeroLicense.getPhoto());
         final int zeroId = getIntFromLong(zeroLicense.getId());
 
-        final int onePhoto = getIntFromByte(oneLicense.getPhoto());
         final int oneId = getIntFromLong(oneLicense.getId());
 
         mockMvc.perform(get("/license?id=1&id=2")).andExpectAll(status().isOk(),
                 jsonPath("$", hasSize(licenses.size())),
                 jsonPath("$.[0].id", is(zeroId)),
-                jsonPath("$.[0].photo", is(zeroPhoto)),
+                jsonPath("$.[0].photo", is(getIntFromByte(zeroLicense.getPhoto()))),
                 jsonPath("$.[0].bankDetails", is(zeroLicense.getBankDetails())),
                 jsonPath("$.[1].id", is(oneId)),
-                jsonPath("$.[1].photo", is(onePhoto)),
+                jsonPath("$.[1].photo", is(getIntFromByte(oneLicense.getPhoto()))),
                 jsonPath("$.[1].bankDetails", is(oneLicense.getBankDetails()))
         );
     }
@@ -169,33 +160,31 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, негативный сценарий")
-    void readAllNegativeTest() throws Exception {
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
+    void readAllNoIdNegativeTest() throws Exception {
         String errorMessage = "Ошибка в параметрах";
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
-        mockMvc.perform(get("/license?id=1")
-        ).andExpectAll(status().isNotFound(),
-                content().string(errorMessage)
-        );
+        mockMvc.perform(get("/license?id=1"))
+                .andExpectAll(
+                        status().isNotFound(),
+                        content().string(errorMessage)
+                );
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, в id передана строка, негативный сценарий")
+    @DisplayName("чтение по нескольким id, одно id некорректно, негативный сценарий")
     void readAllWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(get("/license?id=1&id=" + wrongId))
+        mockMvc.perform(get("/license?id=1&id=test"))
                 .andExpectAll(status().is4xxClientError());
     }
 
     @Test
-    @DisplayName("Обновление, позитивный сценарий")
+    @DisplayName("обновление, позитивный сценарий")
     void updatePositiveTest() throws Exception {
         doReturn(license).when(service).update(anyLong(), any());
 
-        final int photo = getIntFromByte(license.getPhoto());
         final int id = getIntFromLong(license.getId());
 
         mockMvc.perform(put("/license/{id}", ONE).
@@ -203,14 +192,14 @@ public class LicenseControllerTest extends ParentTest {
                 .content(mapper.writeValueAsString(license))
         ).andExpectAll(status().isOk(),
                 jsonPath("$.id", is(id)),
-                jsonPath("$.photo", is(photo)),
+                jsonPath("$.photo", is(getIntFromByte(license.getPhoto()))),
                 jsonPath("$.bankDetails", is(license.getBankDetails()))
         );
     }
 
     @Test
-    @DisplayName("Обновление, негативный сценарий")
-    void updateNegativeTest() throws Exception {
+    @DisplayName("обновление несуществующей лицензии, негативный сценарий")
+    void updateNoIdNegativeTest() throws Exception {
         String errorMessage = "Обновление невозможно";
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).update(anyLong(), any());
@@ -224,11 +213,9 @@ public class LicenseControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Обновление, в id передана строка, негативный сценарий")
+    @DisplayName("обновление некорректного id, негативный сценарий")
     void updateWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(put("/license/" + wrongId)
+        mockMvc.perform(put("/license/test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(license))
         ).andExpectAll(status().is4xxClientError());

@@ -53,24 +53,22 @@ public class CertificateControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение, позитивный сценарий")
+    @DisplayName("сохранение, позитивный сценарий")
     void savePositiveTest() throws Exception {
         doReturn(certificate).when(service).save(any());
-
-        final int photo = getIntFromByte(certificate.getPhoto());
 
         mockMvc.perform(post("/certificate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(certificate))
         ).andExpectAll(status().isOk(),
-                jsonPath("$.photo", is(photo)),
+                jsonPath("$.photo", is(getIntFromByte(certificate.getPhoto()))),
                 jsonPath("$.bankDetails", is(certificate.getBankDetails()))
         );
     }
 
     @Test
-    @DisplayName("Сохранение, негативный сценарий")
-    void saveNegativeTest() throws Exception {
+    @DisplayName("сохранение неккоректных данных, негативный сценарий")
+    void saveNoValidDataNegativeTest() throws Exception {
         String errorMessage = "Неверные данные";
 
         doThrow(new ValidationException(errorMessage)).when(service).save(any());
@@ -84,7 +82,7 @@ public class CertificateControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Сохранение, передан pdf, негативный сценарий")
+    @DisplayName("сохранение pdf вместо json, негативный сценарий")
     void saveWrongMediaTypeNegativeTest() throws Exception {
         mockMvc.perform(
                 post("/certificate")
@@ -94,24 +92,23 @@ public class CertificateControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение, позитивный сценарий")
+    @DisplayName("чтение, позитивный сценарий")
     void readPositiveTest() throws Exception {
         doReturn(certificate).when(service).read(any());
 
-        final int photo = getIntFromByte(certificate.getPhoto());
         final int id = getIntFromLong(certificate.getId());
 
         mockMvc.perform(get("/certificate/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
-                        jsonPath("$.photo", is(photo)),
+                        jsonPath("$.photo", is(getIntFromByte(certificate.getPhoto()))),
                         jsonPath("$.bankDetails", is(certificate.getBankDetails()))
                 );
     }
 
     @Test
-    @DisplayName("Чтение, негативный сценарий")
-    void readNegativeTest() throws Exception {
+    @DisplayName("чтение несуществующего сертификата, негативный сценарий")
+    void readNoCertificateNegativeTest() throws Exception {
         String errorMessage = "Сертификата нет";
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).read(any());
@@ -124,16 +121,14 @@ public class CertificateControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение, в id передана строка, негативный сценарий")
+    @DisplayName("чтение некоректного id, негативный сценарий")
     void readWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(get("/certificate/" + wrongId))
+        mockMvc.perform(get("/certificate/test"))
                 .andExpectAll(status().is4xxClientError());
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, позитивный сценарий")
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
     void readAllPositiveTest() throws Exception {
 
         final List<CertificateDto> certificates = returnCertificates();
@@ -143,19 +138,17 @@ public class CertificateControllerTest extends ParentTest {
         final CertificateDto zeroCertificate = certificates.get(0);
         final CertificateDto oneCertificate = certificates.get(1);
 
-        final int zeroPhoto = getIntFromByte(zeroCertificate.getPhoto());
         final int zeroId = getIntFromLong(zeroCertificate.getId());
 
-        final int onePhoto = getIntFromByte(oneCertificate.getPhoto());
         final int oneId = getIntFromLong(oneCertificate.getId());
 
         mockMvc.perform(get("/certificate?id=1&id=2")).andExpectAll(status().isOk(),
                 jsonPath("$", hasSize(certificates.size())),
                 jsonPath("$.[0].id", is(zeroId)),
-                jsonPath("$.[0].photo", is(zeroPhoto)),
+                jsonPath("$.[0].photo", is(getIntFromByte(zeroCertificate.getPhoto()))),
                 jsonPath("$.[0].bankDetails", is(zeroCertificate.getBankDetails())),
                 jsonPath("$.[1].id", is(oneId)),
-                jsonPath("$.[1].photo", is(onePhoto)),
+                jsonPath("$.[1].photo", is(getIntFromByte(oneCertificate.getPhoto()))),
                 jsonPath("$.[1].bankDetails", is(oneCertificate.getBankDetails()))
         );
     }
@@ -168,32 +161,31 @@ public class CertificateControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, негативный сценарий")
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
     void readAllNegativeTest() throws Exception {
         String errorMessage = "Ошибка в параметрах";
 
         doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
-        mockMvc.perform(get("/certificate?id=1")).andExpectAll(status().isNotFound(),
-                content().string(errorMessage)
-        );
+        mockMvc.perform(get("/certificate?id=1")).
+                andExpectAll(
+                        status().isNotFound(),
+                        content().string(errorMessage)
+                );
     }
 
     @Test
-    @DisplayName("Чтение по нескольким id, в id передана строка, негативный сценарий")
+    @DisplayName("чтение по нескольким id, одно id некорректно, негативный сценарий")
     void readAllWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(get("/certificate?id=1&id=" + wrongId))
+        mockMvc.perform(get("/certificate?id=1&id=test"))
                 .andExpectAll(status().is4xxClientError());
     }
 
     @Test
-    @DisplayName("Обновление, позитивный сценарий")
+    @DisplayName("обновление, позитивный сценарий")
     void updatePositiveTest() throws Exception {
         doReturn(certificate).when(service).update(anyLong(), any());
 
-        final int photo = getIntFromByte(certificate.getPhoto());
         final int id = getIntFromLong(certificate.getId());
 
         mockMvc.perform(put("/certificate/{id}", ONE).
@@ -201,15 +193,16 @@ public class CertificateControllerTest extends ParentTest {
                 .content(mapper.writeValueAsString(certificate))
         ).andExpectAll(status().isOk(),
                 jsonPath("$.id", is(id)),
-                jsonPath("$.photo", is(photo)),
+                jsonPath("$.photo", is(getIntFromByte(certificate.getPhoto()))),
                 jsonPath("$.bankDetails", is(certificate.getBankDetails()))
         );
     }
 
     @Test
-    @DisplayName("Обновление, негативный сценарий")
-    void updateNegativeTest() throws Exception {
+    @DisplayName("обновление несуществующего сертификата, негативный сценарий")
+    void updateNoIdNegativeTest() throws Exception {
         String errorMessage = "Обновление невозможно";
+
         doThrow(new EntityNotFoundException(errorMessage)).when(service).update(anyLong(), any());
 
         mockMvc.perform(put("/certificate/{id}", ONE)
@@ -221,11 +214,9 @@ public class CertificateControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("Обновление, в id передана строка, негативный сценарий")
+    @DisplayName("обновление некорректного id, негативный сценарий")
     void updateWrongIdNegativeTest() throws Exception {
-        String wrongId = "test";
-
-        mockMvc.perform(put("/certificate/" + wrongId)
+        mockMvc.perform(put("/certificate/test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(certificate))
         ).andExpectAll(status().is4xxClientError());
