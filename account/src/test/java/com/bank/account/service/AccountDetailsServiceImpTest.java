@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.bank.account.ParentTest.AccountDetailsSupplier.*;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,7 +41,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     private AccountDetailsRepository repository;
 
     @Spy
-    private AccountDetailsMapper mapper;
+    private AccountDetailsMapperImpl mapper;
 
     @BeforeAll
     static void init() {
