@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import static com.bank.account.supplier.AccountDetailsSupplier.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountDetailsServiceImpTest extends ParentTest {
