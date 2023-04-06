@@ -3,12 +3,14 @@ package com.bank.authorization.service;
 import com.bank.authorization.ParentTest;
 import com.bank.authorization.dto.UserDto;
 import com.bank.authorization.entity.UserEntity;
+import com.bank.authorization.mapper.UserMapperImpl;
 import com.bank.authorization.repository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -45,6 +47,9 @@ class UserServiceTest extends ParentTest {
 
     @Mock
     private UserRepository repository;
+
+    @Spy
+    private UserMapperImpl mapper;
 
     @BeforeAll
     static void setUp() {

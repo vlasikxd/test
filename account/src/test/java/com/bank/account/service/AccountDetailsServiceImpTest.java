@@ -3,6 +3,7 @@ package com.bank.account.service;
 import com.bank.account.ParentTest;
 import com.bank.account.dto.AccountDetailsDto;
 import com.bank.account.entity.AccountDetailsEntity;
+import com.bank.account.mapper.AccountDetailsMapperImpl;
 import com.bank.account.repository.AccountDetailsRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
@@ -36,6 +38,9 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
     @Mock
     private AccountDetailsRepository repository;
+
+    @Spy
+    private AccountDetailsMapperImpl mapper;
 
     @BeforeAll
     static void init() {
