@@ -27,7 +27,7 @@ public class AccountDetailsMapperTest extends ParentTest {
     private List<AccountDetailsEntity> accountDetailsList;
 
     @BeforeEach
-    void init() {
+    void prepare() {
         mapper = new AccountDetailsMapperImpl();
         accountDetailsDto = getAccountDetailsDto(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE, Boolean.TRUE, ONE);
         updateAccountDetails = getAccountDetailsDto(null, TWO, TWO, TWO, BIG_DECIMAL_THREE, Boolean.FALSE, TWO);
@@ -118,27 +118,17 @@ public class AccountDetailsMapperTest extends ParentTest {
     @DisplayName("маппинг списка entity в список dto позитивный сценарий")
     void toDtoListTest() {
         final List<AccountDetailsDto> result = mapper.toDtoList(accountDetailsList);
-
+        final AccountDetailsDto firstAccountDetailsDto = getZeroElement(result);
+        final AccountDetailsEntity firstAccountDetailsEntity = getZeroElement(accountDetailsList);
         assertAll(() -> {
             assertEquals(accountDetailsList.size(), result.size());
-            assertEquals(getZeroEntityElement(accountDetailsList).getId(), getZeroElement(result).getId());
-            assertEquals(getZeroEntityElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
-
-            assertEquals(getZeroEntityElement(accountDetailsList).getProfileId(),
-                    getZeroElement(result).getProfileId()
-            );
-            assertEquals(getZeroEntityElement(accountDetailsList).getPassportId(),
-                    getZeroElement(result).getPassportId()
-            );
-            assertEquals(getZeroEntityElement(accountDetailsList).getAccountNumber(),
-                    getZeroElement(result).getAccountNumber()
-            );
-            assertEquals(getZeroEntityElement(accountDetailsList).getBankDetailsId(),
-                    getZeroElement(result).getBankDetailsId()
-            );
-            assertEquals(getZeroEntityElement(accountDetailsList).getNegativeBalance(),
-                    getZeroElement(result).getNegativeBalance()
-            );
+            assertEquals(firstAccountDetailsEntity.getId(), firstAccountDetailsDto.getId());
+            assertEquals(firstAccountDetailsEntity.getMoney(), firstAccountDetailsDto.getMoney());
+            assertEquals(firstAccountDetailsEntity.getProfileId(), firstAccountDetailsDto.getProfileId());
+            assertEquals(firstAccountDetailsEntity.getPassportId(), firstAccountDetailsDto.getPassportId());
+            assertEquals(firstAccountDetailsEntity.getAccountNumber(), firstAccountDetailsDto.getAccountNumber());
+            assertEquals(firstAccountDetailsEntity.getBankDetailsId(), firstAccountDetailsDto.getBankDetailsId());
+            assertEquals(firstAccountDetailsEntity.getNegativeBalance(), firstAccountDetailsDto.getNegativeBalance());
         });
     }
 
@@ -156,28 +146,19 @@ public class AccountDetailsMapperTest extends ParentTest {
         severalAccountDetails.add(null);
 
         final List<AccountDetailsDto> result = mapper.toDtoList(severalAccountDetails);
+        final AccountDetailsDto firstAccountDetailsDto = getZeroElement(result);
+        final AccountDetailsEntity firstAccountDetailsEntity = getZeroElement(accountDetailsList);
 
         assertAll(() -> {
             assertNull(result.get(1));
             assertEquals(accountDetailsList.size(), result.size());
-            assertEquals(getZeroEntityElement(accountDetailsList).getId(), getZeroElement(result).getId());
-            assertEquals(getZeroEntityElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
-
-            assertEquals(getZeroEntityElement(accountDetailsList).getProfileId(),
-                    getZeroElement(result).getProfileId()
-            );
-            assertEquals(getZeroEntityElement(accountDetailsList).getPassportId(),
-                    getZeroElement(result).getPassportId()
-            );
-            assertEquals(getZeroEntityElement(accountDetailsList).getAccountNumber(),
-                    getZeroElement(result).getAccountNumber()
-            );
-            assertEquals(getZeroEntityElement(accountDetailsList).getBankDetailsId(),
-                    getZeroElement(result).getBankDetailsId()
-            );
-            assertEquals(getZeroEntityElement(accountDetailsList).getNegativeBalance(),
-                    getZeroElement(result).getNegativeBalance()
-            );
+            assertEquals(firstAccountDetailsEntity.getId(), firstAccountDetailsDto.getId());
+            assertEquals(firstAccountDetailsEntity.getMoney(), firstAccountDetailsDto.getMoney());
+            assertEquals(firstAccountDetailsEntity.getProfileId(), firstAccountDetailsDto.getProfileId());
+            assertEquals(firstAccountDetailsEntity.getPassportId(), firstAccountDetailsDto.getPassportId());
+            assertEquals(firstAccountDetailsEntity.getAccountNumber(), firstAccountDetailsDto.getAccountNumber());
+            assertEquals(firstAccountDetailsEntity.getBankDetailsId(), firstAccountDetailsDto.getBankDetailsId());
+            assertEquals(firstAccountDetailsEntity.getNegativeBalance(), firstAccountDetailsDto.getNegativeBalance());
         });
     }
 }

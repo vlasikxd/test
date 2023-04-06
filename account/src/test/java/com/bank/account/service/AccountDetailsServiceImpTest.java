@@ -3,7 +3,6 @@ package com.bank.account.service;
 import com.bank.account.ParentTest;
 import com.bank.account.dto.AccountDetailsDto;
 import com.bank.account.entity.AccountDetailsEntity;
-import com.bank.account.mapper.AccountDetailsMapperImpl;
 import com.bank.account.repository.AccountDetailsRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
@@ -38,9 +36,6 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
     @Mock
     private AccountDetailsRepository repository;
-
-    @Spy
-    private AccountDetailsMapperImpl mapper;
 
     @BeforeAll
     static void init() {
@@ -88,22 +83,22 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
         assertAll( () -> {
             assertEquals(accountDetailsList.size(), result.size());
-            assertEquals(getZeroEntityElement(accountDetailsList).getId(), getZeroElement(result).getId());
-            assertEquals(getZeroEntityElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
+            assertEquals(getZeroElement(accountDetailsList).getId(), getZeroElement(result).getId());
+            assertEquals(getZeroElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
 
-            assertEquals(getZeroEntityElement(accountDetailsList).getProfileId(),
+            assertEquals(getZeroElement(accountDetailsList).getProfileId(),
                     getZeroElement(result).getProfileId()
             );
-            assertEquals(getZeroEntityElement(accountDetailsList).getPassportId(),
+            assertEquals(getZeroElement(accountDetailsList).getPassportId(),
                     getZeroElement(result).getPassportId()
             );
-            assertEquals(getZeroEntityElement(accountDetailsList).getAccountNumber(),
+            assertEquals(getZeroElement(accountDetailsList).getAccountNumber(),
                     getZeroElement(result).getAccountNumber()
             );
-            assertEquals(getZeroEntityElement(accountDetailsList).getBankDetailsId(),
+            assertEquals(getZeroElement(accountDetailsList).getBankDetailsId(),
                     getZeroElement(result).getBankDetailsId()
             );
-            assertEquals(getZeroEntityElement(accountDetailsList).getNegativeBalance(),
+            assertEquals(getZeroElement(accountDetailsList).getNegativeBalance(),
                     getZeroElement(result).getNegativeBalance()
             );
         });

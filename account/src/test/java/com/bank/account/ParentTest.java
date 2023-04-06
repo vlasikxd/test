@@ -14,6 +14,11 @@ public abstract class ParentTest {
     protected static final Long ONE = 1L;
     protected static final Long TWO = 2L;
     protected static final BigDecimal BIG_DECIMAL_THREE = BigDecimal.valueOf(3L);
+    protected static final String BAD_REQUEST_BODY_INCORRECT_ID = "Некорректно указан id";
+    protected static final String BAD_REQUEST_BODY_INVALID_JSON = "Невалидный JSON";
+    protected static final String BAD_REQUEST_BODY_INVALID_ENTITY = "Передана невалидная сущность";
+    protected static final String TEST_STRING = "Test";
+    protected static final String NOT_FOUND_BODY = "Одного или нескольких id из списка не найдено";
 
     protected static AccountDetailsDto getAccountDetailsDto(Long id, Long passportId, Long accountNumber,
                                                             Long bankDetailsId, BigDecimal money,
@@ -40,11 +45,10 @@ public abstract class ParentTest {
         return List.of(accountDetails);
     }
 
-    protected AccountDetailsEntity getZeroEntityElement(List<AccountDetailsEntity> result) {
+    protected <T> T getZeroElement(List<T> result) {
         return result.get(0);
     }
-
-    protected AccountDetailsDto getZeroElement(List<AccountDetailsDto> result) {
-        return result.get(0);
+    protected static String getMissingServletRequestParameterExceptionMessage(String parameter) {
+        return String.format("Необходимая часть запроса '%s' не существует", parameter);
     }
 }
