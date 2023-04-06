@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountDetailsServiceImpTest extends ParentTest {
@@ -80,13 +79,26 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
+    @DisplayName("чтение id = null, негативный сценарий")
+    void readIdIsNullNegativeTest() {
+        when(repository.findById(any()))
+                .thenThrow(new IllegalArgumentException("The id must not be null!"));
+
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> repository.findById(ONE)
+        );
+
+        assertEquals("The id must not be null!", exception.getMessage());
+    }
+
+    @Test
     @DisplayName("чтение списка позитивный сценарий")
     void readAllTest() {
         doReturn(accountDetailsList).when(repository).findAllById(any());
 
         final List<AccountDetailsDto> result = service.readAllById(List.of(ONE));
 
-        assertAll( () -> {
+        assertAll(() -> {
             assertEquals(accountDetailsList.size(), result.size());
             assertEquals(getZeroElement(accountDetailsList).getId(), getZeroElement(result).getId());
             assertEquals(getZeroElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
@@ -119,6 +131,18 @@ public class AccountDetailsServiceImpTest extends ParentTest {
         );
 
         assertEquals("Одного или нескольких id из списка не найдено", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("чтение списка, ids = null, негативный сценарий")
+    void readAllIdIsNullNegativeTest() {
+        when(repository.findAllById(anyList()))
+                .thenThrow(new IllegalArgumentException("The id must not be null!"));
+
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.readAllById(List.of(ONE, TWO)));
+
+        assertEquals("The id must not be null!", exception.getMessage());
     }
 
     @Test
@@ -195,6 +219,18 @@ public class AccountDetailsServiceImpTest extends ParentTest {
             assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
             assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
         });
+    }
+
+    @Test
+    @DisplayName("обновление с id = null")
+    void updateIdIsNullNegativeTest() {
+        when(repository.findById(any()))
+                .thenThrow(new IllegalArgumentException("The id must not be null!"));
+
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.update(ONE, mapper.toDto(accountDetails)));
+
+        assertEquals("The id must not be null!", exception.getMessage());
     }
 
     @Test
