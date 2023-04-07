@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+//  TODO  разверни импорты
 import static com.bank.account.supplier.AccountDetailsSupplier.*;
 
 @WebMvcTest(AccountDetailsController.class)
@@ -112,6 +113,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    //  TODO переименуй в "чтение по нескольким идентификаторам, позитивный сценарий"
     @DisplayName("чтение по нескольким идентификаторам позитивный сценарий")
     void readAllPositiveTest() throws Exception {
         final List<AccountDetailsDto> accountDetailsDtos =
@@ -181,6 +183,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    //  TODO переименуй в "создание, позитивный сценарий"
     @DisplayName("создание позитивный сценарий")
     void createPositiveTest() throws Exception {
         doReturn(accountDetailsPositiveFirst).when(service).create(any());
@@ -215,6 +218,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    //  TODO переименуй в "создание объекта, передача невалидного json, негативный сценарий"
     @DisplayName("создание объекта, передача невалидного json")
     void createInvalidJsonNegativeTest() throws Exception {
         when(service.create(any()))
@@ -233,6 +237,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    //  TODO переименуй в "обновление, позитивный сценарий"
     @DisplayName("обновление позитивный сценарий")
     void updatePositiveTest() throws Exception {
         doReturn(accountDetailsPositiveFirst).when(service).update(anyLong(), any());
