@@ -28,16 +28,20 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//  TODO  разверни импорты
-import static com.bank.account.supplier.AccountDetailsSupplier.*;
+
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsDto;
+
 
 @WebMvcTest(AccountDetailsController.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -113,8 +117,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    //  TODO переименуй в "чтение по нескольким идентификаторам, позитивный сценарий"
-    @DisplayName("чтение по нескольким идентификаторам позитивный сценарий")
+    @DisplayName("чтение по нескольким идентификаторам, позитивный сценарий")
     void readAllPositiveTest() throws Exception {
         final List<AccountDetailsDto> accountDetailsDtos =
                 List.of(accountDetailsPositiveFirst, accountDetailsPositiveSecond);
@@ -183,8 +186,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    //  TODO переименуй в "создание, позитивный сценарий"
-    @DisplayName("создание позитивный сценарий")
+    @DisplayName("создание, позитивный сценарий")
     void createPositiveTest() throws Exception {
         doReturn(accountDetailsPositiveFirst).when(service).create(any());
 
@@ -218,8 +220,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    //  TODO переименуй в "создание объекта, передача невалидного json, негативный сценарий"
-    @DisplayName("создание объекта, передача невалидного json")
+    @DisplayName("создание объекта, передача невалидного json, негативный сценарий")
     void createInvalidJsonNegativeTest() throws Exception {
         when(service.create(any()))
                 .thenThrow(new HttpMessageNotReadableException(
@@ -237,8 +238,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
-    //  TODO переименуй в "обновление, позитивный сценарий"
-    @DisplayName("обновление позитивный сценарий")
+    @DisplayName("обновление, позитивный сценарий")
     void updatePositiveTest() throws Exception {
         doReturn(accountDetailsPositiveFirst).when(service).update(anyLong(), any());
 

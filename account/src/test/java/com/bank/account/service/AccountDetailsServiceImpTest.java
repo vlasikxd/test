@@ -23,9 +23,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-//  TODO  разверни импорты
-import static org.mockito.Mockito.*;
-import static com.bank.account.supplier.AccountDetailsSupplier.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyList;
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetails;
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsList;
+import static com.bank.account.supplier.AccountDetailsSupplier.getZeroElement;
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsDto;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountDetailsServiceImpTest extends ParentTest {
@@ -51,39 +56,27 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "чтение, позитивный сценарий"
-    @DisplayName("чтение позитивный сценарий")
+    @DisplayName("чтение, позитивный сценарий")
     void readTest() {
         doReturn(Optional.of(accountDetails)).when(repository).findById(anyLong());
 
         final AccountDetailsDto result = service.readById(ONE);
 
-        //        TODO приведи к виду
-        //         assertAll(
-        //                () -> {
-        //                    assertEquals(accountDetails.getId(), result.getId());
-        //                    assertEquals(accountDetails.getMoney(), result.getMoney());
-        //                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
-        //                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
-        //                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-        //                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-        //                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        //                }
-        //        );
-        assertAll(() -> {
-            assertEquals(accountDetails.getId(), result.getId());
-            assertEquals(accountDetails.getMoney(), result.getMoney());
-            assertEquals(accountDetails.getProfileId(), result.getProfileId());
-            assertEquals(accountDetails.getPassportId(), result.getPassportId());
-            assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-            assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-            assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(accountDetails.getId(), result.getId());
+                    assertEquals(accountDetails.getMoney(), result.getMoney());
+                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
+                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
+                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
+                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
+                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
+                }
+        );
     }
 
     @Test
-    // TODO переименуй в "чтение, негативный сценарий"
-    @DisplayName("чтение негативный сценарий")
+    @DisplayName("чтение, негативный сценарий")
     void readNegativeTest() {
         doReturn(Optional.empty()).when(repository).findById(anyLong());
 
@@ -108,63 +101,39 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "чтение списка, позитивный сценарий"
-    @DisplayName("чтение списка позитивный сценарий")
+    @DisplayName("чтение списка, позитивный сценарий")
     void readAllTest() {
         doReturn(accountDetailsList).when(repository).findAllById(any());
 
         final List<AccountDetailsDto> result = service.readAllById(List.of(ONE));
 
-        // TODO приведи к виду
-        //  assertAll(
-        //                () -> {
-        //                    assertEquals(accountDetailsList.size(), result.size());
-        //                    assertEquals(getZeroElement(accountDetailsList).getId(), getZeroElement(result).getId());
-        //                    assertEquals(getZeroElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
-        //
-        //                    assertEquals(getZeroElement(accountDetailsList).getProfileId(),
-        //                            getZeroElement(result).getProfileId()
-        //                    );
-        //                    assertEquals(getZeroElement(accountDetailsList).getPassportId(),
-        //                            getZeroElement(result).getPassportId()
-        //                    );
-        //                    assertEquals(getZeroElement(accountDetailsList).getAccountNumber(),
-        //                            getZeroElement(result).getAccountNumber()
-        //                    );
-        //                    assertEquals(getZeroElement(accountDetailsList).getBankDetailsId(),
-        //                            getZeroElement(result).getBankDetailsId()
-        //                    );
-        //                    assertEquals(getZeroElement(accountDetailsList).getNegativeBalance(),
-        //                            getZeroElement(result).getNegativeBalance()
-        //                    );
-        //                }
-        //        );
-        assertAll(() -> {
-            assertEquals(accountDetailsList.size(), result.size());
-            assertEquals(getZeroElement(accountDetailsList).getId(), getZeroElement(result).getId());
-            assertEquals(getZeroElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
+        assertAll(
+                () -> {
+                    assertEquals(accountDetailsList.size(), result.size());
+                    assertEquals(getZeroElement(accountDetailsList).getId(), getZeroElement(result).getId());
+                    assertEquals(getZeroElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
 
-            assertEquals(getZeroElement(accountDetailsList).getProfileId(),
-                    getZeroElement(result).getProfileId()
-            );
-            assertEquals(getZeroElement(accountDetailsList).getPassportId(),
-                    getZeroElement(result).getPassportId()
-            );
-            assertEquals(getZeroElement(accountDetailsList).getAccountNumber(),
-                    getZeroElement(result).getAccountNumber()
-            );
-            assertEquals(getZeroElement(accountDetailsList).getBankDetailsId(),
-                    getZeroElement(result).getBankDetailsId()
-            );
-            assertEquals(getZeroElement(accountDetailsList).getNegativeBalance(),
-                    getZeroElement(result).getNegativeBalance()
-            );
-        });
+                    assertEquals(getZeroElement(accountDetailsList).getProfileId(),
+                            getZeroElement(result).getProfileId()
+                    );
+                    assertEquals(getZeroElement(accountDetailsList).getPassportId(),
+                            getZeroElement(result).getPassportId()
+                    );
+                    assertEquals(getZeroElement(accountDetailsList).getAccountNumber(),
+                            getZeroElement(result).getAccountNumber()
+                    );
+                    assertEquals(getZeroElement(accountDetailsList).getBankDetailsId(),
+                            getZeroElement(result).getBankDetailsId()
+                    );
+                    assertEquals(getZeroElement(accountDetailsList).getNegativeBalance(),
+                            getZeroElement(result).getNegativeBalance()
+                    );
+                }
+        );
     }
 
     @Test
-    // TODO переименуй в "чтение списка, негативный сценарий"
-    @DisplayName("чтение списка негативный сценарий")
+    @DisplayName("чтение списка, негативный сценарий")
     void readAllNegativeTest() {
         doReturn(List.of(new AccountDetailsEntity())).when(repository).findAllById(any());
 
@@ -188,8 +157,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "создание, позитивный сценарий"
-    @DisplayName("создание позитивный сценарий")
+    @DisplayName("создание, позитивный сценарий")
     void createTest() {
         doReturn(accountDetails).when(repository).save(any());
 
@@ -197,32 +165,21 @@ public class AccountDetailsServiceImpTest extends ParentTest {
                 getAccountDetailsDto(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE, Boolean.TRUE, ONE)
         );
 
-        // TODO приведи к виду
-        //  assertAll(
-        //                () -> {
-        //                    assertEquals(accountDetails.getId(), result.getId());
-        //                    assertEquals(accountDetails.getMoney(), result.getMoney());
-        //                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
-        //                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
-        //                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-        //                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-        //                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        //                }
-        //        );
-        assertAll(() -> {
-            assertEquals(accountDetails.getId(), result.getId());
-            assertEquals(accountDetails.getMoney(), result.getMoney());
-            assertEquals(accountDetails.getProfileId(), result.getProfileId());
-            assertEquals(accountDetails.getPassportId(), result.getPassportId());
-            assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-            assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-            assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(accountDetails.getId(), result.getId());
+                    assertEquals(accountDetails.getMoney(), result.getMoney());
+                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
+                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
+                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
+                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
+                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
+                }
+        );
     }
 
     @Test
-    // TODO переименуй в "создание, негативный сценарий"
-    @DisplayName("создание негативный сценарий")
+    @DisplayName("создание, негативный сценарий")
     void createNegativeTest() {
         String massage = "Недопустимые параметры";
 
@@ -236,11 +193,10 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "обновление, позитивный сценарий"
-    @DisplayName("обновление позитивный сценарий")
+    @DisplayName("обновление, позитивный сценарий")
     void updateTest() {
         doReturn(Optional.of(accountDetails)).when(repository).findById(ONE);
-        // TODO добавь пустую строку
+
         doReturn(accountDetails).when(repository).save(
                 getAccountDetails(ONE, TWO, TWO, TWO, BIG_DECIMAL_THREE, Boolean.FALSE, TWO)
         );
@@ -249,92 +205,62 @@ public class AccountDetailsServiceImpTest extends ParentTest {
                 ONE, getAccountDetailsDto(null, TWO, TWO, TWO, BIG_DECIMAL_THREE, Boolean.FALSE, TWO)
         );
 
-        // TODO приведи к виду
-        //  assertAll(
-        //                () -> {
-        //                    assertEquals(accountDetails.getId(), result.getId());
-        //                    assertEquals(accountDetails.getMoney(), result.getMoney());
-        //                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
-        //                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
-        //                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-        //                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-        //                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        //                }
-        //        );
-        assertAll(() -> {
-            assertEquals(accountDetails.getId(), result.getId());
-            assertEquals(accountDetails.getMoney(), result.getMoney());
-            assertEquals(accountDetails.getProfileId(), result.getProfileId());
-            assertEquals(accountDetails.getPassportId(), result.getPassportId());
-            assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-            assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-            assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(accountDetails.getId(), result.getId());
+                    assertEquals(accountDetails.getMoney(), result.getMoney());
+                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
+                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
+                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
+                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
+                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
+                }
+        );
     }
 
-    // TODO ненужные скобки в аннотации
-    @Test()
-    // TODO переименуй в  "обновление с не пустым id и null, позитивный сценарий"
-    @DisplayName("обновление с не пустым id и null")
-    void updateNullTest() {
+    @Test
+    @DisplayName("обновление с не пустым id и null, позитивный сценарий")
+    void updateNullPositiveTest() {
         doReturn(Optional.of(accountDetails)).when(repository).findById(ONE);
-        // TODO добавь пустую строку
+
         doReturn(accountDetails).when(repository).save(any());
 
         final AccountDetailsDto result = service.update(ONE, null);
 
-        // TODO приведи к виду
-        //  assertAll(
-        //                () -> {
-        //                    assertEquals(accountDetails.getId(), result.getId());
-        //                    assertEquals(accountDetails.getMoney(), result.getMoney());
-        //                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
-        //                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
-        //                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-        //                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-        //                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        //                }
-        //        );
-        assertAll(() -> {
-            assertEquals(accountDetails.getId(), result.getId());
-            assertEquals(accountDetails.getMoney(), result.getMoney());
-            assertEquals(accountDetails.getProfileId(), result.getProfileId());
-            assertEquals(accountDetails.getPassportId(), result.getPassportId());
-            assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-            assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-            assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(accountDetails.getId(), result.getId());
+                    assertEquals(accountDetails.getMoney(), result.getMoney());
+                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
+                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
+                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
+                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
+                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
+                }
+        );
     }
 
     @Test
-    // TODO переименуй в  "обновление с id равным null, негативный сценарий"
-    @DisplayName("обновление с id = null")
+    @DisplayName("обновление с id равным null, негативный сценарий")
     void updateIdIsNullNegativeTest() {
         when(repository.findById(any()))
                 .thenThrow(new IllegalArgumentException("The id must not be null!"));
 
-        // TODO приведи к виду
-        //  final IllegalArgumentException exception = assertThrows(
-        //                IllegalArgumentException.class, () -> service.update(ONE, mapper.toDto(accountDetails))
-        //        );
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.update(ONE, mapper.toDto(accountDetails)));
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class, () -> service.update(ONE, mapper.toDto(accountDetails))
+        );
 
         assertEquals("The id must not be null!", exception.getMessage());
     }
 
     @Test
-    // TODO переименуй в "обновление, негативный сценарий"
-    @DisplayName("обновление негативный сценарий")
+    @DisplayName("обновление, негативный сценарий")
     void updateNegativeTest() {
         doReturn(Optional.empty()).when(repository).findById(anyLong());
 
-        // TODO приведи к виду
-        //  final EntityNotFoundException exception = assertThrows(
-        //   EntityNotFoundException.class, () -> service.update(ONE, new AccountDetailsDto())
-        //   );
-        final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> service.update(ONE, new AccountDetailsDto()));
+        final EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class, () -> service.update(ONE, new AccountDetailsDto())
+        );
 
         assertEquals("Не существующий id = " + ONE, exception.getMessage());
     }

@@ -14,8 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-//  TODO  разверни импорты
-import static com.bank.account.supplier.AccountDetailsSupplier.*;
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsDto;
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetails;
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsList;
+import static com.bank.account.supplier.AccountDetailsSupplier.getZeroElement;
 
 public class AccountDetailsMapperTest extends ParentTest {
 
@@ -31,14 +33,24 @@ public class AccountDetailsMapperTest extends ParentTest {
     @BeforeEach
     void prepare() {
         mapper = new AccountDetailsMapperImpl();
-        accountDetailsDto = getAccountDetailsDto(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE, Boolean.TRUE, ONE);
-        updateAccountDetails = getAccountDetailsDto(null, TWO, TWO, TWO, BIG_DECIMAL_THREE, Boolean.FALSE, TWO);
+        accountDetailsDto = getAccountDetailsDto(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE,
+                Boolean.TRUE, ONE
+        );
 
-        accountDetails = getAccountDetails(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE, Boolean.TRUE, ONE);
-        //  TODO перенеси Boolean.FALSE, TWO); на следующую строку, соблюдай код-стайл
-        AccountDetailsEntity accountDetailsUpdate = getAccountDetails(ONE, TWO, TWO, TWO, BIG_DECIMAL_THREE, Boolean.FALSE, TWO);
+        updateAccountDetails = getAccountDetailsDto(null, TWO, TWO, TWO, BIG_DECIMAL_THREE,
+                Boolean.FALSE, TWO
+        );
 
-        accountDetailsList = getAccountDetailsList(accountDetails, accountDetailsUpdate);
+        accountDetails = getAccountDetails(ONE, ONE, ONE, ONE, BIG_DECIMAL_THREE,
+                Boolean.TRUE, ONE
+        );
+
+        AccountDetailsEntity accountDetailsUpdate = getAccountDetails(ONE, TWO, TWO, TWO, BIG_DECIMAL_THREE,
+                Boolean.FALSE, TWO
+        );
+
+        accountDetailsList = getAccountDetailsList(accountDetails, accountDetailsUpdate
+        );
     }
 
     @Test
@@ -46,27 +58,17 @@ public class AccountDetailsMapperTest extends ParentTest {
     void toEntityTest() {
         final AccountDetailsEntity result = mapper.toEntity(accountDetailsDto);
 
-//        TODO приведи к виду
-//         assertAll(
-//                () -> {
-//                    assertNotEquals(accountDetailsDto.getId(), result.getId());
-//                    assertEquals(accountDetails.getMoney(), result.getMoney());
-//                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
-//                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
-//                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-//                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-//                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-//                }
-//        );
-        assertAll(() -> {
-            assertNotEquals(accountDetailsDto.getId(), result.getId());
-            assertEquals(accountDetails.getMoney(), result.getMoney());
-            assertEquals(accountDetails.getProfileId(), result.getProfileId());
-            assertEquals(accountDetails.getPassportId(), result.getPassportId());
-            assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-            assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-            assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertNotEquals(accountDetailsDto.getId(), result.getId());
+                    assertEquals(accountDetails.getMoney(), result.getMoney());
+                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
+                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
+                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
+                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
+                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
+                }
+        );
     }
 
     @Test
@@ -80,27 +82,17 @@ public class AccountDetailsMapperTest extends ParentTest {
     void toDtoTest() {
         final AccountDetailsDto result = mapper.toDto(accountDetails);
 
-        //        TODO приведи к виду
-        //         assertAll(
-        //                () -> {
-        //                    assertEquals(accountDetails.getId(), result.getId());
-        //                    assertEquals(accountDetails.getMoney(), result.getMoney());
-        //                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
-        //                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
-        //                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-        //                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-        //                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        //                }
-        //        );
-        assertAll(() -> {
-            assertEquals(accountDetails.getId(), result.getId());
-            assertEquals(accountDetails.getMoney(), result.getMoney());
-            assertEquals(accountDetails.getProfileId(), result.getProfileId());
-            assertEquals(accountDetails.getPassportId(), result.getPassportId());
-            assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-            assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-            assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(accountDetails.getId(), result.getId());
+                    assertEquals(accountDetails.getMoney(), result.getMoney());
+                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
+                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
+                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
+                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
+                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
+                }
+        );
     }
 
     @Test
@@ -114,28 +106,17 @@ public class AccountDetailsMapperTest extends ParentTest {
     void mergeToEntityTest() {
         final AccountDetailsEntity result = mapper.mergeToEntity(updateAccountDetails, accountDetails);
 
-        //        TODO приведи к виду
-        //         assertAll(
-        //                () -> {
-        //                    assertNotEquals(updateAccountDetails.getId(), result.getId());
-        //                    assertEquals(accountDetails.getMoney(), result.getMoney());
-        //                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
-        //                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
-        //                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-        //                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-        //                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        //                }
-        //        );
-
-        assertAll(() -> {
-            assertNotEquals(updateAccountDetails.getId(), result.getId());
-            assertEquals(accountDetails.getMoney(), result.getMoney());
-            assertEquals(accountDetails.getProfileId(), result.getProfileId());
-            assertEquals(accountDetails.getPassportId(), result.getPassportId());
-            assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
-            assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
-            assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertNotEquals(updateAccountDetails.getId(), result.getId());
+                    assertEquals(accountDetails.getMoney(), result.getMoney());
+                    assertEquals(accountDetails.getProfileId(), result.getProfileId());
+                    assertEquals(accountDetails.getPassportId(), result.getPassportId());
+                    assertEquals(accountDetails.getAccountNumber(), result.getAccountNumber());
+                    assertEquals(accountDetails.getBankDetailsId(), result.getBankDetailsId());
+                    assertEquals(accountDetails.getNegativeBalance(), result.getNegativeBalance());
+                }
+        );
     }
 
     @Test
@@ -143,27 +124,17 @@ public class AccountDetailsMapperTest extends ParentTest {
     void mergeToEntityNullTest() {
         final AccountDetailsEntity result = mapper.mergeToEntity(null, accountDetails);
 
-        //        TODO приведи к виду
-        //         assertAll(
-        //                () -> {
-        //                    assertEquals(ONE, result.getId());
-        //                    assertEquals(ONE, result.getProfileId());
-        //                    assertEquals(ONE, result.getPassportId());
-        //                    assertEquals(ONE, result.getAccountNumber());
-        //                    assertEquals(ONE, result.getBankDetailsId());
-        //                    assertEquals(BIG_DECIMAL_THREE, result.getMoney());
-        //                    assertEquals(Boolean.TRUE, result.getNegativeBalance());
-        //                }
-        //        );
-        assertAll(() -> {
-            assertEquals(ONE, result.getId());
-            assertEquals(ONE, result.getProfileId());
-            assertEquals(ONE, result.getPassportId());
-            assertEquals(ONE, result.getAccountNumber());
-            assertEquals(ONE, result.getBankDetailsId());
-            assertEquals(BIG_DECIMAL_THREE, result.getMoney());
-            assertEquals(Boolean.TRUE, result.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(ONE, result.getId());
+                    assertEquals(ONE, result.getProfileId());
+                    assertEquals(ONE, result.getPassportId());
+                    assertEquals(ONE, result.getAccountNumber());
+                    assertEquals(ONE, result.getBankDetailsId());
+                    assertEquals(BIG_DECIMAL_THREE, result.getMoney());
+                    assertEquals(Boolean.TRUE, result.getNegativeBalance());
+                }
+        );
     }
 
     @Test
@@ -172,30 +143,19 @@ public class AccountDetailsMapperTest extends ParentTest {
         final List<AccountDetailsDto> result = mapper.toDtoList(accountDetailsList);
         final AccountDetailsDto firstAccountDetailsDto = getZeroElement(result);
         final AccountDetailsEntity firstAccountDetailsEntity = getZeroElement(accountDetailsList);
-        //         TODO добавь пустую строку
-        //        TODO приведи к виду
-        //         assertAll(
-        //                () -> {
-        //                    assertEquals(accountDetailsList.size(), result.size());
-        //                    assertEquals(firstAccountDetailsEntity.getId(), firstAccountDetailsDto.getId());
-        //                    assertEquals(firstAccountDetailsEntity.getMoney(), firstAccountDetailsDto.getMoney());
-        //                    assertEquals(firstAccountDetailsEntity.getProfileId(), firstAccountDetailsDto.getProfileId());
-        //                    assertEquals(firstAccountDetailsEntity.getPassportId(), firstAccountDetailsDto.getPassportId());
-        //                    assertEquals(firstAccountDetailsEntity.getAccountNumber(), firstAccountDetailsDto.getAccountNumber());
-        //                    assertEquals(firstAccountDetailsEntity.getBankDetailsId(), firstAccountDetailsDto.getBankDetailsId());
-        //                    assertEquals(firstAccountDetailsEntity.getNegativeBalance(), firstAccountDetailsDto.getNegativeBalance());
-        //                }
-        //        );
-        assertAll(() -> {
-            assertEquals(accountDetailsList.size(), result.size());
-            assertEquals(firstAccountDetailsEntity.getId(), firstAccountDetailsDto.getId());
-            assertEquals(firstAccountDetailsEntity.getMoney(), firstAccountDetailsDto.getMoney());
-            assertEquals(firstAccountDetailsEntity.getProfileId(), firstAccountDetailsDto.getProfileId());
-            assertEquals(firstAccountDetailsEntity.getPassportId(), firstAccountDetailsDto.getPassportId());
-            assertEquals(firstAccountDetailsEntity.getAccountNumber(), firstAccountDetailsDto.getAccountNumber());
-            assertEquals(firstAccountDetailsEntity.getBankDetailsId(), firstAccountDetailsDto.getBankDetailsId());
-            assertEquals(firstAccountDetailsEntity.getNegativeBalance(), firstAccountDetailsDto.getNegativeBalance());
-        });
+
+        assertAll(
+                () -> {
+                    assertEquals(accountDetailsList.size(), result.size());
+                    assertEquals(firstAccountDetailsEntity.getId(), firstAccountDetailsDto.getId());
+                    assertEquals(firstAccountDetailsEntity.getMoney(), firstAccountDetailsDto.getMoney());
+                    assertEquals(firstAccountDetailsEntity.getProfileId(), firstAccountDetailsDto.getProfileId());
+                    assertEquals(firstAccountDetailsEntity.getPassportId(), firstAccountDetailsDto.getPassportId());
+                    assertEquals(firstAccountDetailsEntity.getAccountNumber(), firstAccountDetailsDto.getAccountNumber());
+                    assertEquals(firstAccountDetailsEntity.getBankDetailsId(), firstAccountDetailsDto.getBankDetailsId());
+                    assertEquals(firstAccountDetailsEntity.getNegativeBalance(), firstAccountDetailsDto.getNegativeBalance());
+                }
+        );
     }
 
     @Test
@@ -215,30 +175,18 @@ public class AccountDetailsMapperTest extends ParentTest {
         final AccountDetailsDto firstAccountDetailsDto = getZeroElement(result);
         final AccountDetailsEntity firstAccountDetailsEntity = getZeroElement(accountDetailsList);
 
-        //        TODO приведи к виду
-        //         assertAll(
-        //                () -> {
-        //                    assertNull(result.get(1));
-        //                    assertEquals(accountDetailsList.size(), result.size());
-        //                    assertEquals(firstAccountDetailsEntity.getId(), firstAccountDetailsDto.getId());
-        //                    assertEquals(firstAccountDetailsEntity.getMoney(), firstAccountDetailsDto.getMoney());
-        //                    assertEquals(firstAccountDetailsEntity.getProfileId(), firstAccountDetailsDto.getProfileId());
-        //                    assertEquals(firstAccountDetailsEntity.getPassportId(), firstAccountDetailsDto.getPassportId());
-        //                    assertEquals(firstAccountDetailsEntity.getAccountNumber(), firstAccountDetailsDto.getAccountNumber());
-        //                    assertEquals(firstAccountDetailsEntity.getBankDetailsId(), firstAccountDetailsDto.getBankDetailsId());
-        //                    assertEquals(firstAccountDetailsEntity.getNegativeBalance(), firstAccountDetailsDto.getNegativeBalance());
-        //                }
-        //        );
-        assertAll(() -> {
-            assertNull(result.get(1));
-            assertEquals(accountDetailsList.size(), result.size());
-            assertEquals(firstAccountDetailsEntity.getId(), firstAccountDetailsDto.getId());
-            assertEquals(firstAccountDetailsEntity.getMoney(), firstAccountDetailsDto.getMoney());
-            assertEquals(firstAccountDetailsEntity.getProfileId(), firstAccountDetailsDto.getProfileId());
-            assertEquals(firstAccountDetailsEntity.getPassportId(), firstAccountDetailsDto.getPassportId());
-            assertEquals(firstAccountDetailsEntity.getAccountNumber(), firstAccountDetailsDto.getAccountNumber());
-            assertEquals(firstAccountDetailsEntity.getBankDetailsId(), firstAccountDetailsDto.getBankDetailsId());
-            assertEquals(firstAccountDetailsEntity.getNegativeBalance(), firstAccountDetailsDto.getNegativeBalance());
-        });
+        assertAll(
+                () -> {
+                    assertNull(result.get(1));
+                    assertEquals(accountDetailsList.size(), result.size());
+                    assertEquals(firstAccountDetailsEntity.getId(), firstAccountDetailsDto.getId());
+                    assertEquals(firstAccountDetailsEntity.getMoney(), firstAccountDetailsDto.getMoney());
+                    assertEquals(firstAccountDetailsEntity.getProfileId(), firstAccountDetailsDto.getProfileId());
+                    assertEquals(firstAccountDetailsEntity.getPassportId(), firstAccountDetailsDto.getPassportId());
+                    assertEquals(firstAccountDetailsEntity.getAccountNumber(), firstAccountDetailsDto.getAccountNumber());
+                    assertEquals(firstAccountDetailsEntity.getBankDetailsId(), firstAccountDetailsDto.getBankDetailsId());
+                    assertEquals(firstAccountDetailsEntity.getNegativeBalance(), firstAccountDetailsDto.getNegativeBalance());
+                }
+        );
     }
 }
