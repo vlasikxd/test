@@ -11,7 +11,7 @@ CREATE TABLE account_details_id
 (
     id BIGINT NOT NULL,
     account_id      BIGINT NOT NULL,
-    CONSTRAINT pk_profile PRIMARY KEY (id, account_id)
+    CONSTRAINT pk_account_details_id PRIMARY KEY (id, account_id)
 );
 
 CREATE TABLE actual_registration
@@ -70,6 +70,6 @@ CREATE TABLE registration
     house_block VARCHAR(255),
     flat_number VARCHAR(255),
     index BIGINT NOT NULL ,
-    CONSTRAINT pk_audit PRIMARY KEY (id)
+    CONSTRAINT pk_registration PRIMARY KEY (id)
 );
 
