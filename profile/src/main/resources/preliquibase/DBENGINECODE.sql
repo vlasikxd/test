@@ -73,3 +73,18 @@ CREATE TABLE registration
     CONSTRAINT pk_registration PRIMARY KEY (id)
 );
 
+ALTER TABLE account_details_id
+    ADD CONSTRAINT uc_account_details_id UNIQUE (id, account_id);
+
+ALTER TABLE profile
+    ADD CONSTRAINT uc_profile UNIQUE (id, passport_id, actual_registration_id);
+
+ALTER TABLE actual_registration
+    ADD CONSTRAINT fk_actual_registration FOREIGN KEY (actual_id) REFERENCES actual_registration (id);
+
+ALTER TABLE audit
+    ADD CONSTRAINT fk_audit FOREIGN KEY (audit_id) REFERENCES audit (id);
+
+ALTER TABLE registration
+    ADD CONSTRAINT fk_registration FOREIGN KEY (registration_id) REFERENCES registration (id);
+
