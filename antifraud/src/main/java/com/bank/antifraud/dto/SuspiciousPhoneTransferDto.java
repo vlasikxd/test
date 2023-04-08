@@ -37,6 +37,7 @@ public class SuspiciousPhoneTransferDto implements Serializable {
 
     String blockedReason;
 
+    //    TODO  не нужна это аннотация
     @NotBlank
     String suspiciousReason;
 }
