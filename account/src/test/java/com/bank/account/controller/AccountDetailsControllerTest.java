@@ -1,6 +1,7 @@
 package com.bank.account.controller;
 
 import com.bank.account.ParentTest;
+import com.bank.account.api.controller.AccountDetailsController;
 import com.bank.account.dto.AccountDetailsDto;
 import com.bank.account.service.AccountDetailsService;
 import com.bank.common.exception.ValidationException;

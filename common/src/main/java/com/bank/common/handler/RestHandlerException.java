@@ -2,14 +2,11 @@ package com.bank.common.handler;
 
 import com.bank.common.exception.ClientAccessDeniedException;
 import com.bank.common.exception.ValidationException;
-import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -29,11 +26,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleEntityNotFoundException(EntityNotFoundException exception) {
+    public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
     /**
@@ -41,11 +36,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(NotFoundException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNotFoundException(NotFoundException exception) {
+    public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
     /**
@@ -53,11 +46,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(IllegalStateException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleIllegalStateException(IllegalStateException exception) {
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
     }
 
     /**
@@ -65,11 +56,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public String handleIllegalArgumentException(IllegalArgumentException exception) {
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exception.getMessage());
     }
 
     /**
@@ -77,11 +66,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(ValidationException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public String handleValidationException(ValidationException exception) {
+    public ResponseEntity<String> handleValidationException(ValidationException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exception.getMessage());
     }
 
     /**
@@ -89,11 +76,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(UnsupportedOperationException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    public String handleUnsupportedOperationException(UnsupportedOperationException exception) {
+    public ResponseEntity<String> handleUnsupportedOperationException(UnsupportedOperationException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(exception.getMessage());
     }
 
     /**
@@ -101,11 +86,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
     /**
@@ -113,12 +96,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.LENGTH_REQUIRED)
-    @Hidden
-    public String handleMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
+    public ResponseEntity<String> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.LENGTH_REQUIRED).body(exception.getMessage());
     }
 
     /**
@@ -126,11 +106,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(ClientAccessDeniedException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String handleClientAccessDeniedException(ClientAccessDeniedException exception) {
+    public ResponseEntity<String> handleClientAccessDeniedException(ClientAccessDeniedException exception) {
         log.error(exception.getMessage(), exception);
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
     }
 
     /**
@@ -138,11 +116,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(Exception.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleServerGlobalException(Exception exception) {
+    public ResponseEntity<String> handleServerGlobalException(Exception exception) {
         log.error(exception.getMessage(), exception);
-        return "Ошибка на стороне сервера.";
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка на стороне сервера.");
     }
 
     /**
@@ -150,11 +126,9 @@ public class RestHandlerException {
      * @return {@link ResponseEntity<String>}
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleMethodArgumentTypeMismatchException(
+    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException exception) {
         log.error(exception.getMessage(), exception);
-        return "Некорректно указан id";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Некорректно указан id");
     }
 }
