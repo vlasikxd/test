@@ -7,14 +7,14 @@ CREATE SEQUENCE IF NOT EXISTS passport_id_seq START WITH 1 INCREMENT BY 50;
 CREATE SEQUENCE IF NOT EXISTS profile_id_seq START WITH 1 INCREMENT BY 50;
 CREATE SEQUENCE IF NOT EXISTS registration_id_seq START WITH 1 INCREMENT BY 50;
 
-CREATE TABLE account_details_id
+CREATE TABLE IF NOT EXISTS account_details_id
 (
     id BIGINT NOT NULL,
     account_id      BIGINT NOT NULL,
     CONSTRAINT pk_account_details_id PRIMARY KEY (id, account_id)
 );
 
-CREATE TABLE actual_registration
+CREATE TABLE IF NOT EXISTS actual_registration
 (
     id     BIGINT NOT NULL,
     country   VARCHAR(255),
@@ -30,7 +30,7 @@ CREATE TABLE actual_registration
     CONSTRAINT pk_actual_registration PRIMARY KEY (id)
 );
 
-CREATE TABLE audit
+CREATE TABLE IF NOT EXISTS audit
 (
     id     BIGINT NOT NULL,
     entity_type   VARCHAR(255),
@@ -44,7 +44,7 @@ CREATE TABLE audit
     CONSTRAINT pk_audit PRIMARY KEY (id)
 );
 
-CREATE TABLE profile
+CREATE TABLE IF NOT EXISTS profile
 (
     id BIGINT NOT NULL,
     phone_number BIGINT NOT NULL ,
@@ -57,7 +57,7 @@ CREATE TABLE profile
     CONSTRAINT pk_profile PRIMARY KEY (id, passport_id, actual_registration_id)
 );
 
-CREATE TABLE registration
+CREATE TABLE IF NOT EXISTS registration
 (
     id     BIGINT NOT NULL,
     country   VARCHAR(255),
