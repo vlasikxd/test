@@ -3,7 +3,7 @@ package com.bank.account.service;
 import com.bank.account.ParentTest;
 import com.bank.account.dto.AccountDetailsDto;
 import com.bank.account.entity.AccountDetailsEntity;
-import com.bank.account.mapper.AccountDetailsMapperImpl;
+import com.bank.account.mapper.AccountDetailsMapper;
 import com.bank.account.repository.AccountDetailsRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     private AccountDetailsRepository repository;
 
     @Spy
-    private AccountDetailsMapperImpl mapper;
+    private AccountDetailsMapper mapper;
 
     @BeforeAll
     static void init() {
@@ -57,6 +57,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
     @Test
     @DisplayName("чтение, позитивный сценарий")
+    // TODO переименуй в readPositiveTest
     void readTest() {
         doReturn(Optional.of(accountDetails)).when(repository).findById(anyLong());
 
@@ -76,7 +77,9 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "чтение, id не найден, негативный сценарий"
     @DisplayName("чтение, негативный сценарий")
+        // TODO переименуй в readNotFoundIdNegativeTest
     void readNegativeTest() {
         doReturn(Optional.empty()).when(repository).findById(anyLong());
 
@@ -88,6 +91,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "чтение,по id равному null, негативный сценарий"
     @DisplayName("чтение id = null, негативный сценарий")
     void readIdIsNullNegativeTest() {
         when(repository.findById(any()))
@@ -133,7 +137,9 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "чтение по списку, id не найден, негативный сценарий"
     @DisplayName("чтение списка, негативный сценарий")
+        // TODO переименуй в readAllТNotFoundIdNegativeTest
     void readAllNegativeTest() {
         doReturn(List.of(new AccountDetailsEntity())).when(repository).findAllById(any());
 
@@ -145,6 +151,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "чтение по списку id, равному null, негативный сценарий"
     @DisplayName("чтение списка, ids = null, негативный сценарий")
     void readAllIdIsNullNegativeTest() {
         when(repository.findAllById(anyList()))
@@ -158,6 +165,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
     @Test
     @DisplayName("создание, позитивный сценарий")
+    // TODO переименуй в createPositiveTest
     void createTest() {
         doReturn(accountDetails).when(repository).save(any());
 
@@ -179,7 +187,9 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "создание с недопустимыми параметрами, негативный сценарий"
     @DisplayName("создание, негативный сценарий")
+    // TODO переименуй в createInvalidParamsNegativeTest
     void createNegativeTest() {
         String massage = "Недопустимые параметры";
 
@@ -194,6 +204,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
     @Test
     @DisplayName("обновление, позитивный сценарий")
+    // TODO переименуй в updatePositiveTest
     void updateTest() {
         doReturn(Optional.of(accountDetails)).when(repository).findById(ONE);
 
@@ -254,7 +265,9 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "обновление по несуществующему id, негативный сценарий"
     @DisplayName("обновление, негативный сценарий")
+    // TODO переименуй в updateNotExistIdNegativeTest
     void updateNegativeTest() {
         doReturn(Optional.empty()).when(repository).findById(anyLong());
 

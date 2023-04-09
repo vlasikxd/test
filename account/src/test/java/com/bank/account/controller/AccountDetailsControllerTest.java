@@ -70,6 +70,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    // TODO запятую добавь после "чтение"
     @DisplayName("чтение позитивный сценарий")
     void readPositiveTest() throws Exception {
         doReturn(accountDetailsPositiveFirst)
@@ -91,6 +92,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("чтение несуществующего id, негативный сценарий")
+    // TODO readNotExistIdNegativeTest
     void readAbsentIdNegativeTest() throws Exception {
         doThrow(new EntityNotFoundException(NOT_FOUND_BODY))
                 .when(service)
@@ -117,6 +119,7 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "чтение по нескольким id, позитивный сценарий"
     @DisplayName("чтение по нескольким идентификаторам, позитивный сценарий")
     void readAllPositiveTest() throws Exception {
         final List<AccountDetailsDto> accountDetailsDtos =
@@ -143,7 +146,9 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "чтение по нескольким несуществующим id, негативный сценарий"
     @DisplayName("чтение по нескольким несуществующим идентификаторам, негативный сценарий")
+        // TODO переименуй в readAllNotExistIdsNegativeTest
     void readAllAbsentIdNegativeTest() throws Exception {
         doThrow(new EntityNotFoundException(NOT_FOUND_BODY))
                 .when(service)
@@ -157,7 +162,9 @@ public class AccountDetailsControllerTest extends ParentTest {
     }
 
     @Test
+    // TODO переименуй в "чтение по нескольким id равным null, негативный сценарий"
     @DisplayName("чтение по нескольким id = null, негативный сценарий")
+        // TODO переименуй в readAllNullIdsNegativeTest
     void readAllNullIdNegativeTest() throws Exception {
         when(service.readAllById(anyList()))
                 .thenThrow(new EntityNotFoundException(NOT_FOUND_BODY));
@@ -171,6 +178,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("чтение по нескольким id, не переданы параметры, негативный сценарий")
+        // TODO переименуй в readAllNotExistParamsNegativeTest
     void readAllAbsentParamsNegativeTest() throws Exception {
 
         when(service.readAllById(anyList()))
@@ -259,6 +267,7 @@ public class AccountDetailsControllerTest extends ParentTest {
 
     @Test
     @DisplayName("обновление несуществующего id, негативный сценарий")
+    // TODO переименуй в updateNotExistIdNegativeTest
     void updateAbsentIdNegativeTest() throws Exception {
         doThrow(new EntityNotFoundException(NOT_FOUND_BODY))
                 .when(service)
