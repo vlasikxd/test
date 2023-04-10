@@ -57,8 +57,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
     @Test
     @DisplayName("чтение, позитивный сценарий")
-    // TODO переименуй в readPositiveTest
-    void readTest() {
+    void readPositiveTest() {
         doReturn(Optional.of(accountDetails)).when(repository).findById(anyLong());
 
         final AccountDetailsDto result = service.readById(ONE);
@@ -77,10 +76,8 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "чтение, id не найден, негативный сценарий"
-    @DisplayName("чтение, негативный сценарий")
-        // TODO переименуй в readNotFoundIdNegativeTest
-    void readNegativeTest() {
+    @DisplayName("чтение, id не найден, негативный сценарий")
+    void readNotFoundIdNegativeTest() {
         doReturn(Optional.empty()).when(repository).findById(anyLong());
 
         final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -91,8 +88,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "чтение,по id равному null, негативный сценарий"
-    @DisplayName("чтение id = null, негативный сценарий")
+    @DisplayName("чтение, по id равному null, негативный сценарий")
     void readIdIsNullNegativeTest() {
         when(repository.findById(any()))
                 .thenThrow(new IllegalArgumentException("The id must not be null!"));
@@ -137,10 +133,8 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "чтение по списку, id не найден, негативный сценарий"
-    @DisplayName("чтение списка, негативный сценарий")
-        // TODO переименуй в readAllТNotFoundIdNegativeTest
-    void readAllNegativeTest() {
+    @DisplayName("чтение по списку, id не найден негативный сценарий")
+    void readAllNotFoundIdNegativeTest() {
         doReturn(List.of(new AccountDetailsEntity())).when(repository).findAllById(any());
 
         final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -151,8 +145,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "чтение по списку id, равному null, негативный сценарий"
-    @DisplayName("чтение списка, ids = null, негативный сценарий")
+    @DisplayName("чтение по списку id, равному null, негативный сценарий")
     void readAllIdIsNullNegativeTest() {
         when(repository.findAllById(anyList()))
                 .thenThrow(new IllegalArgumentException("The id must not be null!"));
@@ -165,8 +158,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
     @Test
     @DisplayName("создание, позитивный сценарий")
-    // TODO переименуй в createPositiveTest
-    void createTest() {
+    void createPositiveTest() {
         doReturn(accountDetails).when(repository).save(any());
 
         final AccountDetailsDto result = service.create(
@@ -187,10 +179,8 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "создание с недопустимыми параметрами, негативный сценарий"
-    @DisplayName("создание, негативный сценарий")
-    // TODO переименуй в createInvalidParamsNegativeTest
-    void createNegativeTest() {
+    @DisplayName("создание с недопустимыми параметрами, негативный сценарий")
+    void createInvalidParamsNegativeTest() {
         String massage = "Недопустимые параметры";
 
         doThrow(new IllegalArgumentException(massage)).when(repository).save(any());
@@ -204,8 +194,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
 
     @Test
     @DisplayName("обновление, позитивный сценарий")
-    // TODO переименуй в updatePositiveTest
-    void updateTest() {
+    void updatePositiveTest() {
         doReturn(Optional.of(accountDetails)).when(repository).findById(ONE);
 
         doReturn(accountDetails).when(repository).save(
@@ -265,10 +254,8 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     }
 
     @Test
-    // TODO переименуй в "обновление по несуществующему id, негативный сценарий"
-    @DisplayName("обновление, негативный сценарий")
-    // TODO переименуй в updateNotExistIdNegativeTest
-    void updateNegativeTest() {
+    @DisplayName("обновление по несуществующему id, негативный сценарий")
+    void updateNotExistIdNegativeTest() {
         doReturn(Optional.empty()).when(repository).findById(anyLong());
 
         final EntityNotFoundException exception = assertThrows(
