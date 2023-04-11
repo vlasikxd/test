@@ -34,7 +34,7 @@ class UserServiceTest extends ParentTest {
 
     private static UserDto userDto;
     private static UserEntity user;
-    private static UserDto userUpdateDto;
+    private static UserDto updateUserDto;
     private static UserEntity updateUser;
     private static List<UserEntity> users;
     private static final String UPDATE_USER_NOT_FOUND_EXCEPTION_MESSAGE =
@@ -55,7 +55,7 @@ class UserServiceTest extends ParentTest {
     static void setUp() {
         userDto = getUserDto(ONE, ROLE_USER, PASSWORD, ONE);
 
-        userUpdateDto = getUserDto(null, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
+        updateUserDto = getUserDto(null, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
 
         user = getUser(ONE, ROLE_USER, PASSWORD, ONE);
 
@@ -85,7 +85,7 @@ class UserServiceTest extends ParentTest {
     @Test
     @DisplayName("сохранение, негативный сценарий")
     void saveNegativeTest() {
-        String message = "Entity не должна быть null";
+        String message = "Entity must not be null.";
         doThrow(new IllegalArgumentException(message)).when(repository).save(any());
 
         final var exception = assertThrows(
@@ -142,13 +142,13 @@ class UserServiceTest extends ParentTest {
         repositoryFindByIdMock();
         doReturn(updateUser).when(repository).save(any());
 
-        final UserDto result = service.update(ONE, userUpdateDto);
+        final UserDto result = service.update(ONE, updateUserDto);
 
         assertAll(() -> {
-            assertNotEquals(userUpdateDto.getId(), result.getId());
-            assertEquals(userUpdateDto.getRole(), result.getRole());
-            assertEquals(userUpdateDto.getPassword(), result.getPassword());
-            assertEquals(userUpdateDto.getProfileId(), result.getProfileId());
+            assertNotEquals(updateUserDto.getId(), result.getId());
+            assertEquals(updateUserDto.getRole(), result.getRole());
+            assertEquals(updateUserDto.getPassword(), result.getPassword());
+            assertEquals(updateUserDto.getProfileId(), result.getProfileId());
         });
     }
 
