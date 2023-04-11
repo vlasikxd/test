@@ -3,6 +3,8 @@ package com.bank.profile.controller;
 import com.bank.profile.dto.PassportDto;
 import com.bank.profile.entity.PassportEntity;
 import com.bank.profile.service.PassportService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/passport")
+@Tag(name = "Паспорт контроллер", description = "API для получения паспортных данных пользователей")
 public class PassportController {
 
     private final PassportService service;
@@ -32,6 +35,7 @@ public class PassportController {
      * @return {@link ResponseEntity} c {@link PassportDto} и HttpStatus OK
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Найти паспортные данные пользователя по id")
     public ResponseEntity<PassportDto> read(@PathVariable Long id) {
         return new ResponseEntity<>(service.read(id), HttpStatus.OK);
     }
@@ -41,6 +45,7 @@ public class PassportController {
      * @return {@link ResponseEntity} c {@link PassportDto} и HttpStatus OK
      */
     @GetMapping
+    @Operation(summary = "Найти паспортные данные пользователей по id")
     public ResponseEntity<List<PassportDto>> readAll(@RequestParam("id") List<Long> ids) {
         return new ResponseEntity<>(service.readAll(ids), HttpStatus.OK);
     }
@@ -50,6 +55,7 @@ public class PassportController {
      * @return {@link ResponseEntity} c {@link PassportDto} и HttpStatus OK
      */
     @PostMapping
+    @Operation(summary = "Запись паспортных данных пользователя в бд")
     public ResponseEntity<PassportDto> create(@RequestBody PassportDto passportDto) {
         return new ResponseEntity<>(service.save(passportDto), HttpStatus.OK);
     }
@@ -60,6 +66,7 @@ public class PassportController {
      * @return {@link ResponseEntity} c {@link PassportDto} и HttpStatus OK
      */
     @PutMapping("/{id}")
+    @Operation(summary = "Изменение паспортных данных пользователя по id")
     public ResponseEntity<PassportDto> update(@PathVariable("id") Long id,
                                               @RequestBody PassportDto passport) {
         return ResponseEntity.ok(service.update(id, passport));

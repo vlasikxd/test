@@ -3,6 +3,8 @@ package com.bank.profile.controller;
 import com.bank.profile.dto.AccountDetailsIdDto;
 import com.bank.profile.entity.AccountDetailsIdEntity;
 import com.bank.profile.service.AccountDetailsIdService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/account/details-id")
+@Tag(name = "Контроллер технической идентификации",
+        description = "API для получения информации об идентификации пользователя")
 public class AccountDetailsIdController {
 
     private final AccountDetailsIdService service;
@@ -31,6 +35,7 @@ public class AccountDetailsIdController {
      * @return {@link ResponseEntity} c {@link AccountDetailsIdDto} и HttpStatus OK
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Найти информацию о пользователе по id")
     public ResponseEntity<AccountDetailsIdDto> read(@PathVariable Long id) {
         return new ResponseEntity<>(service.read(id), HttpStatus.OK);
     }
@@ -40,6 +45,7 @@ public class AccountDetailsIdController {
      * @return {@link ResponseEntity} c {@link AccountDetailsIdDto} и HttpStatus OK
      */
     @GetMapping
+    @Operation(summary = "Найти информацию о пользователях по id")
     public ResponseEntity<List<AccountDetailsIdDto>> readAll(@RequestParam("id") List<Long> ids) {
         return new ResponseEntity<>(service.readAll(ids), HttpStatus.OK);
     }
@@ -49,6 +55,7 @@ public class AccountDetailsIdController {
      * @return {@link ResponseEntity} c {@link AccountDetailsIdDto} и HttpStatus OK
      */
     @PostMapping
+    @Operation(summary = "Создание аккаунта для пользователя")
     public ResponseEntity<AccountDetailsIdDto> create(@RequestBody AccountDetailsIdDto accountDetailsId) {
         return new ResponseEntity<>(service.save(accountDetailsId), HttpStatus.OK);
     }
@@ -59,6 +66,7 @@ public class AccountDetailsIdController {
      * @return {@link ResponseEntity} c {@link AccountDetailsIdDto} и HttpStatus OK
      */
     @PutMapping("/{id}")
+    @Operation(summary = "Изменение аккаунта пользователя по id")
     public ResponseEntity<AccountDetailsIdDto> update(@PathVariable("id") Long id,
                                                       @RequestBody AccountDetailsIdDto accountDetailsId) {
         return ResponseEntity.ok(service.update(id, accountDetailsId));

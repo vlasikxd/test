@@ -3,6 +3,8 @@ package com.bank.profile.controller;
 import com.bank.profile.dto.RegistrationDto;
 import com.bank.profile.entity.RegistrationEntity;
 import com.bank.profile.service.RegistrationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/registration")
+@Tag(name = "Контроллер регистрации")
 public class RegistrationController {
 
     private final RegistrationService service;
@@ -31,6 +34,7 @@ public class RegistrationController {
      * @return {@link ResponseEntity} c {@link RegistrationDto} и HttpStatus OK
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Найти информацию о зарегистрированном пользователе по id")
     public ResponseEntity<RegistrationDto> read(@PathVariable Long id) {
         return new ResponseEntity<>(service.read(id), HttpStatus.OK);
     }
@@ -40,6 +44,7 @@ public class RegistrationController {
      * @return {@link ResponseEntity} c {@link RegistrationDto} и HttpStatus OK
      */
     @GetMapping
+    @Operation(summary = "Найти информацию о зарегистрированных пользователях по id")
     public ResponseEntity<List<RegistrationDto>> readAll(@RequestParam("id") List<Long> ids) {
         return new ResponseEntity<>(service.readAll(ids), HttpStatus.OK);
     }
@@ -49,6 +54,7 @@ public class RegistrationController {
      * @return {@link ResponseEntity} c {@link RegistrationDto} и HttpStatus OK
      */
     @PostMapping
+    @Operation(summary = "Регистрация нового пользователя")
     public ResponseEntity<RegistrationDto> create(@RequestBody RegistrationDto registrationDto) {
         return new ResponseEntity<>(service.save(registrationDto), HttpStatus.OK);
     }
@@ -59,6 +65,7 @@ public class RegistrationController {
      * @return {@link ResponseEntity} c {@link RegistrationDto} и HttpStatus OK
      */
     @PutMapping("/{id}")
+    @Operation(summary = "Изменение информации о зарегистрированном пользователе по id")
     public ResponseEntity<RegistrationDto> update(@PathVariable("id") Long id,
                                                   @RequestBody RegistrationDto registration) {
         return ResponseEntity.ok(service.update(id, registration));
