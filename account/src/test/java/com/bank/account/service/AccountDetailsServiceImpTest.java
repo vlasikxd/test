@@ -18,19 +18,19 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetails;
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsDto;
+import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsList;
+import static com.bank.account.supplier.AccountDetailsSupplier.getZeroElement;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyList;
-import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetails;
-import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsList;
-import static com.bank.account.supplier.AccountDetailsSupplier.getZeroElement;
-import static com.bank.account.supplier.AccountDetailsSupplier.getAccountDetailsDto;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountDetailsServiceImpTest extends ParentTest {
@@ -110,9 +110,12 @@ public class AccountDetailsServiceImpTest extends ParentTest {
         assertAll(
                 () -> {
                     assertEquals(accountDetailsList.size(), result.size());
-                    assertEquals(getZeroElement(accountDetailsList).getId(), getZeroElement(result).getId());
-                    assertEquals(getZeroElement(accountDetailsList).getMoney(), getZeroElement(result).getMoney());
-
+                    assertEquals(getZeroElement(accountDetailsList).getId(),
+                            getZeroElement(result).getId()
+                    );
+                    assertEquals(getZeroElement(accountDetailsList).getMoney(),
+                            getZeroElement(result).getMoney()
+                    );
                     assertEquals(getZeroElement(accountDetailsList).getProfileId(),
                             getZeroElement(result).getProfileId()
                     );
