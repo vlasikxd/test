@@ -1,4 +1,4 @@
-package com.bank.publicinfo.service;
+package com.bank.publicinfo.mapper.service;
 
 import com.bank.publicinfo.ParentTest;
 import com.bank.publicinfo.dto.CertificateDto;
