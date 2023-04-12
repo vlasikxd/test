@@ -3,7 +3,7 @@ package com.bank.account.service;
 import com.bank.account.ParentTest;
 import com.bank.account.dto.AccountDetailsDto;
 import com.bank.account.entity.AccountDetailsEntity;
-import com.bank.account.mapper.AccountDetailsMapper;
+import com.bank.account.mapper.AccountDetailsMapperImpl;
 import com.bank.account.repository.AccountDetailsRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ public class AccountDetailsServiceImpTest extends ParentTest {
     private AccountDetailsRepository repository;
 
     @Spy
-    private AccountDetailsMapper mapper;
+    private AccountDetailsMapperImpl mapper;
 
     @BeforeAll
     static void init() {
