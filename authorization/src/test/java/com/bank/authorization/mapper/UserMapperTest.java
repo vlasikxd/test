@@ -32,11 +32,11 @@ class UserMapperTest extends ParentTest {
     void setUp() {
         mapper = new UserMapperImpl();
 
-        userDto = getUserDto(ONE, ROLE_USER, PASSWORD, ONE);
+        userDto = getUserDto(ONE, USERNAME, ROLE_USER, PASSWORD, ONE);
 
-        userUpdateDto = getUserDto(null, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
+        userUpdateDto = getUserDto(null, USERNAME, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
 
-        user = getUser(ONE, ROLE_USER, PASSWORD, ONE);
+        user = getUser(ONE, USERNAME, ROLE_USER, PASSWORD, ONE);
 
         users = getUsers(user);
     }
@@ -48,6 +48,7 @@ class UserMapperTest extends ParentTest {
 
         assertAll(() -> {
             assertNotEquals(userDto.getId(), result.getId());
+            assertEquals(userDto.getUsername(), result.getUsername());
             assertEquals(userDto.getRole(), result.getRole());
             assertEquals(userDto.getPassword(), result.getPassword());
             assertEquals(userDto.getProfileId(), result.getProfileId());
@@ -67,6 +68,7 @@ class UserMapperTest extends ParentTest {
 
         assertAll(() -> {
             assertEquals(user.getId(), result.getId());
+            assertEquals(userDto.getUsername(), result.getUsername());
             assertEquals(user.getRole(), result.getRole());
             assertEquals(user.getPassword(), result.getPassword());
             assertEquals(user.getProfileId(), result.getProfileId());
@@ -86,6 +88,7 @@ class UserMapperTest extends ParentTest {
 
         assertAll(() -> {
             assertNotEquals(userUpdateDto.getId(), result.getId());
+            assertEquals(userUpdateDto.getUsername(), result.getUsername());
             assertEquals(userUpdateDto.getRole(), result.getRole());
             assertEquals(userUpdateDto.getPassword(), result.getPassword());
             assertEquals(userUpdateDto.getProfileId(), result.getProfileId());
@@ -99,6 +102,7 @@ class UserMapperTest extends ParentTest {
 
         assertAll(() -> {
             assertEquals(ONE, result.getId());
+            assertEquals(USERNAME, result.getUsername());
             assertEquals(ROLE_USER, result.getRole());
             assertEquals(PASSWORD, result.getPassword());
             assertEquals(ONE, result.getProfileId());
@@ -116,6 +120,7 @@ class UserMapperTest extends ParentTest {
         assertAll(() -> {
             assertEquals(users.size(), result.size());
             assertEquals(userEntity.getId(), userDto.getId());
+            assertEquals(userEntity.getUsername(), userDto.getUsername());
             assertEquals(userEntity.getRole(), userDto.getRole());
             assertEquals(userEntity.getPassword(), userDto.getPassword());
             assertEquals(userEntity.getProfileId(), userDto.getProfileId());
@@ -141,6 +146,7 @@ class UserMapperTest extends ParentTest {
         assertAll(() -> {
             assertEquals(users.size(), result.size());
             assertEquals(userEntity.getId(), userDto.getId());
+            assertEquals(userEntity.getUsername(), userDto.getUsername());
             assertEquals(userEntity.getRole(), userDto.getRole());
             assertEquals(userEntity.getPassword(), userDto.getPassword());
             assertEquals(userEntity.getProfileId(), userDto.getProfileId());

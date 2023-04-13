@@ -54,7 +54,7 @@ class UserControllerTest extends ParentTest {
 
     @BeforeAll
     static void setUp() {
-        user = getUserDto(ONE, ROLE_USER, PASSWORD, ONE);
+        user = getUserDto(ONE, USERNAME, ROLE_USER, PASSWORD, ONE);
     }
 
     @Test
@@ -66,7 +66,8 @@ class UserControllerTest extends ParentTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(user)))
                 .andExpectAll(status().isOk(),
-                        jsonPath("$.role", is(user.getRole())),
+                        jsonPath("$.username", is(user.getUsername())),
+                        jsonPath("$.role", is(user.getRole().name())),
                         jsonPath("$.password", is(user.getPassword())),
                         jsonPath("$.profileId", is(user.getProfileId().intValue()))
                 );
@@ -112,7 +113,8 @@ class UserControllerTest extends ParentTest {
         mockMvc.perform(get("/users/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(user.getId().intValue())),
-                        jsonPath("$.role", is(user.getRole())),
+                        jsonPath("$.username", is(user.getUsername())),
+                        jsonPath("$.role", is(user.getRole().name())),
                         jsonPath("$.password", is(user.getPassword())),
                         jsonPath("$.profileId", is(user.getProfileId().intValue()))
                 );
@@ -150,7 +152,8 @@ class UserControllerTest extends ParentTest {
 
         mockMvc.perform(get("/users?id=1")).andExpectAll(status().isOk(),
                 jsonPath("$", hasSize(1)),
-                jsonPath("$.[0].role", is(user.getRole())),
+                jsonPath("$.[0].role", is(user.getRole().name())),
+                jsonPath("$.[0].username", is(user.getUsername())),
                 jsonPath("$.[0].id", is(user.getId().intValue())),
                 jsonPath("$.[0].password", is(user.getPassword())),
                 jsonPath("$.[0].profileId", is(user.getProfileId().intValue()))
@@ -193,7 +196,8 @@ class UserControllerTest extends ParentTest {
                         .content(mapper.writeValueAsString(user)))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(user.getId().intValue())),
-                        jsonPath("$.role", is(user.getRole())),
+                        jsonPath("$.username", is(user.getUsername())),
+                        jsonPath("$.role", is(user.getRole().name())),
                         jsonPath("$.password", is(user.getPassword())),
                         jsonPath("$.profileId", is(user.getProfileId().intValue()))
                 );

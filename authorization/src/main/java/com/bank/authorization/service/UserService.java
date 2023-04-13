@@ -17,6 +17,12 @@ public interface UserService {
     UserDto read(Long id);
 
     /**
+     * @param username имя пользователя для {@link UserEntity}.
+     * @return {@link UserDto}.
+     */
+    UserDto readByUserName(String username);
+
+    /**
      * @param user {@link UserDto}.
      * @return {@link UserDto}.
      */
