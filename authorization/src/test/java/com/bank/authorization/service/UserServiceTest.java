@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ class UserServiceTest extends ParentTest {
 
     private static UserDto userDto;
     private static UserEntity user;
-    private static UserDto updateUserDto;
+    private static UserDto userUpdateDto;
     private static UserEntity updateUser;
     private static List<UserEntity> users;
     private static final String UPDATE_USER_NOT_FOUND_EXCEPTION_MESSAGE =
@@ -51,17 +52,20 @@ class UserServiceTest extends ParentTest {
     @Spy
     private UserMapperImpl mapper;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @BeforeAll
     static void setUp() {
-        userDto = getUserDto(ONE, ROLE_USER, PASSWORD, ONE);
+        userDto = getUserDto(ONE, USERNAME, ROLE_USER, PASSWORD, ONE);
 
-        updateUserDto = getUserDto(null, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
+        userUpdateDto = getUserDto(null, USERNAME, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
 
-        user = getUser(ONE, ROLE_USER, PASSWORD, ONE);
+        user = getUser(ONE, USERNAME, ROLE_USER, PASSWORD, ONE);
 
-        UserEntity userTwo = getUser(TWO, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
+        UserEntity userTwo = getUser(TWO, USERNAME, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
 
-        updateUser = getUser(ONE, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
+        updateUser = getUser(ONE, USERNAME, ROLE_ADMIN, PASSWORD_ADMIN, TWO);
 
         users = getUsers(user, userTwo);
     }
@@ -75,6 +79,7 @@ class UserServiceTest extends ParentTest {
 
         assertAll(() -> {
             assertEquals(user.getId(), result.getId());
+            assertEquals(user.getUsername(), result.getUsername());
             assertEquals(user.getRole(), result.getRole());
             assertEquals(user.getPassword(), result.getPassword());
             assertEquals(user.getProfileId(), result.getProfileId());
@@ -104,6 +109,7 @@ class UserServiceTest extends ParentTest {
 
         assertAll(() -> {
             assertEquals(user.getId(), result.getId());
+            assertEquals(user.getUsername(), result.getUsername());
             assertEquals(user.getRole(), result.getRole());
             assertEquals(user.getPassword(), result.getPassword());
             assertEquals(user.getProfileId(), result.getProfileId());
@@ -141,14 +147,16 @@ class UserServiceTest extends ParentTest {
     void updatePositiveTest() {
         repositoryFindByIdMock();
         doReturn(updateUser).when(repository).save(any());
+        doReturn(userUpdateDto.getPassword()).when(passwordEncoder).encode(any());
 
-        final UserDto result = service.update(ONE, updateUserDto);
+        final UserDto result = service.update(ONE, userUpdateDto);
 
         assertAll(() -> {
-            assertNotEquals(updateUserDto.getId(), result.getId());
-            assertEquals(updateUserDto.getRole(), result.getRole());
-            assertEquals(updateUserDto.getPassword(), result.getPassword());
-            assertEquals(updateUserDto.getProfileId(), result.getProfileId());
+            assertNotEquals(userUpdateDto.getId(), result.getId());
+            assertEquals(userUpdateDto.getUsername(), result.getUsername());
+            assertEquals(userUpdateDto.getRole().name(), result.getRole().name());
+            assertEquals(userUpdateDto.getPassword(), result.getPassword());
+            assertEquals(userUpdateDto.getProfileId(), result.getProfileId());
         });
     }
 
@@ -162,6 +170,7 @@ class UserServiceTest extends ParentTest {
 
         assertAll(() -> {
             assertEquals(user.getId(), result.getId());
+            assertEquals(user.getUsername(), result.getUsername());
             assertEquals(user.getRole(), result.getRole());
             assertEquals(user.getPassword(), result.getPassword());
             assertEquals(user.getProfileId(), result.getProfileId());
@@ -208,10 +217,12 @@ class UserServiceTest extends ParentTest {
         assertAll(() -> {
             assertEquals(users.size(), result.size());
             assertEquals(firstUserInList.getId(), firstUserInReadList.getId());
+            assertEquals(firstUserInList.getUsername(), firstUserInReadList.getUsername());
             assertEquals(firstUserInList.getRole(), firstUserInReadList.getRole());
             assertEquals(firstUserInList.getPassword(), firstUserInReadList.getPassword());
             assertEquals(firstUserInList.getProfileId(), firstUserInReadList.getProfileId());
             assertEquals(secondUserInList.getId(), secondUserInReadList.getId());
+            assertEquals(secondUserInList.getUsername(), secondUserInReadList.getUsername());
             assertEquals(secondUserInList.getRole(), secondUserInReadList.getRole());
             assertEquals(secondUserInList.getPassword(), secondUserInReadList.getPassword());
             assertEquals(secondUserInList.getProfileId(), secondUserInReadList.getProfileId());
