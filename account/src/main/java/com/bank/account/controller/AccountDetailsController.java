@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -30,6 +34,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/details", produces = "application/json")
+@Validated
 @Tag(name = "Банковский счет", description = "API для получения информации о банковском счете")
 public class AccountDetailsController {
 
@@ -66,7 +71,8 @@ public class AccountDetailsController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<AccountDetailsDto> read(
-            @Parameter(description = "Id запрошенного банковского счета") @PathVariable Long id) {
+             @Parameter(description = "Id запрошенного банковского счета")
+             @NotNull @PositiveOrZero @PathVariable Long id) {
         return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
 
@@ -130,8 +136,9 @@ public class AccountDetailsController {
             )
     })
     @PostMapping
-    public ResponseEntity<AccountDetailsDto> create(@Parameter(description = "Тело JSON банковского счета на создание")
-                                                    @RequestBody AccountDetailsDto accountDetails) {
+    public ResponseEntity<AccountDetailsDto> create(
+            @Parameter(description = "Тело JSON банковского счета на создание")
+            @Valid @RequestBody AccountDetailsDto accountDetails) {
         return new ResponseEntity<>(service.create(accountDetails), HttpStatus.OK);
     }
 
@@ -168,9 +175,9 @@ public class AccountDetailsController {
     @PutMapping("/{id}")
     public ResponseEntity<AccountDetailsDto> update(
             @Parameter(description = "Id банковского счета для обновления")
-            @PathVariable Long id,
+            @NotNull @PositiveOrZero @PathVariable Long id,
             @Parameter(description = "Тело JSON банковского счета на обновление")
-            @RequestBody AccountDetailsDto accountDetails) {
+            @Valid @RequestBody AccountDetailsDto accountDetails) {
         return new ResponseEntity<>(service.update(id, accountDetails), HttpStatus.OK);
     }
 }
