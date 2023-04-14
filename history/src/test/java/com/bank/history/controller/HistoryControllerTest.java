@@ -20,6 +20,7 @@ import javax.persistence.EntityNotFoundException;
 
 import java.util.Collections;
 
+import static com.bank.history.supplier.HistorySupplier.getHistoryDto;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;

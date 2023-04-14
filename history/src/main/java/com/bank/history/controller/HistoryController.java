@@ -3,6 +3,8 @@ package com.bank.history.controller;
 import java.util.List;
 
 import com.bank.history.entity.HistoryEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import com.bank.history.dto.HistoryDto;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/history")
+@Tag(name = "HistoryController", description = "Контроллер микросервиса по сбору истории " +
+        "из других микросервисов")
 public class HistoryController {
     private final HistoryService service;
 
@@ -31,6 +35,7 @@ public class HistoryController {
      * @return {@link ResponseEntity} c {@link HistoryDto} и HttpStatus OK
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Поиск информации об истории по id")
     public ResponseEntity<HistoryDto> read(@PathVariable Long id) {
         return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
@@ -40,6 +45,7 @@ public class HistoryController {
      * @return {@link ResponseEntity} c {@link HistoryDto} и HttpStatus OK
      */
     @GetMapping
+    @Operation(summary = "Поиск информации об историях по id")
     public ResponseEntity<List<HistoryDto>> readAll(@RequestParam("id") List<Long> id) {
         return new ResponseEntity<>(service.readAllById(id), HttpStatus.OK);
     }
@@ -49,6 +55,7 @@ public class HistoryController {
      * @return {@link ResponseEntity} c {@link HistoryDto} и HttpStatus OK
      */
     @PostMapping
+    @Operation(summary = "Создание новой истории")
     public ResponseEntity<HistoryDto> create(@RequestBody HistoryDto history) {
         return new ResponseEntity<>(service.create(history), HttpStatus.OK);
     }
@@ -59,6 +66,7 @@ public class HistoryController {
      * @return {@link ResponseEntity} c {@link HistoryDto} и HttpStatus OK
      */
     @PutMapping("/{id}")
+    @Operation(summary = "Обновление информации об истории по id")
     public ResponseEntity<HistoryDto> update(@PathVariable Long id,
                                              @RequestBody HistoryDto history) {
         return new ResponseEntity<>(service.update(id, history), HttpStatus.OK);
