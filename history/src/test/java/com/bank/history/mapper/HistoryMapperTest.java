@@ -10,7 +10,11 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.bank.history.supplier.HistorySupplier.*;
+import static com.bank.history.supplier.HistorySupplier.getHistories;
+import static com.bank.history.supplier.HistorySupplier.getHistoryDto;
+import static com.bank.history.supplier.HistorySupplier.getHistoryEntity;
+import static com.bank.history.supplier.HistorySupplier.getZeroElement;
+import static com.bank.history.supplier.HistorySupplier.getZeroEntityElement;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -23,6 +27,7 @@ public class HistoryMapperTest extends ParentTest {
     private HistoryEntity historyEntity;
 
     private HistoryDto historyDto;
+
     private HistoryDto updatedHistoryDto;
 
     private List<HistoryEntity> histories;
@@ -43,19 +48,21 @@ public class HistoryMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг в entity, позитивный сценарий")
+    @DisplayName("маппинг в entity")
     void toEntityTest() {
         final HistoryEntity result = mapper.toEntity(historyDto);
 
-        assertAll(() -> {
-            assertNotEquals(historyDto.getId(), result.getId());
-            assertEquals(historyDto.getPublicBankInfoAuditId(), result.getPublicBankInfoAuditId());
-            assertEquals(historyDto.getProfileAuditId(), result.getProfileAuditId());
-            assertEquals(historyDto.getAntiFraudAuditId(), result.getAntiFraudAuditId());
-            assertEquals(historyDto.getAuthorizationAuditId(), result.getAuthorizationAuditId());
-            assertEquals(historyDto.getAccountAuditId(), result.getAccountAuditId());
-            assertEquals(historyDto.getTransferAuditId(), result.getTransferAuditId());
-        });
+        assertAll(
+                () -> {
+                    assertNotEquals(historyDto.getId(), result.getId());
+                    assertEquals(historyDto.getPublicBankInfoAuditId(), result.getPublicBankInfoAuditId());
+                    assertEquals(historyDto.getProfileAuditId(), result.getProfileAuditId());
+                    assertEquals(historyDto.getAntiFraudAuditId(), result.getAntiFraudAuditId());
+                    assertEquals(historyDto.getAuthorizationAuditId(), result.getAuthorizationAuditId());
+                    assertEquals(historyDto.getAccountAuditId(), result.getAccountAuditId());
+                    assertEquals(historyDto.getTransferAuditId(), result.getTransferAuditId());
+                }
+        );
     }
 
     @Test
@@ -65,19 +72,21 @@ public class HistoryMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг в dto, позитивный сценарий")
+    @DisplayName("маппинг в dto")
     void toDtoTest() {
         final HistoryDto result = mapper.toDto(historyEntity);
 
-        assertAll(() -> {
-            assertEquals(historyEntity.getId(), result.getId());
-            assertEquals(historyEntity.getPublicBankInfoAuditId(), result.getPublicBankInfoAuditId());
-            assertEquals(historyEntity.getProfileAuditId(), result.getProfileAuditId());
-            assertEquals(historyEntity.getAntiFraudAuditId(), result.getAntiFraudAuditId());
-            assertEquals(historyEntity.getAuthorizationAuditId(), result.getAuthorizationAuditId());
-            assertEquals(historyEntity.getAccountAuditId(), result.getAccountAuditId());
-            assertEquals(historyEntity.getTransferAuditId(), result.getTransferAuditId());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(historyEntity.getId(), result.getId());
+                    assertEquals(historyEntity.getPublicBankInfoAuditId(), result.getPublicBankInfoAuditId());
+                    assertEquals(historyEntity.getProfileAuditId(), result.getProfileAuditId());
+                    assertEquals(historyEntity.getAntiFraudAuditId(), result.getAntiFraudAuditId());
+                    assertEquals(historyEntity.getAuthorizationAuditId(), result.getAuthorizationAuditId());
+                    assertEquals(historyEntity.getAccountAuditId(), result.getAccountAuditId());
+                    assertEquals(historyEntity.getTransferAuditId(), result.getTransferAuditId());
+                }
+        );
     }
 
     @Test
@@ -87,63 +96,75 @@ public class HistoryMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг в entity, позитивный сценарий")
+    @DisplayName("слияние в entity, позитивный сценарий")
     void mergeToEntityTest() {
         final HistoryEntity result = mapper.mergeToEntity(updatedHistoryDto, historyEntity);
 
-        assertAll(() -> {
-            assertNotEquals(updatedHistoryDto.getId(), result.getId());
-            assertEquals(historyEntity.getPublicBankInfoAuditId(), result.getPublicBankInfoAuditId());
-            assertEquals(historyEntity.getProfileAuditId(), result.getProfileAuditId());
-            assertEquals(historyEntity.getAntiFraudAuditId(), result.getAntiFraudAuditId());
-            assertEquals(historyEntity.getAuthorizationAuditId(), result.getAuthorizationAuditId());
-            assertEquals(historyEntity.getAccountAuditId(), result.getAccountAuditId());
-            assertEquals(historyEntity.getTransferAuditId(), result.getTransferAuditId());
-        });
+        assertAll(
+                () -> {
+                    assertNotEquals(updatedHistoryDto.getId(), result.getId());
+                    assertEquals(historyEntity.getPublicBankInfoAuditId(), result.getPublicBankInfoAuditId());
+                    assertEquals(historyEntity.getProfileAuditId(), result.getProfileAuditId());
+                    assertEquals(historyEntity.getAntiFraudAuditId(), result.getAntiFraudAuditId());
+                    assertEquals(historyEntity.getAuthorizationAuditId(), result.getAuthorizationAuditId());
+                    assertEquals(historyEntity.getAccountAuditId(), result.getAccountAuditId());
+                    assertEquals(historyEntity.getTransferAuditId(), result.getTransferAuditId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг в entity, на вход подан null")
+    @DisplayName("слияние в entity, на вход подан null")
     void mergeToEntityNullTest() {
         final HistoryEntity result = mapper.mergeToEntity(null, historyEntity);
 
-        assertAll(() -> {
-            assertEquals(ONE, result.getId());
-            assertEquals(ONE, result.getAuthorizationAuditId());
-            assertEquals(ONE, result.getPublicBankInfoAuditId());
-            assertEquals(ONE, result.getTransferAuditId());
-            assertEquals(ONE, result.getProfileAuditId());
-            assertEquals(ONE, result.getAntiFraudAuditId());
-            assertEquals(ONE, result.getAccountAuditId());
-        });
+        assertAll(
+                () -> {
+                    assertEquals(ONE, result.getId());
+                    assertEquals(ONE, result.getAuthorizationAuditId());
+                    assertEquals(ONE, result.getPublicBankInfoAuditId());
+                    assertEquals(ONE, result.getTransferAuditId());
+                    assertEquals(ONE, result.getProfileAuditId());
+                    assertEquals(ONE, result.getAntiFraudAuditId());
+                    assertEquals(ONE, result.getAccountAuditId());
+                }
+        );
     }
 
     @Test
-    @DisplayName("маппинг списка entity в список dto, позитивный сценарий")
+    @DisplayName("маппинг списка entity в список dto")
     void toDtoListTest() {
         final List<HistoryDto> result = mapper.toDtoList(histories);
 
-        assertAll(() -> {
-            assertEquals(histories.size(), result.size());
-            assertEquals(getZeroEntityElement(histories).getId(), getZeroElement(result).getId());
-            assertEquals(getZeroEntityElement(histories).getAccountAuditId(), getZeroElement(result).getAccountAuditId());
+        assertAll(
+                () -> {
+                    assertEquals(histories.size(), result.size());
 
-            assertEquals(getZeroEntityElement(histories).getTransferAuditId(),
-                    getZeroElement(result).getTransferAuditId()
-            );
-            assertEquals(getZeroEntityElement(histories).getPublicBankInfoAuditId(),
-                    getZeroElement(result).getPublicBankInfoAuditId()
-            );
-            assertEquals(getZeroEntityElement(histories).getProfileAuditId(),
-                    getZeroElement(result).getProfileAuditId()
-            );
-            assertEquals(getZeroEntityElement(histories).getAuthorizationAuditId(),
-                    getZeroElement(result).getAuthorizationAuditId()
-            );
-            assertEquals(getZeroEntityElement(histories).getAntiFraudAuditId(),
-                    getZeroElement(result).getAntiFraudAuditId()
-            );
-        });
+                    assertEquals(getZeroEntityElement(histories).getAccountAuditId(),
+                            getZeroElement(result).getAccountAuditId()
+                    );
+
+                    assertEquals(getZeroEntityElement(histories).getAccountAuditId(),
+                            getZeroElement(result).getAccountAuditId()
+                    );
+
+                    assertEquals(getZeroEntityElement(histories).getTransferAuditId(),
+                            getZeroElement(result).getTransferAuditId()
+                    );
+                    assertEquals(getZeroEntityElement(histories).getPublicBankInfoAuditId(),
+                            getZeroElement(result).getPublicBankInfoAuditId()
+                    );
+                    assertEquals(getZeroEntityElement(histories).getProfileAuditId(),
+                            getZeroElement(result).getProfileAuditId()
+                    );
+                    assertEquals(getZeroEntityElement(histories).getAuthorizationAuditId(),
+                            getZeroElement(result).getAuthorizationAuditId()
+                    );
+                    assertEquals(getZeroEntityElement(histories).getAntiFraudAuditId(),
+                            getZeroElement(result).getAntiFraudAuditId()
+                    );
+                }
+        );
     }
 
     @Test
@@ -161,27 +182,32 @@ public class HistoryMapperTest extends ParentTest {
 
         final List<HistoryDto> result = mapper.toDtoList(severalAccountDetails);
 
-        assertAll(() -> {
-            assertNull(result.get(1));
-            assertEquals(histories.size(), result.size());
-            assertEquals(getZeroEntityElement(histories).getId(), getZeroElement(result).getId());
-            assertEquals(getZeroEntityElement(histories).getAntiFraudAuditId(), getZeroElement(result).getAntiFraudAuditId());
+        assertAll(
+                () -> {
+                    assertNull(result.get(1));
+                    assertEquals(histories.size(), result.size());
+                    assertEquals(getZeroEntityElement(histories).getAntiFraudAuditId(),
+                            getZeroElement(result).getAntiFraudAuditId());
 
-            assertEquals(getZeroEntityElement(histories).getTransferAuditId(),
-                    getZeroElement(result).getTransferAuditId()
-            );
-            assertEquals(getZeroEntityElement(histories).getAccountAuditId(),
-                    getZeroElement(result).getAccountAuditId()
-            );
-            assertEquals(getZeroEntityElement(histories).getProfileAuditId(),
-                    getZeroElement(result).getProfileAuditId()
-            );
-            assertEquals(getZeroEntityElement(histories).getAuthorizationAuditId(),
-                    getZeroElement(result).getAuthorizationAuditId()
-            );
-            assertEquals(getZeroEntityElement(histories).getPublicBankInfoAuditId(),
-                    getZeroElement(result).getPublicBankInfoAuditId()
-            );
-        });
+                    assertEquals(getZeroEntityElement(histories).getAntiFraudAuditId(),
+                            getZeroElement(result).getAntiFraudAuditId());
+
+                    assertEquals(getZeroEntityElement(histories).getTransferAuditId(),
+                            getZeroElement(result).getTransferAuditId()
+                    );
+                    assertEquals(getZeroEntityElement(histories).getAccountAuditId(),
+                            getZeroElement(result).getAccountAuditId()
+                    );
+                    assertEquals(getZeroEntityElement(histories).getProfileAuditId(),
+                            getZeroElement(result).getProfileAuditId()
+                    );
+                    assertEquals(getZeroEntityElement(histories).getAuthorizationAuditId(),
+                            getZeroElement(result).getAuthorizationAuditId()
+                    );
+                    assertEquals(getZeroEntityElement(histories).getPublicBankInfoAuditId(),
+                            getZeroElement(result).getPublicBankInfoAuditId()
+                    );
+                }
+        );
     }
 }
