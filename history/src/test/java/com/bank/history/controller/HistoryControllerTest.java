@@ -12,9 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mock.http.client.MockClientHttpResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -73,9 +77,9 @@ public class HistoryControllerTest extends ParentTest {
 
 
     @Test
-    @DisplayName("чтение, негативный сценарий")
-    void readNegativeTest() throws Exception {
-        String massage = "История не найдена";
+    @DisplayName("чтение несуществующего id, негативный сценарий")
+    void readNotExistIdNegativeTest() throws Exception {
+        final String massage = "История не найдена";
 
         doThrow(new EntityNotFoundException(massage)).when(service).readById(any());
 
@@ -87,7 +91,21 @@ public class HistoryControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по нескольким идентификаторам позитивный сценарий")
+    @DisplayName("чтение по некорректному id, негативный сценарий")
+    void readIncorrectIdNegativeTest() throws Exception {
+        doThrow(MethodArgumentTypeMismatchException.class)
+                .when(service)
+                .readById(any());
+
+        mock.perform(get("/api/history/{id}", "NotANumber"))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string("Некорректно указан id")
+                );
+    }
+
+    @Test
+    @DisplayName("чтение по нескольким id, позитивный сценарий")
     void readAllPositiveTest() throws Exception {
         doReturn(Collections.singletonList(history)).when(service).readAllById(any());
 
@@ -104,15 +122,28 @@ public class HistoryControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по нескольким идентификаторам, негативный сценарий")
-    void readAllNegativeTest() throws Exception {
-        String massage = "Ошибка в переданных параметрах";
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
+    void readAllNotExistIdsNegativeTest() throws Exception {
+        final String massage = "Ошибка в переданных параметрах";
 
         doThrow(new EntityNotFoundException(massage)).when(service).readAllById(any());
 
         mock.perform(get("/api/history?id=1"))
                 .andExpectAll(status().isNotFound(),
                         content().string(massage)
+                );
+    }
+
+    @Test
+    @DisplayName("чтение по нескольким некорректным id, негативный сценарий")
+    void readAllIncorrectIdNegativeTest() throws Exception {
+        doThrow(MethodArgumentTypeMismatchException.class)
+                .when(service)
+                .readAllById(any());
+
+        mock.perform(get("/api/history?id=NitANumber"))
+                .andExpectAll(status().isBadRequest(),
+                        content().string("Некорректно указан id")
                 );
     }
 
@@ -137,9 +168,9 @@ public class HistoryControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("создание, негативный сценарий")
-    void saveNegativeTest() throws Exception {
-        String massage = "Неверные данные";
+    @DisplayName("создание, некорректные данные, негативный сценарий")
+    void saveIncorrectDataNegativeTest() throws Exception {
+        final String massage = "Неверные данные";
 
         doThrow(new ValidationException(massage)).when(service).create(any());
 
@@ -150,6 +181,23 @@ public class HistoryControllerTest extends ParentTest {
         response.andExpectAll(status().isUnprocessableEntity(),
                 content().string(massage)
         );
+    }
+
+    @Test
+    @DisplayName("создание некорректного json, негативный сценарий")
+    void saveIncorrectJsonNegativeTest() throws Exception {
+        final String message = "Обновление невозможно, некорректные данные!";
+
+        doThrow(new HttpMessageNotReadableException(
+                message, new MockClientHttpResponse(
+                        new byte[]{}, HttpStatus.MULTI_STATUS))).when(service).create(any()
+        );
+
+        response = mock.perform(post("/api/history")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpectAll(status().isBadRequest(),
+                        content().string(message));
     }
 
     @Test
@@ -173,9 +221,9 @@ public class HistoryControllerTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
-    void updateNegativeTest() throws Exception {
-        String massage = "Обновление невозможно";
+    @DisplayName("обновление несуществующей сущности, негативный сценарий")
+    void updateNotExistEntityNegativeTest() throws Exception {
+        final String massage = "Обновление невозможно";
 
         doThrow(new EntityNotFoundException(massage)).when(service).update(anyLong(), any());
 
@@ -186,5 +234,21 @@ public class HistoryControllerTest extends ParentTest {
         response.andExpectAll(status().isNotFound(),
                 content().string(massage)
         );
+    }
+
+    @Test
+    @SuppressWarnings("all")
+    @DisplayName("обновление, некорректный json, негативный сценарий")
+    void updateIncorrectJsonNegativeTest() throws Exception {
+        final String message = "Обновление невозможно, некорректные данные!";
+
+        doThrow(new HttpMessageNotReadableException(message)).when(service).update(anyLong(), any());
+
+        response = mock.perform(put("/api/history/{id}", ONE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpectAll(status().isBadRequest(),
+                        content().string(message)
+                );
     }
 }
