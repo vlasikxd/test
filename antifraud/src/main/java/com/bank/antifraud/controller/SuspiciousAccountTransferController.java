@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -32,7 +33,8 @@ public class SuspiciousAccountTransferController {
      * @return {@link ResponseEntity} c {@link SuspiciousAccountTransferDto} и {@link HttpStatus}
      */
     @PostMapping
-    public ResponseEntity<SuspiciousAccountTransferDto> create(@RequestBody SuspiciousAccountTransferDto transfer) {
+    public ResponseEntity<SuspiciousAccountTransferDto> create(@Valid @RequestBody
+                                                                   SuspiciousAccountTransferDto transfer) {
         return ResponseEntity.ok(service.create(transfer));
     }
 
@@ -60,8 +62,8 @@ public class SuspiciousAccountTransferController {
      * @return {@link ResponseEntity} c {@link SuspiciousAccountTransferDto} и {@link HttpStatus}
      */
     @PutMapping("/{id}")
-    public ResponseEntity<SuspiciousAccountTransferDto> update(@PathVariable("id") Long id,
-                                                               @RequestBody SuspiciousAccountTransferDto transfer) {
+    public ResponseEntity<SuspiciousAccountTransferDto> update(@Valid @PathVariable("id") Long id,
+                                                                @RequestBody SuspiciousAccountTransferDto transfer) {
         return ResponseEntity.ok(service.update(transfer, id));
     }
 }
