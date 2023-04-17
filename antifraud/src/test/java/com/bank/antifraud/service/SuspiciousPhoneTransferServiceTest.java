@@ -7,7 +7,7 @@ import com.bank.antifraud.mapper.SuspiciousPhoneTransferMapperImpl;
 import com.bank.antifraud.repository.SuspiciousPhoneTransferRepository;
 import com.bank.antifraud.service.impl.SuspiciousPhoneTransferServiceImpl;
 import com.bank.antifraud.supplier.SuspiciousPhoneTransferSupplier;
-import com.bank.antifraud.util.ListSizeValidator;
+import com.bank.antifraud.validator.ValidatorSize;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class SuspiciousPhoneTransferServiceTest extends ParentTest {
     private static SuspiciousPhoneTransferMapperImpl mapper;
 
     @Spy
-    private ListSizeValidator listSizeValidator;
+    private ValidatorSize validatorSize;
 
     @BeforeAll
     static void init() {

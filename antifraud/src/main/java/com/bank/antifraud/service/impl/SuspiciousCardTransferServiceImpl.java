@@ -5,13 +5,16 @@ import com.bank.antifraud.entity.SuspiciousCardTransferEntity;
 import com.bank.antifraud.mapper.SuspiciousCardTransferMapper;
 import com.bank.antifraud.repository.SuspiciousCardTransferRepository;
 import com.bank.antifraud.service.SuspiciousCardTransferService;
-import com.bank.antifraud.util.ListSizeValidator;
+import com.bank.antifraud.validator.CardValidator;
+import com.bank.antifraud.validator.ValidatorSize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+
+
 
 /**
  * Реализация {@link SuspiciousCardTransferService}
@@ -22,8 +25,7 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
 
     private final SuspiciousCardTransferRepository repository;
     private final SuspiciousCardTransferMapper mapper;
-    private final ListSizeValidator listSizeValidator;
-
+    private final ValidatorSize validatorSize;
 
     /**
      * @param transfer {@link SuspiciousCardTransferDto}
@@ -32,6 +34,9 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
     @Override
     @Transactional
     public SuspiciousCardTransferDto create(SuspiciousCardTransferDto transfer) {
+        if (transfer != null) {
+            CardValidator.dtoValidator(transfer.getIsBlocked(), transfer.getBlockedReason());
+        }
         final SuspiciousCardTransferEntity suspiciousCardTransfer = repository.save(
                 mapper.toEntity(transfer)
         );
@@ -55,7 +60,7 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
     @Override
     public List<SuspiciousCardTransferDto> readAll(List<Long> ids) {
         final List<SuspiciousCardTransferEntity> suspiciousCardTransfers = repository.findAllById(ids);
-        listSizeValidator.throwIfDifferent(ids, suspiciousCardTransfers,
+        validatorSize.checkSize(ids, suspiciousCardTransfers,
                 () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает.")
         );
         return mapper.toListDto(suspiciousCardTransfers);
@@ -69,6 +74,9 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
     @Override
     @Transactional
     public SuspiciousCardTransferDto update(SuspiciousCardTransferDto transfer, Long id) {
+        if (transfer != null) {
+            CardValidator.dtoValidator(transfer.getIsBlocked(), transfer.getBlockedReason());
+        }
         final SuspiciousCardTransferEntity suspiciousCardTransferById = findById(id);
         final SuspiciousCardTransferEntity savedSuspiciousCardTransfer = repository.save(
                 mapper.mergeToEntity(transfer, suspiciousCardTransferById)

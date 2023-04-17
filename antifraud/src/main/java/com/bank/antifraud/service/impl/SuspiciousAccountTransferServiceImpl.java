@@ -5,13 +5,14 @@ import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
 import com.bank.antifraud.mapper.SuspiciousAccountTransferMapper;
 import com.bank.antifraud.repository.SuspiciousAccountTransferRepository;
 import com.bank.antifraud.service.SuspiciousAccountTransferService;
-import com.bank.antifraud.util.ListSizeValidator;
+import com.bank.antifraud.validator.AccountValidator;
+import com.bank.antifraud.validator.ValidatorSize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+
 
 /**
  * Реализация {@link SuspiciousAccountTransferService}
@@ -22,7 +23,7 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
 
     private final SuspiciousAccountTransferRepository repository;
     private final SuspiciousAccountTransferMapper mapper;
-    private final ListSizeValidator listSizeValidator;
+    private final ValidatorSize validatorSize;
 
     /**
      * @param transfer {@link SuspiciousAccountTransferDto}
@@ -31,6 +32,9 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
     @Override
     @Transactional
     public SuspiciousAccountTransferDto create(SuspiciousAccountTransferDto transfer) {
+        if (transfer != null) {
+            AccountValidator.dtoValidator(transfer.getIsBlocked(), transfer.getBlockedReason());
+        }
         final SuspiciousAccountTransferEntity suspiciousAccountTransfer = repository.save(
                 mapper.toEntity(transfer)
         );
@@ -54,7 +58,7 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
     @Override
     public List<SuspiciousAccountTransferDto> readAll(List<Long> ids) {
         final List<SuspiciousAccountTransferEntity> suspiciousAccountTransfers = repository.findAllById(ids);
-        listSizeValidator.throwIfDifferent(ids, suspiciousAccountTransfers,
+        validatorSize.checkSize(ids, suspiciousAccountTransfers,
                 () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает.")
         );
         return mapper.toListDto(suspiciousAccountTransfers);
@@ -68,6 +72,9 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
     @Override
     @Transactional
     public SuspiciousAccountTransferDto update(SuspiciousAccountTransferDto transfer, Long id) {
+        if (transfer != null) {
+            AccountValidator.dtoValidator(transfer.getIsBlocked(), transfer.getBlockedReason());
+        }
         final SuspiciousAccountTransferEntity suspiciousAccountTransferById = findById(id);
         final SuspiciousAccountTransferEntity savedSuspiciousAccountTransfer = repository.save(
                 mapper.mergeToEntity(transfer, suspiciousAccountTransferById)
