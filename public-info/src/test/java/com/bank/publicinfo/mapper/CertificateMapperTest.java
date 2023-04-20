@@ -39,7 +39,7 @@ public class CertificateMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity")
+    @DisplayName("Маппинг к entity")
     void toEntityTest() {
         final CertificateEntity result = mapper.toEntity(certificateDto);
 
@@ -53,13 +53,13 @@ public class CertificateMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity, на вход подан null")
+    @DisplayName("Маппинг к entity, на вход подан null")
     void toEntityNullTest() {
         assertNull(mapper.toEntity(null));
     }
 
     @Test
-    @DisplayName("маппинг к dto")
+    @DisplayName("Маппинг к dto")
     void toDtoTest() {
         final CertificateDto result = mapper.toDto(certificate);
 
@@ -73,13 +73,13 @@ public class CertificateMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к dto, на вход подан null")
+    @DisplayName("Маппинг к dto, на вход подан null")
     void toDtoNullTest() {
         assertNull(mapper.toDto(null));
     }
 
     @Test
-    @DisplayName("слияние в entity позитивный сценарий")
+    @DisplayName("Слияние в entity позитивный сценарий")
     void mergeToEntityTest() {
         final CertificateEntity result = mapper.mergeToEntity(certificateUpdateDto, certificate);
 
@@ -93,7 +93,7 @@ public class CertificateMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("слияние в entity, на вход подан null")
+    @DisplayName("Слияние в entity, на вход подан null")
     void mergeToEntityNullTest() {
         final CertificateEntity result = mapper.mergeToEntity(null, certificate);
 
@@ -105,7 +105,7 @@ public class CertificateMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку дто")
+    @DisplayName("Маппинг к списку дто")
     void toDtoListTest() {
         final List<CertificateDto> certificates = mapper.toDtoList(
                 List.of(certificate)
@@ -124,13 +124,13 @@ public class CertificateMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку дто, на вход подан null")
+    @DisplayName("Маппинг к списку дто, на вход подан null")
     void toDtoListNullTest() {
         assertNull(mapper.toDtoList(null));
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, один из элементов списка равен null")
+    @DisplayName("Маппинг к списку dto, один из элементов списка равен null")
     void toListDtoElementNullTest() {
         final List<CertificateEntity> certificates = new ArrayList<>();
         certificates.add(certificate);

@@ -40,7 +40,7 @@ public class BranchControllerTest extends ParentTest {
     private static BranchSupplier branchSupplier;
 
     private final ObjectMapper mapper;
-    private final MockMvc mock;
+    private final MockMvc mockMvc;
 
     @MockBean
     private BranchService service;
@@ -49,165 +49,192 @@ public class BranchControllerTest extends ParentTest {
     static void init() {
         branchSupplier = new BranchSupplier();
 
-        branch = branchSupplier.getDto(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        branch = branchSupplier.getDto(ONE, SPACE, TWO, SPACE);
     }
 
     @Test
-    @DisplayName("сохранение, позитивный сценарий")
-    void saveTest() throws Exception {
+    @DisplayName("cохранение, позитивный сценарий")
+    void savePositiveTest() throws Exception {
         doReturn(branch).when(service).save(any());
 
         final int phoneNumber = getIntFromLong(branch.getPhoneNumber());
-        final String startOfWork = LocalTimeToString(branch.getStartOfWork());
-        final String endOfWork = LocalTimeToString(branch.getEndOfWork());
 
-        mock.perform(post("/branch")
+        mockMvc.perform(post("/branch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isOk(),
-                jsonPath("$.address", is(branch.getAddress())),
-                jsonPath("$.phoneNumber", is(phoneNumber)),
                 jsonPath("$.city", is(branch.getCity())),
-                jsonPath("$.startOfWork", is(startOfWork)),
-                jsonPath("$.endOfWork", is(endOfWork))
+                jsonPath("$.phoneNumber", is(phoneNumber)),
+                jsonPath("$.address", is(branch.getAddress())),
+                jsonPath("$.endOfWork", is(toStringLocalTime(branch.getEndOfWork()))),
+                jsonPath("$.startOfWork", is(toStringLocalTime(branch.getStartOfWork())))
         );
     }
 
     @Test
-    @DisplayName("Сохранение  негативный сценарий")
-    void saveNegativeTest() throws Exception {
-        doThrow(new ValidationException("Неверные данные")).when(service).save(any());
+    @DisplayName("сохранение некорректных данных, негативный сценарий")
+    void saveInvalidDataNegativeTest() throws Exception {
+        String errorMessage = "Неверные данные";
 
-        mock.perform(post("/branch")
+        doThrow(new ValidationException(errorMessage)).when(service).save(any());
+
+        mockMvc.perform(post("/branch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isUnprocessableEntity(),
-                content().string("Неверные данные")
+                content().string(errorMessage)
         );
+    }
+
+    @Test
+    @DisplayName("сохранение, передан pdf вместо json, негативный сценарий")
+    void saveWrongMediaTypeNegativeTest() throws Exception {
+        mockMvc.perform(
+                post("/branch")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .content(mapper.writeValueAsString(branch))
+        ).andExpectAll(status().is5xxServerError());
     }
 
     @Test
     @DisplayName("чтение, позитивный сценарий")
-    void readTest() throws Exception {
+    void readPositiveTest() throws Exception {
         doReturn(branch).when(service).read(any());
 
         final int id = getIntFromLong(branch.getId());
         final int phoneNumber = getIntFromLong(branch.getPhoneNumber());
-        final String startOfWork = LocalTimeToString(branch.getStartOfWork());
-        final String endOfWork = LocalTimeToString(branch.getEndOfWork());
 
-        mock.perform(get("/branch/{id}", ONE))
+        mockMvc.perform(get("/branch/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
-                        jsonPath("$.address", is(branch.getAddress())),
-                        jsonPath("$.phoneNumber", is(phoneNumber)),
                         jsonPath("$.city", is(branch.getCity())),
-                        jsonPath("$.startOfWork", is(startOfWork)),
-                        jsonPath("$.endOfWork", is(endOfWork))
+                        jsonPath("$.phoneNumber", is(phoneNumber)),
+                        jsonPath("$.address", is(branch.getAddress())),
+                        jsonPath("$.endOfWork", is(toStringLocalTime(branch.getEndOfWork()))),
+                        jsonPath("$.startOfWork", is(toStringLocalTime(branch.getStartOfWork())))
                 );
     }
 
     @Test
-    @DisplayName("чтение, негативный сценарий")
-    void readNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Отделения банка нет")).when(service).read(any());
+    @DisplayName("чтение несуществующего отделения, негативный сценарий")
+    void readNotExistBranchNegativeTest() throws Exception {
+        String errorMessage = "Отделения банка нет";
 
-        mock.perform(get("/branch/{id}", ONE))
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).read(any());
+
+        mockMvc.perform(get("/branch/{id}", ONE))
                 .andExpectAll(
                         status().isNotFound(),
-                        content().string("Отделения банка нет")
+                        content().string(errorMessage)
                 );
+    }
+
+    @Test
+    @DisplayName("чтение некорректного id, негативный сценарий")
+    void readWrongIdNegativeTest() throws Exception {
+        mockMvc.perform(get("/branch/test"))
+                .andExpectAll(status().is4xxClientError());
     }
 
     @Test
     @DisplayName("чтение по нескольким id, позитивный сценарий")
-    void readAll() throws Exception {
-
+    void readAllPositiveTest() throws Exception {
         final List<BranchDto> branches = returnBranches();
 
         doReturn(branches).when(service).readAll(any());
 
-        final BranchDto zeroBranch = branches.get(0);
         final BranchDto oneBranch = branches.get(1);
+        final BranchDto zeroBranch = branches.get(0);
 
         final int zeroId = getIntFromLong(zeroBranch.getId());
         final int zeroPhoneNumber = getIntFromLong(zeroBranch.getPhoneNumber());
-        final String zeroStartOfWork = LocalTimeToString(zeroBranch.getStartOfWork());
-        final String zeroEndOfWork = LocalTimeToString(zeroBranch.getEndOfWork());
 
         final int oneId = getIntFromLong(oneBranch.getId());
         final int onePhoneNumber = getIntFromLong(oneBranch.getPhoneNumber());
-        final String oneStartOfWork = LocalTimeToString(oneBranch.getStartOfWork());
-        final String oneEndOfWork = LocalTimeToString(oneBranch.getEndOfWork());
 
-        mock.perform(get("/branch?id=1&id=2"))
+        mockMvc.perform(get("/branch?id=1&id=2"))
                 .andExpectAll(status().isOk(),
                         jsonPath("$", hasSize(branches.size())),
                         jsonPath("$.[0].id", is(zeroId)),
-                        jsonPath("$.[0].address", is(zeroBranch.getAddress())),
-                        jsonPath("$.[0].phoneNumber", is(zeroPhoneNumber)),
                         jsonPath("$.[0].city", is(zeroBranch.getCity())),
-                        jsonPath("$.[0].startOfWork", is(zeroStartOfWork)),
-                        jsonPath("$.[0].endOfWork", is(zeroEndOfWork)),
+                        jsonPath("$.[0].phoneNumber", is(zeroPhoneNumber)),
+                        jsonPath("$.[0].address", is(zeroBranch.getAddress())),
+                        jsonPath("$.[0].endOfWork", is(toStringLocalTime(zeroBranch.getEndOfWork()))),
+                        jsonPath("$.[0].startOfWork", is(toStringLocalTime(zeroBranch.getStartOfWork()))),
                         jsonPath("$.[1].id", is(oneId)),
-                        jsonPath("$.[1].address", is(oneBranch.getAddress())),
-                        jsonPath("$.[1].phoneNumber", is(onePhoneNumber)),
                         jsonPath("$.[1].city", is(oneBranch.getCity())),
-                        jsonPath("$.[1].startOfWork", is(oneStartOfWork)),
-                        jsonPath("$.[1].endOfWork", is(oneEndOfWork))
+                        jsonPath("$.[1].phoneNumber", is(onePhoneNumber)),
+                        jsonPath("$.[1].address", is(oneBranch.getAddress())),
+                        jsonPath("$.[1].endOfWork", is(toStringLocalTime(oneBranch.getEndOfWork()))),
+                        jsonPath("$.[1].startOfWork", is(toStringLocalTime(oneBranch.getStartOfWork())))
                 );
     }
 
     private List<BranchDto> returnBranches() {
         return List.of(
-                branchSupplier.getDto(ONE, SPACE, TWO, SPACE, TIME, TIME),
-                branchSupplier.getDto(ONE, SPACE, TWO, SPACE, TIME, TIME)
+                branchSupplier.getDto(ONE, SPACE, TWO, SPACE),
+                branchSupplier.getDto(ONE, SPACE, TWO, SPACE)
         );
     }
 
     @Test
-    @DisplayName("чтение по нескольким id, негативный сценарий")
-    void readAllNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Ошибка в параметрах")).when(service).readAll(any());
+    @DisplayName("чтение по нескольким несуществующим id, негативный сценарий")
+    void readAllNotExistIdNegativeTest() throws Exception {
+        final String errorMessage = "Ошибка в параметрах";
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).readAll(any());
 
-        mock.perform(get("/branch?id=1")).andExpectAll(status().isNotFound(),
-                content().string("Ошибка в параметрах")
-        );
+        mockMvc.perform(get("/branch?id=1")).andExpectAll(status().isNotFound(),
+                content().string(errorMessage));
+    }
+
+    @Test
+    @DisplayName("чтение по нескольким id, один из id некорректен, негативный сценарий")
+    void readAllWrongIdNegativeTest() throws Exception {
+        mockMvc.perform(get("/branch?id=1&id=test"))
+                .andExpectAll(status().is4xxClientError());
     }
 
     @Test
     @DisplayName("обновление, позитивный сценарий")
-    void updateTest() throws Exception {
+    void updatePositiveTest() throws Exception {
         doReturn(branch).when(service).update(anyLong(), any());
 
         final int id = getIntFromLong(branch.getId());
         final int phoneNumber = getIntFromLong(branch.getPhoneNumber());
-        final String startOfWork = LocalTimeToString(branch.getStartOfWork());
-        final String endOfWork = LocalTimeToString(branch.getEndOfWork());
 
-        mock.perform(put("/branch/{id}", ONE).
+        mockMvc.perform(put("/branch/{id}", ONE).
                 contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isOk(),
                 jsonPath("$.id", is(id)),
-                jsonPath("$.address", is(branch.getAddress())),
-                jsonPath("$.phoneNumber", is(phoneNumber)),
                 jsonPath("$.city", is(branch.getCity())),
-                jsonPath("$.startOfWork", is(startOfWork)),
-                jsonPath("$.endOfWork", is(endOfWork))
+                jsonPath("$.phoneNumber", is(phoneNumber)),
+                jsonPath("$.address", is(branch.getAddress())),
+                jsonPath("$.endOfWork", is(toStringLocalTime(branch.getEndOfWork()))),
+                jsonPath("$.startOfWork", is(toStringLocalTime(branch.getStartOfWork())))
         );
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
-    void updateNegativeTest() throws Exception {
-        doThrow(new EntityNotFoundException("Обновление невозможно")).when(service).update(anyLong(), any());
+    @DisplayName("обновление по несуществующему id, негативный сценарий")
+    void updateNotExistIdNegativeTest() throws Exception {
+        String errorMessage = "Обновление невозможно";
 
-        mock.perform(put("/branch/{id}", ONE)
+        doThrow(new EntityNotFoundException(errorMessage)).when(service).update(anyLong(), any());
+
+        mockMvc.perform(put("/branch/{id}", ONE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(branch))
         ).andExpectAll(status().isNotFound(),
-                content().string("Обновление невозможно")
-        );
+                content().string(errorMessage));
+    }
+
+    @Test
+    @DisplayName("обновление по некорректному id, негативный сценарий")
+    void updateWrongIdNegativeTest() throws Exception {
+        mockMvc.perform(put("/branch/test")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(branch))
+        ).andExpectAll(status().is4xxClientError());
     }
 }

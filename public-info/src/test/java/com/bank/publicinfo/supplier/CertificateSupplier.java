@@ -5,6 +5,7 @@ import com.bank.publicinfo.dto.CertificateDto;
 import com.bank.publicinfo.entity.BankDetailsEntity;
 import com.bank.publicinfo.entity.CertificateEntity;
 
+
 public class CertificateSupplier {
 
     public CertificateDto getDto(Long id, Byte photo, BankDetailsDto bankDetails) {

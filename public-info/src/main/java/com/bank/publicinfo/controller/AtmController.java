@@ -28,7 +28,7 @@ public class AtmController {
     private final AtmService service;
 
     /**
-     * @param id техничский идентификатор {@link AtmEntity}
+     * @param id технический идентификатор {@link AtmEntity}
      * @return {@link ResponseEntity} c {@link AtmDto} и HttpStatus OK
      */
     @GetMapping("/{id}")

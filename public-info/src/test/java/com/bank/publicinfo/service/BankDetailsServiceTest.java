@@ -1,4 +1,4 @@
-package com.bank.publicinfo.mapper.service;
+package com.bank.publicinfo.service;
 
 import com.bank.publicinfo.ParentTest;
 import com.bank.publicinfo.dto.BankDetailsDto;
@@ -50,11 +50,11 @@ public class BankDetailsServiceTest extends ParentTest {
     static void init() {
         BankDetailsSupplier bankDetailsSupplier = new BankDetailsSupplier();
 
-        bankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        bankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO);
 
-        updateBankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        updateBankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO);
 
-        updateBankDetailsDto = bankDetailsSupplier.getDto(ONE, TWO, TWO, TWO, INT_ONE, SPACE, SPACE, SPACE);
+        updateBankDetailsDto = bankDetailsSupplier.getDto(ONE, TWO, TWO, TWO);
     }
 
     @Test
@@ -79,8 +79,8 @@ public class BankDetailsServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение, негативный сценарий")
-    void saveNegativeTest() {
+    @DisplayName("Сохранение недопустимых параметров, негативный сценарий")
+    void saveInvalidParametersNegativeTest() {
         doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
 
         final var exception = assertThrows(
@@ -91,7 +91,7 @@ public class BankDetailsServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение, позитивный сценарий")
+    @DisplayName("Чтение, позитивный сценарий")
     void readPositiveTest() {
         findByIdMock();
 
@@ -112,8 +112,8 @@ public class BankDetailsServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение, негативный сценарий")
-    void readNegativeTest() {
+    @DisplayName("Чтение по несуществующему id, негативный сценарий")
+    void readNotExistIdNegativeTest() {
         findByIdEmptyMock();
 
         final var exception = assertThrows(
@@ -124,7 +124,7 @@ public class BankDetailsServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление позитивный сценарий")
+    @DisplayName("Обновление, позитивный сценарий")
     void updatePositiveTest() {
         saveMock();
         findByIdMock();
@@ -168,8 +168,8 @@ public class BankDetailsServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
-    void updateNegativeTest() {
+    @DisplayName("Обновление несуществующего bankDetails, негативный сценарий")
+    void updateNotExistBankDetailsNegativeTest() {
         findByIdEmptyMock();
 
         final var exception = assertThrows(
@@ -180,8 +180,8 @@ public class BankDetailsServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id, позитивный сценарий")
-    void readAllTest() {
+    @DisplayName("Чтение по списку id, позитивный сценарий")
+    void readAllPositiveTest() {
         final List<BankDetailsDto> bankDetailsList = readAllTestPrepare();
 
         final var zeroBankDetails = bankDetailsList.get(0);
@@ -217,8 +217,8 @@ public class BankDetailsServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id, негативный сценарий")
-    void readAllNegativeTest() {
+    @DisplayName("Чтение по списку несуществующих id, негативный сценарий")
+    void readAllNotExistIdNegativeTest() {
         doReturn(List.of(new BankDetailsEntity())).when(repository).findAllById(any());
 
         final var exception = assertThrows(
