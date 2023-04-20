@@ -4,6 +4,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @ExtendWith(MockitoExtension.class)
 public abstract class ParentTest {
@@ -11,10 +12,8 @@ public abstract class ParentTest {
     protected static final Long ONE = 1L;
     protected static final Long TWO = 2L;
     protected static final Long THREE = 3L;
-    protected static final Integer INT_ONE = 1;
     protected static final Byte BYTE = 1;
     protected static final String SPACE = " ";
-    protected static final LocalTime TIME = LocalTime.of(1, 1, 1, 1);
 
     protected int getIntFromLong(Long number) {
         return number.intValue();
@@ -24,7 +23,13 @@ public abstract class ParentTest {
         return value.intValue();
     }
 
-    protected String LocalTimeToString(LocalTime time) {
-        return time.toString();
+    protected String formatLocalTime(LocalTime localTime) {
+        return localTime.format(
+                DateTimeFormatter.ISO_TIME
+        );
+    }
+
+    protected String toStringLocalTime(LocalTime localTime) {
+        return localTime.toString();
     }
 }

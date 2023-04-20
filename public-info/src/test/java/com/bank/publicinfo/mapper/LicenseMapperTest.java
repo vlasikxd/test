@@ -39,7 +39,7 @@ public class LicenseMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity")
+    @DisplayName("Маппинг к entity")
     void toEntityTest() {
         final LicenseEntity result = mapper.toEntity(licenseDto);
 
@@ -53,13 +53,13 @@ public class LicenseMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity, на вход подан null")
+    @DisplayName("Маппинг к entity, на вход подан null")
     void toEntityNullTest() {
         assertNull(mapper.toEntity(null));
     }
 
     @Test
-    @DisplayName("маппинг к dto")
+    @DisplayName("Маппинг к dto")
     void toDtoTest() {
         final LicenseDto result = mapper.toDto(license);
 
@@ -73,13 +73,13 @@ public class LicenseMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к dto, на вход подан null")
+    @DisplayName("Маппинг к dto, на вход подан null")
     void toDtoNullTest() {
         assertNull(mapper.toDto(null));
     }
 
     @Test
-    @DisplayName("слияние в entity")
+    @DisplayName("Слияние в entity")
     void mergeToEntityTest() {
         final LicenseEntity result = mapper.mergeToEntity(licenseUpdateDto, license);
 
@@ -93,7 +93,7 @@ public class LicenseMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("слияние в entity, на вход подан null")
+    @DisplayName("Слияние в entity, на вход подан null")
     void mergeToEntityNullTest() {
         final LicenseEntity result = mapper.mergeToEntity(null, license);
 
@@ -105,7 +105,7 @@ public class LicenseMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку дто")
+    @DisplayName("Маппинг к списку дто")
     void toDtoListTest() {
         final List<LicenseDto> licenses = mapper.toDtoList(
                 List.of(license)
@@ -124,13 +124,13 @@ public class LicenseMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку дто, на вход подан null")
+    @DisplayName("Маппинг к списку дто, на вход подан null")
     void toDtoListNullTest() {
         assertNull(mapper.toDtoList(null));
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, один из элементов списка равен null")
+    @DisplayName("Маппинг к списку dto, один из элементов списка равен null")
     void toListDtoElementNullTest() {
         final List<LicenseEntity> licenses = new ArrayList<>();
         licenses.add(license);

@@ -1,4 +1,4 @@
-package com.bank.publicinfo.mapper.service;
+package com.bank.publicinfo.service;
 
 import com.bank.publicinfo.ParentTest;
 import com.bank.publicinfo.dto.BranchDto;
@@ -48,15 +48,15 @@ public class BranchServiceTest extends ParentTest {
     static void init() {
         BranchSupplier branchSupplier = new BranchSupplier();
 
-        branch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        branch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE);
 
-        updateBranch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        updateBranch = branchSupplier.genEntity(ONE, SPACE, TWO, SPACE);
 
-        updateBranchDto = branchSupplier.getDto(ONE, SPACE, TWO, SPACE, TIME, TIME);
+        updateBranchDto = branchSupplier.getDto(ONE, SPACE, TWO, SPACE);
     }
 
     @Test
-    @DisplayName("сохранение, позитивный сценарий")
+    @DisplayName("Сохранение, позитивный сценарий")
     void savePositiveTest() {
         saveMock();
 
@@ -75,15 +75,17 @@ public class BranchServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение, негативный сценарий")
-    void saveNegativeTest() {
-        doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
+    @DisplayName("Сохранение недопустимых параметров, негативный сценарий")
+    void saveInvalidParametersNegativeTest() {
+        String errorMessage = "Недопустимые параметры";
+
+        doThrow(new IllegalArgumentException(errorMessage)).when(repository).save(any());
 
         final var exception = assertThrows(
                 IllegalArgumentException.class, () -> service.save(null)
         );
 
-        assertEquals("Недопустимые параметры", exception.getMessage());
+        assertEquals(errorMessage, exception.getMessage());
     }
 
     @Test
@@ -106,8 +108,8 @@ public class BranchServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение, негативный сценарий")
-    void readNegativeTest() {
+    @DisplayName("Чтение по несуществующему id, негативный сценарий")
+    void readNotExistIdNegativeTest() {
         findByIdEmptyMock();
 
         final EntityNotFoundException exception = assertThrows(
@@ -118,8 +120,8 @@ public class BranchServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, позитивный сценарий")
-    void updateTest() {
+    @DisplayName("Обновление, позитивный сценарий")
+    void updatePositiveTest() {
         saveMock();
         findByIdMock();
 
@@ -158,8 +160,8 @@ public class BranchServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
-    void updateNegativeTest() {
+    @DisplayName("Обновление несуществующего branch, негативный сценарий")
+    void updateNotExistBranchNegativeTest() {
         findByIdEmptyMock();
 
         final var exception = assertThrows(
@@ -170,7 +172,7 @@ public class BranchServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id, позитивный сценарий")
+    @DisplayName("Чтение по списку id, позитивный сценарий")
     void readAllPositiveTest() {
         final List<BranchDto> branches = readAllTestPrepare();
 
@@ -203,8 +205,8 @@ public class BranchServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id, негативный сценарий")
-    void readAllNegativeTest() {
+    @DisplayName("Чтение по списку несуществующих id, негативный сценарий")
+    void readAllNotExistIdNegativeTest() {
         doReturn(List.of(new BranchEntity())).when(repository).findAllById(any());
 
         final var exception = assertThrows(

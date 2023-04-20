@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Setter
@@ -14,7 +15,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuditDto {
+public class AuditDto implements Serializable {
     Long id;
     String entityType;
     String operationType;

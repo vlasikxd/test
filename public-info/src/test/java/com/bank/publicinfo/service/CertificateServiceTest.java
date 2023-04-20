@@ -1,4 +1,4 @@
-package com.bank.publicinfo.mapper.service;
+package com.bank.publicinfo.service;
 
 import com.bank.publicinfo.ParentTest;
 import com.bank.publicinfo.dto.CertificateDto;
@@ -73,19 +73,21 @@ public class CertificateServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("сохранение, негативный сценарий")
-    void saveNegativeTest() {
-        doThrow(new IllegalArgumentException("Недопустимые параметры")).when(repository).save(any());
+    @DisplayName("Сохранение недопустимых параметров, негативный сценарий")
+    void saveInvalidParametersNegativeTest() {
+        String errorMessage = "Недопустимые параметры";
+
+        doThrow(new IllegalArgumentException(errorMessage)).when(repository).save(any());
 
         final var exception = assertThrows(
                 IllegalArgumentException.class, () -> service.save(null)
         );
 
-        assertEquals("Недопустимые параметры", exception.getMessage());
+        assertEquals(errorMessage, exception.getMessage());
     }
 
     @Test
-    @DisplayName("чтение, позитивный сценарий")
+    @DisplayName("Чтение, позитивный сценарий")
     void readPositiveTest() {
         findByIdMock();
 
@@ -99,8 +101,8 @@ public class CertificateServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение, негативный сценарий")
-    void readNegativeTest() {
+    @DisplayName("Чтение по несуществующему id, негативный сценарий")
+    void readNotExistIdNegativeTest() {
         findByIdEmptyMock();
 
         final var exception = assertThrows(
@@ -111,8 +113,8 @@ public class CertificateServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, позитивный сценарий")
-    void updateTest() {
+    @DisplayName("Обновление, позитивный сценарий")
+    void updatePositiveTest() {
         saveMock();
         findByIdMock();
 
@@ -145,8 +147,8 @@ public class CertificateServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("обновление, негативный сценарий")
-    void updateNegativeTest() {
+    @DisplayName("Обновление несуществующего certificate, негативный сценарий")
+    void updateNotExistCertificateNegativeTest() {
         findByIdEmptyMock();
 
         final var exception = assertThrows(
@@ -184,8 +186,8 @@ public class CertificateServiceTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("чтение по списку id, негативный сценарий")
-    void readAllNegativeTest() {
+    @DisplayName("Чтение по списку несуществующих id, негативный сценарий")
+    void readAllNotExistIdNegativeTest() {
         doReturn(List.of(new CertificateEntity())).when(repository).findAllById(any());
 
         final var exception = assertThrows(
