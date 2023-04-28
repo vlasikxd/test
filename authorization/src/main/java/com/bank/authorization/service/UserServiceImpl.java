@@ -7,6 +7,7 @@ import com.bank.authorization.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,11 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     UserRepository repository;
+
     UserMapper mapper;
+
+    PasswordEncoder passwordEncoder;
+
 
     /**
      * @param id технический идентификатор для {@link UserEntity}.
@@ -36,12 +41,25 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * @param username имя пользователя для {@link UserEntity}.
+     * @return {@link UserDto}.
+     */
+    public UserDto readByUserName(String username) {
+        final UserEntity user = repository.findByUsername(username)
+                .orElseThrow(() -> returnEntityNotFoundException("Пользователь с данным username не найден!"));
+        return mapper.toDto(user);
+    }
+
+    /**
      * @param user {@link UserDto}.
      * @return {@link UserDto}.
      */
     @Override
     @Transactional
     public UserDto save(UserDto user) {
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         final UserEntity userEntity = repository.save(mapper.toEntity(user));
         return mapper.toDto(userEntity);
     }
@@ -56,6 +74,9 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long id, UserDto userDto) {
         final UserEntity userById = repository.findById(id)
                  .orElseThrow(() -> returnEntityNotFoundException("Обновление невозможно, пользователь не найден!"));
+        if (userDto != null && userDto.getPassword() != null) {
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
         final UserEntity user = repository.save(mapper.mergeToEntity(userDto, userById));
         return mapper.toDto(user);
     }

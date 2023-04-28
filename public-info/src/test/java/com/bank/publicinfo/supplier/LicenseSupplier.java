@@ -5,6 +5,7 @@ import com.bank.publicinfo.dto.LicenseDto;
 import com.bank.publicinfo.entity.BankDetailsEntity;
 import com.bank.publicinfo.entity.LicenseEntity;
 
+
 public class LicenseSupplier {
 
     public LicenseDto getDto(Long id, Byte photo, BankDetailsDto bankDetails) {

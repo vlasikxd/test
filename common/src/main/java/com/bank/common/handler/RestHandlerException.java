@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -13,6 +15,8 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.webjars.NotFoundException;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
+import java.util.Objects;
 
 /**
  * Обработчик исключений.
@@ -130,5 +134,38 @@ public class RestHandlerException {
             MethodArgumentTypeMismatchException exception) {
         log.error(exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Некорректно указан id");
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<String> handleMissingServletRequestParameterException(
+            MissingServletRequestParameterException exception) {
+        log.error(exception.getMessage(), exception);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Необходимая часть запроса '" + exception.getParameterName() + "' не существует");
+    }
+
+
+    /**
+     * * @param exception {@link ConstraintViolationException}
+     * @return {@link ResponseEntity<String>}
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolationException(
+            ConstraintViolationException exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    /**
+     * * @param exception {@link MethodArgumentNotValidException}
+     * @return {@link ResponseEntity<String>}
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> onMethodArgumentNotValidException(
+            MethodArgumentNotValidException exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Objects.requireNonNull(exception.getFieldError()).getDefaultMessage()
+        );
     }
 }

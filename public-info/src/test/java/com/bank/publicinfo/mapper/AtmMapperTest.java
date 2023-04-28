@@ -32,15 +32,15 @@ public class AtmMapperTest extends ParentTest {
 
         AtmSupplier atmSupplier = new AtmSupplier();
 
-        atmDto = atmSupplier.getDto(ONE, SPACE, TIME, TIME, TRUE, null);
+        atmDto = atmSupplier.getDto(ONE, SPACE, TRUE, null);
 
-        atmUpdateDto = atmSupplier.getDto(null, SPACE, TIME, TIME, TRUE, null);
+        atmUpdateDto = atmSupplier.getDto(null, SPACE, TRUE, null);
 
-        atm = atmSupplier.getEntity(ONE, SPACE, TIME, TIME, TRUE, null);
+        atm = atmSupplier.getEntity(ONE, SPACE, TRUE, null);
     }
 
     @Test
-    @DisplayName("маппинг к entity")
+    @DisplayName("Маппинг к entity")
     void toEntityTest() {
         final AtmEntity result = mapper.toEntity(atmDto);
 
@@ -55,13 +55,13 @@ public class AtmMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к entity, на вход подан null")
+    @DisplayName("Маппинг к entity, на вход подан null")
     void toEntityNullTest() {
         assertNull(mapper.toEntity(null));
     }
 
     @Test
-    @DisplayName("маппинг к dto")
+    @DisplayName("Маппинг к dto")
     void toDtoTest() {
         final AtmDto result = mapper.toDto(atm);
 
@@ -76,13 +76,13 @@ public class AtmMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к dto, на вход подан null")
+    @DisplayName("Маппинг к dto, на вход подан null")
     void toDtoNullTest() {
         assertNull(mapper.toDto(null));
     }
 
     @Test
-    @DisplayName("слияние в entity")
+    @DisplayName("Слияние в entity")
     void mergeToEntityTest() {
         final AtmEntity result = mapper.mergeToEntity(atmUpdateDto, atm);
 
@@ -99,7 +99,7 @@ public class AtmMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("слияние в entity, на вход подан null")
+    @DisplayName("Слияние в entity, на вход подан null")
     void mergeToEntityNullTest() {
         final AtmEntity result = mapper.mergeToEntity(null, atm);
 
@@ -115,7 +115,7 @@ public class AtmMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку дто")
+    @DisplayName("Маппинг к списку дто")
     void toDtoListTest() {
         final List<AtmDto> atms = mapper.toDtoList(List.of(atm));
 
@@ -135,13 +135,13 @@ public class AtmMapperTest extends ParentTest {
     }
 
     @Test
-    @DisplayName("маппинг к списку дто, на вход подан null")
+    @DisplayName("Маппинг к списку дто, на вход подан null")
     void toDtoListNullTest() {
         assertNull(mapper.toDtoList(null));
     }
 
     @Test
-    @DisplayName("маппинг к списку dto, один из элементов списка равен null")
+    @DisplayName("Маппинг к списку dto, один из элементов списка равен null")
     void toListDtoElementNullTest() {
         final List<AtmEntity> atms = new ArrayList<>();
         atms.add(atm);

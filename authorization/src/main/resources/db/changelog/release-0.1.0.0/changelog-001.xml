@@ -49,4 +49,11 @@
     <changeSet author="Рустам" id="1674055321526-3">
         <addUniqueConstraint columnNames="password" constraintName="users_password_key" tableName="users"/>
     </changeSet>
+    <changeSet author="Никита" id="1674055321526-4">
+        <addColumn tableName="users" >
+            <column name="user_name"
+                    type="varchar(50)" >
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -34,6 +35,6 @@ public class SuspiciousAccountTransferDto implements Serializable {
 
     String blockedReason;
 
-    @NotNull
+    @NotBlank
     String suspiciousReason;
 }

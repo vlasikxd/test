@@ -1,3 +1,4 @@
 spring:
   liquibase:
     default-schema: profile
+

@@ -7,12 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BankDetailsDto {
+public class BankDetailsDto implements Serializable {
     Long id;
     Long bik;
     Long inn;

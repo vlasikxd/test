@@ -3,7 +3,13 @@ spring:
     name: authorization-app
   profiles:
     active: local
+  security:
+    filter:
+      order: 10
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+jwt.secret.access: olfh65rasf4WChU7vwFw4vu0hr0XmXzpWfSaFh6Kmf+LdBf/89OoUV9ihW4amxfJdh99Q9lUQb/XS8SvCjBeKg==
+jwt.secret.refresh: nq9jmwX59ga0s2m60614XUGPrToDheTx6p69Vub2AgM4S1U9pE8WHdbsmEHpP8n3geyMt7IK6hWoUgWkLmHDFQ==
