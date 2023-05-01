@@ -85,8 +85,8 @@ public class LicenseControllerTest extends ParentTest {
     @DisplayName("cохранение pdf вместо json, негативный сценарий")
     void saveWrongMediaTypeNegativeTest() throws Exception {
         mockMvc.perform(post("/license")
-                        .contentType(MediaType.APPLICATION_PDF)
-                        .content(mapper.writeValueAsString(license))
+                .contentType(MediaType.APPLICATION_PDF)
+                .content(mapper.writeValueAsString(license))
         ).andExpectAll(status().is5xxServerError());
     }
 
