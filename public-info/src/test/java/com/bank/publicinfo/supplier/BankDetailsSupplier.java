@@ -8,7 +8,7 @@ public class BankDetailsSupplier {
 
     public BankDetailsDto getDto(Long id, Long bik, Long inn, Long kpp) {
         return new BankDetailsDto(
-                id, bik, inn, kpp,1 ,
+                id, bik, inn, kpp, 1,
                 "testCity", "testJointCompany", "testName"
         );
     }

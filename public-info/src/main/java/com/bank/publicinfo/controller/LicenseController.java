@@ -28,7 +28,7 @@ public class LicenseController {
     private final LicenseService service;
 
     /**
-     * @param id технический идентификатор {@link LicenseEntity}
+     * @param id техничский идентификатор {@link LicenseEntity}
      * @return {@link ResponseEntity} c {@link LicenseDto} и HttpStatus OK
      */
     @GetMapping("/{id}")
@@ -37,7 +37,7 @@ public class LicenseController {
     }
 
     /**
-     * @param ids список технических идентификаторов {@link LicenseEntity}
+     * @param ids список техничских идентификаторов {@link LicenseEntity}
      * @return {@link ResponseEntity} c {@link LicenseDto} и HttpStatus OK
      */
     @GetMapping
