@@ -25,8 +25,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/history")
-@Tag(name = "HistoryController", description = "Контроллер микросервиса по сбору истории " +
-        "из других микросервисов")
+@Tag(name = "HistoryController", description = "Контроллер микросервиса по сбору истории из других микросервисов")
 public class HistoryController {
     private final HistoryService service;
 

@@ -1,4 +1,4 @@
-CREATE SCHEMA IF NOT EXISTS ${spring.liquibase.liquibase-schema:profile};
+-- CREATE SCHEMA IF NOT EXISTS ${spring.liquibase.liquibase-schema:profile};
 
 CREATE SEQUENCE IF NOT EXISTS account_details_id_id_seq START WITH 1 INCREMENT BY 50;
 CREATE SEQUENCE IF NOT EXISTS actual_registration_id_seq START WITH 1 INCREMENT BY 50;
