@@ -1,7 +1,9 @@
 package com.bank.antifraud.controller;
 
 import com.bank.antifraud.dto.SuspiciousCardTransferDto;
+import com.bank.antifraud.dto.transferDto.CardTransferDto;
 import com.bank.antifraud.entity.SuspiciousCardTransferEntity;
+import com.bank.antifraud.feign.TransferCardClient;
 import com.bank.antifraud.service.SuspiciousCardTransferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +32,7 @@ import java.util.List;
 public class SuspiciousCardTransferController {
 
     private final SuspiciousCardTransferService service;
+    private final TransferCardClient transferClient;
 
     /**
      * @param transfer {@link SuspiciousCardTransferDto}
@@ -71,5 +74,27 @@ public class SuspiciousCardTransferController {
     public ResponseEntity<SuspiciousCardTransferDto> update(@Valid @PathVariable("id") Long id,
                                                                @RequestBody SuspiciousCardTransferDto transfer) {
         return ResponseEntity.ok(service.update(transfer, id));
+    }
+
+    /**
+     * @param id технический идентификатор {@link SuspiciousCardTransferEntity}
+     * @return {@link ResponseEntity} c {@link CardTransferDto} и {@link HttpStatus}
+     */
+    @GetMapping("/{id}/info")
+    @Operation(summary = "Получение информации о переводе")
+    public ResponseEntity<CardTransferDto> readTransfer(@PathVariable("id") Long id) {
+        Long cardTransferId = service.read(id).getCardTransferId();
+        return transferClient.read(cardTransferId);
+    }
+
+    /**
+     * @param ids список технических идентификаторов {@link SuspiciousCardTransferEntity}
+     * @return {@link ResponseEntity} со списком {@link CardTransferDto} и {@link HttpStatus}
+     */
+    @GetMapping("/info")
+    @Operation(summary = "Получение информации о всех отчетах")
+    public ResponseEntity <List<CardTransferDto>> readAllTransfer(@RequestParam("id") List<Long> ids) {
+        List<Long> cardTransferIds = service.readAll(ids).stream().map(SuspiciousCardTransferDto::getCardTransferId).toList();
+        return transferClient.readAll(cardTransferIds);
     }
 }

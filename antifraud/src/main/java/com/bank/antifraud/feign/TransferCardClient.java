@@ -1,6 +1,6 @@
 package com.bank.antifraud.feign;
 
-import com.bank.antifraud.dto.transferDto.PhoneTransferDto;
+import com.bank.antifraud.dto.transferDto.CardTransferDto;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +13,10 @@ import java.util.List;
 @FeignClient(value = "transfer-card", url = "http://localhost:8092/api/transfer")
 public interface TransferCardClient {
 
-    @GetMapping("/phone/read")
-    ResponseEntity<PhoneTransferDto> read(@RequestParam Long id);
+    @GetMapping("/card/read")
+    ResponseEntity<CardTransferDto> read(@RequestParam Long id);
 
-    @GetMapping("/Phone/read/all")
-    ResponseEntity<List<PhoneTransferDto>> readAll(@RequestParam List<Long> ids);
+    @GetMapping("/card/read/all")
+    ResponseEntity<List<CardTransferDto>> readAll(@RequestParam List<Long> ids);
 
 }

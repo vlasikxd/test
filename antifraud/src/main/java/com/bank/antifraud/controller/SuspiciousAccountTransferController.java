@@ -1,7 +1,9 @@
 package com.bank.antifraud.controller;
 
 import com.bank.antifraud.dto.SuspiciousAccountTransferDto;
+import com.bank.antifraud.dto.transferDto.AccountTransferDto;
 import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
+import com.bank.antifraud.feign.TransferAccountClient;
 import com.bank.antifraud.service.SuspiciousAccountTransferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +33,7 @@ import java.util.List;
 public class SuspiciousAccountTransferController {
 
     private final SuspiciousAccountTransferService service;
+    private final TransferAccountClient transferClient;
 
     /**
      * @param transfer {@link SuspiciousAccountTransferDto}
@@ -73,5 +76,27 @@ public class SuspiciousAccountTransferController {
     public ResponseEntity<SuspiciousAccountTransferDto> update(@Valid @PathVariable("id") Long id,
                                                                @RequestBody SuspiciousAccountTransferDto transfer) {
         return ResponseEntity.ok(service.update(transfer, id));
+    }
+
+    /**
+     * @param id технический идентификатор {@link SuspiciousAccountTransferEntity}
+     * @return {@link ResponseEntity} c {@link AccountTransferDto} и {@link HttpStatus}
+     */
+    @GetMapping("/{id}/info")
+    @Operation(summary = "Получение информации о переводе")
+    public ResponseEntity<AccountTransferDto> readTransfer(@PathVariable("id") Long id) {
+        Long accountTransferId = service.read(id).getAccountTransferId();
+        return transferClient.read(accountTransferId);
+    }
+
+    /**
+     * @param ids список технических идентификаторов {@link SuspiciousAccountTransferEntity}
+     * @return {@link ResponseEntity} со списком {@link AccountTransferDto} и {@link HttpStatus}
+     */
+    @GetMapping("/info")
+    @Operation(summary = "Получение информации о всех отчетах")
+    public ResponseEntity <List<AccountTransferDto>> readAllTransfer(@RequestParam("id") List<Long> ids) {
+        List<Long> accountTransferIds = service.readAll(ids).stream().map(SuspiciousAccountTransferDto::getAccountTransferId).toList();
+        return transferClient.readAll(accountTransferIds);
     }
 }
