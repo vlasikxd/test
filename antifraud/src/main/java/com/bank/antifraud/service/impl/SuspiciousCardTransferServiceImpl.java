@@ -1,13 +1,17 @@
 package com.bank.antifraud.service.impl;
 
 import com.bank.antifraud.dto.SuspiciousCardTransferDto;
+import com.bank.antifraud.dto.transferDto.CardTransferDto;
 import com.bank.antifraud.entity.SuspiciousCardTransferEntity;
+import com.bank.antifraud.feign.TransferCardClient;
 import com.bank.antifraud.mapper.SuspiciousCardTransferMapper;
 import com.bank.antifraud.repository.SuspiciousCardTransferRepository;
 import com.bank.antifraud.service.SuspiciousCardTransferService;
 import com.bank.antifraud.validator.CardValidator;
 import com.bank.antifraud.validator.ValidatorSize;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +30,7 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
     private final SuspiciousCardTransferRepository repository;
     private final SuspiciousCardTransferMapper mapper;
     private final ValidatorSize validatorSize;
+    private final TransferCardClient transferClient;
 
     /**
      * @param transfer {@link SuspiciousCardTransferDto}
@@ -92,5 +97,23 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
         return repository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("SuspiciousCardTransfer с id = " + id + " не найден.")
         );
+    }
+
+    /**
+     * @param id технический идентификатор {@link SuspiciousCardTransferEntity}
+     * @return {@link ResponseEntity} c {@link CardTransferDto} и {@link HttpStatus}
+     */
+    public ResponseEntity<CardTransferDto> readTransfer(Long id) {
+        return transferClient.read(findById(id).getCardTransferId());
+    }
+
+    /**
+     * @param ids список технических идентификаторов {@link SuspiciousCardTransferEntity}
+     * @return {@link ResponseEntity} со списком {@link CardTransferDto} и {@link HttpStatus}
+     */
+    public ResponseEntity<List<CardTransferDto>> readAllTransfer(List<Long> ids) {
+        final List<Long> cardTransferIds = readAll(ids).stream()
+                .map(SuspiciousCardTransferDto::getCardTransferId).toList();
+        return transferClient.readAll(cardTransferIds);
     }
 }

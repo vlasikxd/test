@@ -1,15 +1,20 @@
 package com.bank.antifraud.service.impl;
 
 import com.bank.antifraud.dto.SuspiciousAccountTransferDto;
+import com.bank.antifraud.dto.transferDto.AccountTransferDto;
 import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
+import com.bank.antifraud.feign.TransferAccountClient;
 import com.bank.antifraud.mapper.SuspiciousAccountTransferMapper;
 import com.bank.antifraud.repository.SuspiciousAccountTransferRepository;
 import com.bank.antifraud.service.SuspiciousAccountTransferService;
 import com.bank.antifraud.validator.AccountValidator;
 import com.bank.antifraud.validator.ValidatorSize;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
@@ -24,6 +29,7 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
     private final SuspiciousAccountTransferRepository repository;
     private final SuspiciousAccountTransferMapper mapper;
     private final ValidatorSize validatorSize;
+    private final TransferAccountClient transferClient;
 
     /**
      * @param transfer {@link SuspiciousAccountTransferDto}
@@ -90,5 +96,23 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
         return repository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("SuspiciousAccountTransfer с id = " + id + " не найден.")
         );
+    }
+
+    /**
+     * @param id технический идентификатор {@link SuspiciousAccountTransferEntity}
+     * @return {@link ResponseEntity} c {@link AccountTransferDto} и {@link HttpStatus}
+     */
+    public ResponseEntity<AccountTransferDto> readTransfer(Long id) {
+        return transferClient.read(findById(id).getAccountTransferId());
+    }
+
+    /**
+     * @param ids список технических идентификаторов {@link SuspiciousAccountTransferEntity}
+     * @return {@link ResponseEntity} со списком {@link AccountTransferDto} и {@link HttpStatus}
+     */
+    public ResponseEntity<List<AccountTransferDto>> readAllTransfer(List<Long> ids) {
+        final List<Long> accountTransferIds = readAll(ids).stream()
+                .map(SuspiciousAccountTransferDto::getAccountTransferId).toList();
+        return transferClient.readAll(accountTransferIds);
     }
 }

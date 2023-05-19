@@ -3,7 +3,6 @@ package com.bank.antifraud.controller;
 import com.bank.antifraud.dto.SuspiciousPhoneTransferDto;
 import com.bank.antifraud.dto.transferDto.PhoneTransferDto;
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
-import com.bank.antifraud.feign.TransferPhoneClient;
 import com.bank.antifraud.service.SuspiciousPhoneTransferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +31,6 @@ import java.util.List;
 public class SuspiciousPhoneTransferController {
 
     private final SuspiciousPhoneTransferService service;
-    private final TransferPhoneClient transferClient;
 
     /**
      * @param transfer {@link SuspiciousPhoneTransferDto}
@@ -83,8 +81,7 @@ public class SuspiciousPhoneTransferController {
     @GetMapping("/{id}/info")
     @Operation(summary = "Получение информации о переводе")
     public ResponseEntity<PhoneTransferDto> readTransfer(@PathVariable("id") Long id) {
-        Long phoneTransferId = service.read(id).getPhoneTransferId();
-        return transferClient.read(phoneTransferId);
+        return service.readTransfer(id);
     }
 
     /**
@@ -93,8 +90,7 @@ public class SuspiciousPhoneTransferController {
      */
     @GetMapping("/info")
     @Operation(summary = "Получение информации о всех отчетах")
-    public ResponseEntity <List<PhoneTransferDto>> readAllTransfer(@RequestParam("id") List<Long> ids) {
-        List<Long> cardTransferIds = service.readAll(ids).stream().map(SuspiciousPhoneTransferDto::getPhoneTransferId).toList();
-        return transferClient.readAll(cardTransferIds);
+    public ResponseEntity<List<PhoneTransferDto>> readAllTransfer(@RequestParam("id") List<Long> ids) {
+        return service.readAllTransfer(ids);
     }
 }
