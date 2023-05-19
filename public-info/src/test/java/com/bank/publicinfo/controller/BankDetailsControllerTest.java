@@ -49,7 +49,7 @@ public class BankDetailsControllerTest extends ParentTest {
     static void init() {
         bankDetailsSupplier = new BankDetailsSupplier();
 
-        bankDetails = bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE);
+        bankDetails = bankDetailsSupplier.getDto(ONE, BIK, INN, KPP);
     }
 
     @Test
@@ -58,9 +58,6 @@ public class BankDetailsControllerTest extends ParentTest {
         doReturn(bankDetails).when(service).save(any());
 
         final int id = getIntFromLong(bankDetails.getId());
-        final int bik = getIntFromLong(bankDetails.getBik());
-        final int inn = getIntFromLong(bankDetails.getInn());
-        final int kpp = getIntFromLong(bankDetails.getKpp());
 
         mockMvc.perform(post("/bank-details")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -68,9 +65,9 @@ public class BankDetailsControllerTest extends ParentTest {
         ).andExpectAll(
                 status().isOk(),
                 jsonPath("$.id", is(id)),
-                jsonPath("$.bik", is(bik)),
-                jsonPath("$.inn", is(inn)),
-                jsonPath("$.kpp", is(kpp)),
+                jsonPath("$.bik", is(bankDetails.getBik())),
+                jsonPath("$.inn", is(bankDetails.getInn())),
+                jsonPath("$.kpp", is(bankDetails.getKpp())),
                 jsonPath("$.corAccount", is(bankDetails.getCorAccount())),
                 jsonPath("$.city", is(bankDetails.getCity())),
                 jsonPath("$.jointStockCompany", is(bankDetails.getJointStockCompany())),
@@ -107,16 +104,12 @@ public class BankDetailsControllerTest extends ParentTest {
         doReturn(bankDetails).when(service).read(any());
 
         final int id = getIntFromLong(bankDetails.getId());
-        final int bik = getIntFromLong(bankDetails.getBik());
-        final int inn = getIntFromLong(bankDetails.getInn());
-        final int kpp = getIntFromLong(bankDetails.getKpp());
-
         mockMvc.perform(get("/bank-details/{id}", ONE))
                 .andExpectAll(status().isOk(),
                         jsonPath("$.id", is(id)),
-                        jsonPath("$.bik", is(bik)),
-                        jsonPath("$.inn", is(inn)),
-                        jsonPath("$.kpp", is(kpp)),
+                        jsonPath("$.bik", is(bankDetails.getBik())),
+                        jsonPath("$.inn", is(bankDetails.getInn())),
+                        jsonPath("$.kpp", is(bankDetails.getKpp())),
                         jsonPath("$.name", is(bankDetails.getName())),
                         jsonPath("$.city", is(bankDetails.getCity())),
                         jsonPath("$.corAccount", is(bankDetails.getCorAccount())),
@@ -156,30 +149,24 @@ public class BankDetailsControllerTest extends ParentTest {
         final var oneBankDetails = bankDetailsList.get(1);
 
         final int zeroId = getIntFromLong(zeroBankDetails.getId());
-        final int zeroBik = getIntFromLong(zeroBankDetails.getBik());
-        final int zeroInn = getIntFromLong(zeroBankDetails.getInn());
-        final int zeroKpp = getIntFromLong(zeroBankDetails.getKpp());
 
         final int oneId = getIntFromLong(oneBankDetails.getId());
-        final int oneBik = getIntFromLong(oneBankDetails.getBik());
-        final int oneInn = getIntFromLong(oneBankDetails.getInn());
-        final int oneKpp = getIntFromLong(oneBankDetails.getKpp());
 
         mockMvc.perform(get("/bank-details?id=1&id=2"))
                 .andExpectAll(status().isOk(),
                         jsonPath("$", hasSize(bankDetailsList.size())),
                         jsonPath("$.[0].id", is(zeroId)),
-                        jsonPath("$.[0].bik", is(zeroBik)),
-                        jsonPath("$.[0].inn", is(zeroInn)),
-                        jsonPath("$.[0].kpp", is(zeroKpp)),
+                        jsonPath("$.[0].bik", is(zeroBankDetails.getBik())),
+                        jsonPath("$.[0].inn", is(zeroBankDetails.getInn())),
+                        jsonPath("$.[0].kpp", is(zeroBankDetails.getKpp())),
                         jsonPath("$.[0].corAccount", is(zeroBankDetails.getCorAccount())),
                         jsonPath("$.[0].city", is(zeroBankDetails.getCity())),
                         jsonPath("$.[0].jointStockCompany", is(zeroBankDetails.getJointStockCompany())),
                         jsonPath("$.[0].name", is(zeroBankDetails.getName())),
                         jsonPath("$.[1].id", is(oneId)),
-                        jsonPath("$.[1].bik", is(oneBik)),
-                        jsonPath("$.[1].inn", is(oneInn)),
-                        jsonPath("$.[1].kpp", is(oneKpp)),
+                        jsonPath("$.[1].bik", is(oneBankDetails.getBik())),
+                        jsonPath("$.[1].inn", is(oneBankDetails.getInn())),
+                        jsonPath("$.[1].kpp", is(oneBankDetails.getKpp())),
                         jsonPath("$.[1].name", is(oneBankDetails.getName())),
                         jsonPath("$.[1].city", is(oneBankDetails.getCity())),
                         jsonPath("$.[1].corAccount", is(oneBankDetails.getCorAccount())),
@@ -189,8 +176,8 @@ public class BankDetailsControllerTest extends ParentTest {
 
     private List<BankDetailsDto> returnBankDetailsList() {
         return List.of(
-                bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE),
-                bankDetailsSupplier.getDto(ONE, THREE, THREE, THREE)
+                bankDetailsSupplier.getDto(ONE, BIK, INN, KPP),
+                bankDetailsSupplier.getDto(ONE, BIK, INN, KPP)
         );
     }
 
@@ -219,18 +206,15 @@ public class BankDetailsControllerTest extends ParentTest {
         doReturn(bankDetails).when(service).update(anyLong(), any());
 
         final int id = getIntFromLong(bankDetails.getId());
-        final int bik = getIntFromLong(bankDetails.getBik());
-        final int inn = getIntFromLong(bankDetails.getInn());
-        final int kpp = getIntFromLong(bankDetails.getKpp());
 
         mockMvc.perform(put("/bank-details/{id}", ONE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(bankDetails))
         ).andExpectAll(status().isOk(),
                 jsonPath("$.id", is(id)),
-                jsonPath("$.bik", is(bik)),
-                jsonPath("$.inn", is(inn)),
-                jsonPath("$.kpp", is(kpp)),
+                jsonPath("$.bik", is(bankDetails.getBik())),
+                jsonPath("$.inn", is(bankDetails.getInn())),
+                jsonPath("$.kpp", is(bankDetails.getKpp())),
                 jsonPath("$.name", is(bankDetails.getName())),
                 jsonPath("$.city", is(bankDetails.getCity())),
                 jsonPath("$.corAccount", is(bankDetails.getCorAccount())),

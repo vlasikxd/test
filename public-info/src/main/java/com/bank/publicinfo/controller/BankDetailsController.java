@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -49,7 +50,7 @@ public class BankDetailsController {
      * @return {@link ResponseEntity} c {@link BankDetailsDto} и HttpStatus OK
      */
     @PostMapping
-    public ResponseEntity<BankDetailsDto> create(@RequestBody BankDetailsDto bankDetails) {
+    public ResponseEntity<BankDetailsDto> create(@RequestBody @Valid BankDetailsDto bankDetails) {
         return ResponseEntity.ok(service.save(bankDetails));
     }
 
@@ -59,7 +60,8 @@ public class BankDetailsController {
      * @return {@link ResponseEntity} c {@link BankDetailsDto} и HttpStatus OK
      */
     @PutMapping("/{id}")
-    public ResponseEntity<BankDetailsDto> update(@PathVariable("id") Long id, @RequestBody BankDetailsDto bankDetails) {
+    public ResponseEntity<BankDetailsDto> update(@PathVariable("id") Long id,
+                                                 @RequestBody @Valid BankDetailsDto bankDetails) {
         return ResponseEntity.ok(service.update(id, bankDetails));
     }
 }

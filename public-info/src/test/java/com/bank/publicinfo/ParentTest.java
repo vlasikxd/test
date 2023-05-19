@@ -12,6 +12,12 @@ public abstract class ParentTest {
     protected static final Long ONE = 1L;
     protected static final Long TWO = 2L;
     protected static final Long THREE = 3L;
+
+    protected static final String BIK = "044525225";
+
+    protected static final String INN = "7707083893";
+
+    protected static final String KPP = "773643001";
     protected static final Byte BYTE = 1;
     protected static final String SPACE = " ";
 

@@ -31,11 +31,11 @@ public class BankDetailsMapperTest extends ParentTest {
 
         BankDetailsSupplier bankDetailsSupplier = new BankDetailsSupplier();
 
-        bankDetailsDto = bankDetailsSupplier.getDto(ONE, TWO, TWO, TWO);
+        bankDetailsDto = bankDetailsSupplier.getDto(ONE, BIK, INN, KPP);
 
-        bankDetailsUpdateDto = bankDetailsSupplier.getDto(null, TWO, TWO, TWO);
+        bankDetailsUpdateDto = bankDetailsSupplier.getDto(null, BIK, INN, KPP);
 
-        bankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO);
+        bankDetails = bankDetailsSupplier.getEntity(ONE, BIK, INN, KPP);
     }
 
     @Test

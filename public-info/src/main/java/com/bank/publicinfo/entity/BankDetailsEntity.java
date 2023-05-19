@@ -30,16 +30,16 @@ public class BankDetailsEntity {
     Long id;
 
     @Column(name = "bik")
-    Long bik;
+    String bik;
 
     @Column(name = "inn")
-    Long inn;
+    String inn;
 
     @Column(name = "kpp")
-    Long kpp;
+    String kpp;
 
     @Column(name = "cor_account")
-    Integer corAccount;
+    String corAccount;
 
     @Column(name = "city")
     String city;

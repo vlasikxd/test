@@ -50,11 +50,11 @@ public class BankDetailsServiceTest extends ParentTest {
     static void init() {
         BankDetailsSupplier bankDetailsSupplier = new BankDetailsSupplier();
 
-        bankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO);
+        bankDetails = bankDetailsSupplier.getEntity(ONE, BIK, INN, KPP);
 
-        updateBankDetails = bankDetailsSupplier.getEntity(ONE, TWO, TWO, TWO);
+        updateBankDetails = bankDetailsSupplier.getEntity(ONE, BIK, INN, KPP);
 
-        updateBankDetailsDto = bankDetailsSupplier.getDto(ONE, TWO, TWO, TWO);
+        updateBankDetailsDto = bankDetailsSupplier.getDto(ONE, BIK, INN, KPP);
     }
 
     @Test
