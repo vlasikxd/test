@@ -57,7 +57,7 @@
             <column name="inn" remarks="ИНН" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
-            <column name="kpp" remarks="КПП" type="VARCHAR(10)">
+            <column name="kpp" remarks="КПП" type="VARCHAR(9)">
                 <constraints nullable="false"/>
             </column>
             <column name="cor_account" remarks="корреспондентский счет" type="VARCHAR(20)">
