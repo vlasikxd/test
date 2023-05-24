@@ -25,6 +25,7 @@ public class SuspiciousPhoneTransferDto implements Serializable {
     Long id;
 
     @NotNull
+    // TODO здесь должна лежать дто, а не лонг
     Long phoneTransferId;
 
     @NotNull

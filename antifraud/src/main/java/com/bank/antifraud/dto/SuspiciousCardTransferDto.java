@@ -25,6 +25,7 @@ public class SuspiciousCardTransferDto implements Serializable {
     Long id;
 
     @NotNull
+    // TODO здесь должна лежать дто, а не лонг
     Long cardTransferId;
 
     @NotNull
