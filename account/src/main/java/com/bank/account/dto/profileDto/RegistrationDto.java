@@ -15,7 +15,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegistrationDto {
-
     Long id;
     String country;
     String region;
