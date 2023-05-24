@@ -1,5 +1,6 @@
 package com.bank.account.dto;
 
+import com.bank.account.dto.profileDto.ProfileDto;
 import com.bank.account.entity.AccountDetailsEntity;
 import com.bank.account.util.serialization.deserializer.StrictBooleanDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -51,4 +52,6 @@ public class AccountDetailsDto {
     @NotNull(message = "profileId must not be null")
     @Positive(message = "profileId must be positive")
     Long profileId;
+
+    ProfileDto profile;
 }

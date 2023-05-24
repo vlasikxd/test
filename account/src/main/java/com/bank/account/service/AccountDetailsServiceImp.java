@@ -2,6 +2,7 @@ package com.bank.account.service;
 
 import com.bank.account.dto.AccountDetailsDto;
 import com.bank.account.entity.AccountDetailsEntity;
+import com.bank.account.feign.ProfileFeignClient;
 import com.bank.account.mapper.AccountDetailsMapper;
 import com.bank.account.repository.AccountDetailsRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +23,18 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
 
     private final AccountDetailsMapper mapper;
 
+    private final ProfileFeignClient profile;
+
     /**
      * @param id техничский идентификатор {@link AccountDetailsEntity}.
      * @return {@link AccountDetailsDto}
      */
     @Override
     public AccountDetailsDto readById(Long id) {
-        return mapper.toDto(repository.findById(id)
-                .orElseThrow(() -> returnEntityNotFoundException("AccountDetails с таким id не найдено"))
-        );
+        AccountDetailsDto accountDetailsDto = mapper.toDto(repository.findById(id)
+                .orElseThrow(() -> returnEntityNotFoundException("AccountDetails с таким id не найдено")));
+        accountDetailsDto.setProfile(profile.read(accountDetailsDto.getProfileId()).getBody());
+        return accountDetailsDto;
     }
 
     /**
@@ -39,11 +43,15 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
      */
     @Override
     public List<AccountDetailsDto> readAllById(List<Long> ids) {
-        final List<AccountDetailsEntity> accountDetailsList = repository.findAllById(ids);
+        List<AccountDetailsEntity> accountDetailsList = repository.findAllById(ids);
         if (ids.size() > accountDetailsList.size()) {
             throw returnEntityNotFoundException("Одного или нескольких id из списка не найдено");
         }
-        return mapper.toDtoList(accountDetailsList);
+        List<AccountDetailsDto> accountDetailsDtoList = mapper.toDtoList(accountDetailsList);
+        for (AccountDetailsDto accountDetailsDto : accountDetailsDtoList) {
+            accountDetailsDto.setProfile(profile.read(accountDetailsDto.getProfileId()).getBody());
+        }
+        return accountDetailsDtoList;
     }
 
     /**
@@ -54,6 +62,7 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
     @Transactional
     public AccountDetailsDto create(AccountDetailsDto accountDetailsDto) {
         final AccountDetailsEntity accountDetails = repository.save(mapper.toEntity(accountDetailsDto));
+        profile.create(accountDetailsDto.getProfile());
         return mapper.toDto(accountDetails);
     }
 
@@ -70,6 +79,7 @@ public class AccountDetailsServiceImp implements AccountDetailsService {
         );
         final AccountDetailsEntity accountDetails = repository.save(mapper.mergeToEntity(accountDetailsDto,
                 accountDetailsEntity));
+        profile.update(accountDetailsDto.getProfileId(), accountDetailsDto.getProfile());
         return mapper.toDto(accountDetails);
     }
 
