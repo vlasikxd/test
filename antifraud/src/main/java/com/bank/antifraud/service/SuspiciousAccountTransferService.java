@@ -37,16 +37,4 @@ public interface SuspiciousAccountTransferService {
      * @return {@link SuspiciousAccountTransferDto}
      */
     SuspiciousAccountTransferDto update(SuspiciousAccountTransferDto transfer, Long id);
-
-    /**
-     * @param id технический идентификатор {@link SuspiciousAccountTransferEntity}
-     * @return {@link ResponseEntity} c {@link AccountTransferDto} и {@link HttpStatus}
-     */
-    ResponseEntity<AccountTransferDto> readTransfer(Long id);
-
-    /**
-     * @param ids список технических идентификаторов {@link SuspiciousAccountTransferEntity}
-     * @return {@link ResponseEntity} со списком {@link AccountTransferDto} и {@link HttpStatus}
-     */
-    ResponseEntity<List<AccountTransferDto>> readAllTransfer(List<Long> ids);
 }

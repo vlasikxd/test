@@ -1,6 +1,7 @@
 package com.bank.antifraud.supplier;
 
 import com.bank.antifraud.dto.SuspiciousAccountTransferDto;
+import com.bank.antifraud.dto.transferDto.AccountTransferDto;
 import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
 
 public class SuspiciousAccountTransferSupplier {
@@ -18,7 +19,7 @@ public class SuspiciousAccountTransferSupplier {
 
     public SuspiciousAccountTransferDto getDto(Long id, Long accountTransferId,
                                                Boolean isSuspicious, String suspiciousReason) {
-        return new SuspiciousAccountTransferDto(id, accountTransferId, isBlocked, isSuspicious,
+        return new SuspiciousAccountTransferDto(id, new AccountTransferDto(accountTransferId, null, null, null, null), isBlocked, isSuspicious,
                 blockedReason, suspiciousReason
         );
     }

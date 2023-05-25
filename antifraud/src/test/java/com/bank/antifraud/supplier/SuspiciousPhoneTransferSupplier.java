@@ -1,6 +1,7 @@
 package com.bank.antifraud.supplier;
 
 import com.bank.antifraud.dto.SuspiciousPhoneTransferDto;
+import com.bank.antifraud.dto.transferDto.PhoneTransferDto;
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
 
 public class SuspiciousPhoneTransferSupplier {
@@ -17,7 +18,7 @@ public class SuspiciousPhoneTransferSupplier {
 
     public SuspiciousPhoneTransferDto getDto(Long id, Long accountTransferId,
                                              Boolean isBlocked, Boolean isSuspicious) {
-        return new SuspiciousPhoneTransferDto(id, accountTransferId, isBlocked, isSuspicious,
+        return new SuspiciousPhoneTransferDto(id, new PhoneTransferDto(accountTransferId, null, null, null, null), isBlocked, isSuspicious,
                 blockedReason, suspiciousReason
         );
     }

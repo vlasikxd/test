@@ -1,6 +1,7 @@
 package com.bank.antifraud.mapper;
 
 import com.bank.antifraud.dto.SuspiciousCardTransferDto;
+import com.bank.antifraud.dto.transferDto.CardTransferDto;
 import com.bank.antifraud.entity.SuspiciousCardTransferEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -41,4 +42,14 @@ public interface SuspiciousCardTransferMapper {
      * @return {@link SuspiciousCardTransferDto}
      */
     List<SuspiciousCardTransferDto> toListDto(List<SuspiciousCardTransferEntity> suspiciousCardTransfers);
+
+    default CardTransferDto toCardTransferDto(Long cardTransferId) {
+        CardTransferDto cardTransferDto = new CardTransferDto();
+        cardTransferDto.setId(cardTransferId);
+        return cardTransferDto;
+    }
+
+    default Long fromCardTransferDto(CardTransferDto cardTransferDto) {
+        return cardTransferDto.getId();
+    }
 }

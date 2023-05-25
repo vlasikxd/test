@@ -2,7 +2,9 @@ package com.bank.antifraud.service;
 
 import com.bank.antifraud.ParentTest;
 import com.bank.antifraud.dto.SuspiciousAccountTransferDto;
+import com.bank.antifraud.dto.transferDto.AccountTransferDto;
 import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
+import com.bank.antifraud.feign.TransferAccountClient;
 import com.bank.antifraud.mapper.SuspiciousAccountTransferMapperImpl;
 import com.bank.antifraud.repository.SuspiciousAccountTransferRepository;
 import com.bank.antifraud.service.impl.SuspiciousAccountTransferServiceImpl;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.springframework.http.ResponseEntity;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -27,14 +30,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 public class SuspiciousAccountTransferServiceTest extends ParentTest {
 
     private static SuspiciousAccountTransferEntity suspiciousAccountTransfer;
     private static SuspiciousAccountTransferEntity updatedSuspiciousAccountTransfer;
     private static SuspiciousAccountTransferDto updateSuspiciousAccountTransferDto;
+
+    private static AccountTransferDto accountTransferDto;
 
     @InjectMocks
     private SuspiciousAccountTransferServiceImpl service;
@@ -48,6 +52,9 @@ public class SuspiciousAccountTransferServiceTest extends ParentTest {
     @Spy
     private ValidatorSize validatorSize;
 
+    @Mock
+    private TransferAccountClient transferClient;
+
 
 
     @BeforeAll
@@ -59,6 +66,8 @@ public class SuspiciousAccountTransferServiceTest extends ParentTest {
         updatedSuspiciousAccountTransfer = suspiciousAccountTransferSupplier.getEntity(ONE, TWO, FALSE, REASON);
 
         updateSuspiciousAccountTransferDto = suspiciousAccountTransferSupplier.getDto(ONE, TWO, FALSE, REASON);
+
+        accountTransferDto = new AccountTransferDto(TWO, null, null, null, null);
     }
 
     @Test
@@ -102,7 +111,7 @@ public class SuspiciousAccountTransferServiceTest extends ParentTest {
     @DisplayName("чтение, позитивный сценарий")
     void readPositiveTest() {
         findByIdMock();
-
+        when(transferClient.read(any())).thenReturn(ResponseEntity.ok(accountTransferDto));
         final SuspiciousAccountTransferDto result = service.read(ONE);
 
         assertAll(
@@ -252,6 +261,7 @@ public class SuspiciousAccountTransferServiceTest extends ParentTest {
         doReturn(List.of(suspiciousAccountTransfer, updatedSuspiciousAccountTransfer)).when(repository).findAllById(
                 any()
         );
+
 
         return service.readAll(
                 List.of(ONE, TWO)

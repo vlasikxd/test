@@ -1,6 +1,8 @@
 package com.bank.antifraud.dto;
 
+import com.bank.antifraud.dto.transferDto.AccountTransferDto;
 import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,21 +23,19 @@ import java.io.Serializable;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SuspiciousAccountTransferDto implements Serializable {
-
     Long id;
 
     @NotNull
-            // TODO здесь должна лежать дто, а не лонг
-    Long accountTransferId;
-
+    AccountTransferDto accountTransferId;
     @NotNull
     Boolean isBlocked;
-
     @NotNull
     Boolean isSuspicious;
-
     String blockedReason;
-
     @NotBlank
     String suspiciousReason;
+
+    public Long getAccountTransferId() {
+        return accountTransferId.getId();
+    }
 }

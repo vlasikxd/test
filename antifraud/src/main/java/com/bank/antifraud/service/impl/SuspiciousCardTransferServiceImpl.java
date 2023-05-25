@@ -1,7 +1,10 @@
 package com.bank.antifraud.service.impl;
 
 import com.bank.antifraud.dto.SuspiciousCardTransferDto;
+import com.bank.antifraud.dto.SuspiciousCardTransferDto;
+import com.bank.antifraud.dto.SuspiciousCardTransferDto;
 import com.bank.antifraud.dto.transferDto.CardTransferDto;
+import com.bank.antifraud.entity.SuspiciousCardTransferEntity;
 import com.bank.antifraud.entity.SuspiciousCardTransferEntity;
 import com.bank.antifraud.feign.TransferCardClient;
 import com.bank.antifraud.mapper.SuspiciousCardTransferMapper;
@@ -54,8 +57,9 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
      */
     @Override
     public SuspiciousCardTransferDto read(Long id) {
-        final SuspiciousCardTransferEntity suspiciousCardTransfer = findById(id);
-        return mapper.toDto(suspiciousCardTransfer);
+        SuspiciousCardTransferDto suspiciousCardTransferDto = mapper.toDto(findById(id));
+        suspiciousCardTransferDto.setCardTransferId(transferClient.read(suspiciousCardTransferDto.getCardTransferId()).getBody());
+        return suspiciousCardTransferDto;
     }
 
     /**
@@ -66,9 +70,10 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
     public List<SuspiciousCardTransferDto> readAll(List<Long> ids) {
         final List<SuspiciousCardTransferEntity> suspiciousCardTransfers = repository.findAllById(ids);
         validatorSize.checkSize(ids, suspiciousCardTransfers,
-                () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает.")
-        );
-        return mapper.toListDto(suspiciousCardTransfers);
+                () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает."));
+        List<SuspiciousCardTransferDto> suspiciousCardTransferDto = mapper.toListDto(suspiciousCardTransfers);
+        suspiciousCardTransferDto.forEach(x -> x.setCardTransferId(transferClient.read(x.getCardTransferId()).getBody()));
+        return suspiciousCardTransferDto;
     }
 
     /**
@@ -97,23 +102,5 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
         return repository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("SuspiciousCardTransfer с id = " + id + " не найден.")
         );
-    }
-
-    /**
-     * @param id технический идентификатор {@link SuspiciousCardTransferEntity}
-     * @return {@link ResponseEntity} c {@link CardTransferDto} и {@link HttpStatus}
-     */
-    public ResponseEntity<CardTransferDto> readTransfer(Long id) {
-        return transferClient.read(findById(id).getCardTransferId());
-    }
-
-    /**
-     * @param ids список технических идентификаторов {@link SuspiciousCardTransferEntity}
-     * @return {@link ResponseEntity} со списком {@link CardTransferDto} и {@link HttpStatus}
-     */
-    public ResponseEntity<List<CardTransferDto>> readAllTransfer(List<Long> ids) {
-        final List<Long> cardTransferIds = readAll(ids).stream()
-                .map(SuspiciousCardTransferDto::getCardTransferId).toList();
-        return transferClient.readAll(cardTransferIds);
     }
 }

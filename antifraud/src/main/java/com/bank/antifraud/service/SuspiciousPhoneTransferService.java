@@ -37,16 +37,4 @@ public interface SuspiciousPhoneTransferService {
      * @return {@link SuspiciousPhoneTransferDto}
      */
     SuspiciousPhoneTransferDto update(SuspiciousPhoneTransferDto transfer, Long id);
-
-    /**
-     * @param id технический идентификатор {@link SuspiciousPhoneTransferEntity}
-     * @return {@link ResponseEntity} c {@link PhoneTransferDto} и {@link HttpStatus}
-     */
-    ResponseEntity<PhoneTransferDto> readTransfer(Long id);
-
-    /**
-     * @param ids список технических идентификаторов {@link SuspiciousPhoneTransferEntity}
-     * @return {@link ResponseEntity} со списком {@link PhoneTransferDto} и {@link HttpStatus}
-     */
-    ResponseEntity<List<PhoneTransferDto>> readAllTransfer(List<Long> ids);
 }

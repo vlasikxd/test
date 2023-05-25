@@ -1,7 +1,6 @@
 package com.bank.antifraud.controller;
 
 import com.bank.antifraud.dto.SuspiciousPhoneTransferDto;
-import com.bank.antifraud.dto.transferDto.PhoneTransferDto;
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
 import com.bank.antifraud.service.SuspiciousPhoneTransferService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,25 +71,5 @@ public class SuspiciousPhoneTransferController {
     public ResponseEntity<SuspiciousPhoneTransferDto> update(@Valid @PathVariable("id") Long id,
                                                                @RequestBody SuspiciousPhoneTransferDto transfer) {
         return ResponseEntity.ok(service.update(transfer, id));
-    }
-
-    /**
-     * @param id технический идентификатор {@link SuspiciousPhoneTransferEntity}
-     * @return {@link ResponseEntity} c {@link PhoneTransferDto} и {@link HttpStatus}
-     */
-    @GetMapping("/{id}/info")
-    @Operation(summary = "Получение информации о переводе")
-    public ResponseEntity<PhoneTransferDto> readTransfer(@PathVariable("id") Long id) {
-        return service.readTransfer(id);
-    }
-
-    /**
-     * @param ids список технических идентификаторов {@link SuspiciousPhoneTransferEntity}
-     * @return {@link ResponseEntity} со списком {@link PhoneTransferDto} и {@link HttpStatus}
-     */
-    @GetMapping("/info")
-    @Operation(summary = "Получение информации о всех отчетах")
-    public ResponseEntity<List<PhoneTransferDto>> readAllTransfer(@RequestParam("id") List<Long> ids) {
-        return service.readAllTransfer(ids);
     }
 }
