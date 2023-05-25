@@ -1,7 +1,6 @@
 package com.bank.antifraud.controller;
 
 import com.bank.antifraud.dto.SuspiciousAccountTransferDto;
-import com.bank.antifraud.dto.transferDto.AccountTransferDto;
 import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
 import com.bank.antifraud.service.SuspiciousAccountTransferService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,25 +73,5 @@ public class SuspiciousAccountTransferController {
     public ResponseEntity<SuspiciousAccountTransferDto> update(@Valid @PathVariable("id") Long id,
                                                                @RequestBody SuspiciousAccountTransferDto transfer) {
         return ResponseEntity.ok(service.update(transfer, id));
-    }
-
-    /**
-     * @param id технический идентификатор {@link SuspiciousAccountTransferEntity}
-     * @return {@link ResponseEntity} c {@link AccountTransferDto} и {@link HttpStatus}
-     */
-    @GetMapping("/{id}/info")
-    @Operation(summary = "Получение информации о переводе")
-    public ResponseEntity<AccountTransferDto> readTransfer(@PathVariable("id") Long id) {
-        return service.readTransfer(id);
-    }
-
-    /**
-     * @param ids список технических идентификаторов {@link SuspiciousAccountTransferEntity}
-     * @return {@link ResponseEntity} со списком {@link AccountTransferDto} и {@link HttpStatus}
-     */
-    @GetMapping("/info")
-    @Operation(summary = "Получение информации о всех отчетах")
-    public ResponseEntity<List<AccountTransferDto>> readAllTransfer(@RequestParam("id") List<Long> ids) {
-        return service.readAllTransfer(ids);
     }
 }

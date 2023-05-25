@@ -1,7 +1,6 @@
 package com.bank.antifraud.service.impl;
 
 import com.bank.antifraud.dto.SuspiciousPhoneTransferDto;
-import com.bank.antifraud.dto.transferDto.PhoneTransferDto;
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
 import com.bank.antifraud.feign.TransferPhoneClient;
 import com.bank.antifraud.mapper.SuspiciousPhoneTransferMapper;
@@ -10,8 +9,6 @@ import com.bank.antifraud.service.SuspiciousPhoneTransferService;
 import com.bank.antifraud.validator.PhoneValidator;
 import com.bank.antifraud.validator.ValidatorSize;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,8 +49,9 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
      */
     @Override
     public SuspiciousPhoneTransferDto read(Long id) {
-        final SuspiciousPhoneTransferEntity suspiciousPhoneTransfer = findById(id);
-        return mapper.toDto(suspiciousPhoneTransfer);
+        SuspiciousPhoneTransferDto suspiciousPhoneTransferDto = mapper.toDto(findById(id));
+        suspiciousPhoneTransferDto.setPhoneTransferId(transferClient.read(suspiciousPhoneTransferDto.getPhoneTransferId().getId()).getBody());
+        return suspiciousPhoneTransferDto;
     }
 
     /**
@@ -64,9 +62,10 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
     public List<SuspiciousPhoneTransferDto> readAll(List<Long> ids) {
         final List<SuspiciousPhoneTransferEntity> suspiciousPhoneTransfers = repository.findAllById(ids);
         validatorSize.checkSize(ids, suspiciousPhoneTransfers,
-                () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает.")
-        );
-        return mapper.toListDto(suspiciousPhoneTransfers);
+                () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает."));
+        List<SuspiciousPhoneTransferDto> suspiciousPhoneTransferDto = mapper.toListDto(suspiciousPhoneTransfers);
+        suspiciousPhoneTransferDto.forEach(x -> x.setPhoneTransferId(transferClient.read(x.getPhoneTransferId().getId()).getBody()));
+        return suspiciousPhoneTransferDto;
     }
 
     /**
@@ -95,23 +94,5 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
         return repository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("SuspiciousPhoneTransfer с id = " + id + " не найден.")
         );
-    }
-
-    /**
-     * @param id технический идентификатор {@link SuspiciousPhoneTransferEntity}
-     * @return {@link ResponseEntity} c {@link PhoneTransferDto} и {@link HttpStatus}
-     */
-    public ResponseEntity<PhoneTransferDto> readTransfer(Long id) {
-        return transferClient.read(findById(id).getPhoneTransferId());
-    }
-
-    /**
-     * @param ids список технических идентификаторов {@link SuspiciousPhoneTransferEntity}
-     * @return {@link ResponseEntity} со списком {@link PhoneTransferDto} и {@link HttpStatus}
-     */
-    public ResponseEntity<List<PhoneTransferDto>> readAllTransfer(List<Long> ids) {
-        final List<Long> phoneTransferIds = readAll(ids).stream()
-                .map(SuspiciousPhoneTransferDto::getPhoneTransferId).toList();
-        return transferClient.readAll(phoneTransferIds);
     }
 }

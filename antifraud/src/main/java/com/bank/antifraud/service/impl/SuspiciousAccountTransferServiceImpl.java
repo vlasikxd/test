@@ -1,7 +1,6 @@
 package com.bank.antifraud.service.impl;
 
 import com.bank.antifraud.dto.SuspiciousAccountTransferDto;
-import com.bank.antifraud.dto.transferDto.AccountTransferDto;
 import com.bank.antifraud.entity.SuspiciousAccountTransferEntity;
 import com.bank.antifraud.feign.TransferAccountClient;
 import com.bank.antifraud.mapper.SuspiciousAccountTransferMapper;
@@ -10,14 +9,11 @@ import com.bank.antifraud.service.SuspiciousAccountTransferService;
 import com.bank.antifraud.validator.AccountValidator;
 import com.bank.antifraud.validator.ValidatorSize;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-
 
 /**
  * Реализация {@link SuspiciousAccountTransferService}
@@ -53,8 +49,9 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
      */
     @Override
     public SuspiciousAccountTransferDto read(Long id) {
-        final SuspiciousAccountTransferEntity suspiciousAccountTransfer = findById(id);
-        return mapper.toDto(suspiciousAccountTransfer);
+        SuspiciousAccountTransferDto suspiciousAccountTransferDto = mapper.toDto(findById(id));
+        suspiciousAccountTransferDto.setAccountTransferId(transferClient.read(suspiciousAccountTransferDto.getAccountTransferId().getId()).getBody());
+        return suspiciousAccountTransferDto;
     }
 
     /**
@@ -65,14 +62,15 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
     public List<SuspiciousAccountTransferDto> readAll(List<Long> ids) {
         final List<SuspiciousAccountTransferEntity> suspiciousAccountTransfers = repository.findAllById(ids);
         validatorSize.checkSize(ids, suspiciousAccountTransfers,
-                () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает.")
-        );
-        return mapper.toListDto(suspiciousAccountTransfers);
+                () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает."));
+        List<SuspiciousAccountTransferDto> suspiciousAccountTransferDto = mapper.toListDto(suspiciousAccountTransfers);
+        suspiciousAccountTransferDto.forEach(x -> x.setAccountTransferId(transferClient.read(x.getAccountTransferId().getId()).getBody()));
+        return suspiciousAccountTransferDto;
     }
 
     /**
      * @param transfer {@link SuspiciousAccountTransferDto}
-     * @param id технический идентификатор {@link SuspiciousAccountTransferEntity}
+     * @param id       технический идентификатор {@link SuspiciousAccountTransferEntity}
      * @return {@link SuspiciousAccountTransferDto}
      */
     @Override
@@ -98,21 +96,21 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
         );
     }
 
-    /**
-     * @param id технический идентификатор {@link SuspiciousAccountTransferEntity}
-     * @return {@link ResponseEntity} c {@link AccountTransferDto} и {@link HttpStatus}
-     */
-    public ResponseEntity<AccountTransferDto> readTransfer(Long id) {
-        return transferClient.read(findById(id).getAccountTransferId());
-    }
-
-    /**
-     * @param ids список технических идентификаторов {@link SuspiciousAccountTransferEntity}
-     * @return {@link ResponseEntity} со списком {@link AccountTransferDto} и {@link HttpStatus}
-     */
-    public ResponseEntity<List<AccountTransferDto>> readAllTransfer(List<Long> ids) {
-        final List<Long> accountTransferIds = readAll(ids).stream()
-                .map(SuspiciousAccountTransferDto::getAccountTransferId).toList();
-        return transferClient.readAll(accountTransferIds);
-    }
+//    /**
+//     * @param id технический идентификатор {@link SuspiciousAccountTransferEntity}
+//     * @return {@link ResponseEntity} c {@link AccountTransferDto} и {@link HttpStatus}
+//     */
+//    public ResponseEntity<AccountTransferDto> readTransfer(Long id) {
+//        return transferClient.read(findById(id).getAccountTransferId());
+//    }
+//
+//    /**
+//     * @param ids список технических идентификаторов {@link SuspiciousAccountTransferEntity}
+//     * @return {@link ResponseEntity} со списком {@link AccountTransferDto} и {@link HttpStatus}
+//     */
+//    public ResponseEntity<List<AccountTransferDto>> readAllTransfer(List<Long> ids) {
+//        final List<Long> accountTransferIds = readAll(ids).stream()
+//                .map(SuspiciousAccountTransferDto::getAccountTransferId).toList();
+//        return transferClient.readAll(accountTransferIds);
+//    }
 }

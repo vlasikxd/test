@@ -1,10 +1,7 @@
 package com.bank.antifraud.service;
 
 import com.bank.antifraud.dto.SuspiciousPhoneTransferDto;
-import com.bank.antifraud.dto.transferDto.PhoneTransferDto;
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -37,16 +34,4 @@ public interface SuspiciousPhoneTransferService {
      * @return {@link SuspiciousPhoneTransferDto}
      */
     SuspiciousPhoneTransferDto update(SuspiciousPhoneTransferDto transfer, Long id);
-
-    /**
-     * @param id технический идентификатор {@link SuspiciousPhoneTransferEntity}
-     * @return {@link ResponseEntity} c {@link PhoneTransferDto} и {@link HttpStatus}
-     */
-    ResponseEntity<PhoneTransferDto> readTransfer(Long id);
-
-    /**
-     * @param ids список технических идентификаторов {@link SuspiciousPhoneTransferEntity}
-     * @return {@link ResponseEntity} со списком {@link PhoneTransferDto} и {@link HttpStatus}
-     */
-    ResponseEntity<List<PhoneTransferDto>> readAllTransfer(List<Long> ids);
 }
