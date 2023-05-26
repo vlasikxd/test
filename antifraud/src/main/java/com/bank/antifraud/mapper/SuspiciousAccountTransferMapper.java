@@ -44,7 +44,7 @@ public interface SuspiciousAccountTransferMapper {
     List<SuspiciousAccountTransferDto> toListDto(List<SuspiciousAccountTransferEntity> suspiciousAccountTransfers);
 
     default AccountTransferDto toAccountTransferDto(Long accountTransferId) {
-        AccountTransferDto accountTransferDto = new AccountTransferDto();
+        final AccountTransferDto accountTransferDto = new AccountTransferDto();
         accountTransferDto.setId(accountTransferId);
         return accountTransferDto;
     }

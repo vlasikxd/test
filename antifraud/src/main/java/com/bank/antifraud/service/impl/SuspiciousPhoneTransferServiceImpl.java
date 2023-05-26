@@ -49,8 +49,9 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
      */
     @Override
     public SuspiciousPhoneTransferDto read(Long id) {
-        SuspiciousPhoneTransferDto suspiciousPhoneTransferDto = mapper.toDto(findById(id));
-        suspiciousPhoneTransferDto.setPhoneTransferId(transferClient.read(suspiciousPhoneTransferDto.getPhoneTransferId().getId()).getBody());
+        final SuspiciousPhoneTransferDto suspiciousPhoneTransferDto = mapper.toDto(findById(id));
+        suspiciousPhoneTransferDto.setPhoneTransferId(
+                transferClient.read(suspiciousPhoneTransferDto.getPhoneTransferId().getId()).getBody());
         return suspiciousPhoneTransferDto;
     }
 
@@ -63,9 +64,10 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
         final List<SuspiciousPhoneTransferEntity> suspiciousPhoneTransfers = repository.findAllById(ids);
         validatorSize.checkSize(ids, suspiciousPhoneTransfers,
                 () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает."));
-        List<SuspiciousPhoneTransferDto> suspiciousPhoneTransferDto = mapper.toListDto(suspiciousPhoneTransfers);
-        suspiciousPhoneTransferDto.forEach(x -> x.setPhoneTransferId(transferClient.read(x.getPhoneTransferId().getId()).getBody()));
-        return suspiciousPhoneTransferDto;
+        final var suspiciousPhoneTransferDtoList = mapper.toListDto(suspiciousPhoneTransfers);
+        suspiciousPhoneTransferDtoList.forEach(x -> x.setPhoneTransferId(
+                transferClient.read(x.getPhoneTransferId().getId()).getBody()));
+        return suspiciousPhoneTransferDtoList;
     }
 
     /**

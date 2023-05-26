@@ -44,7 +44,7 @@ public interface SuspiciousPhoneTransferMapper {
     List<SuspiciousPhoneTransferDto> toListDto(List<SuspiciousPhoneTransferEntity> suspiciousPhoneTransfers);
 
     default PhoneTransferDto toPhoneTransferDto(Long phoneTransferId) {
-        PhoneTransferDto phoneTransferDto = new PhoneTransferDto();
+        final PhoneTransferDto phoneTransferDto = new PhoneTransferDto();
         phoneTransferDto.setId(phoneTransferId);
         return phoneTransferDto;
     }

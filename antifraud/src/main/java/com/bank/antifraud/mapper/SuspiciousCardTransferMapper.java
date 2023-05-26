@@ -44,7 +44,7 @@ public interface SuspiciousCardTransferMapper {
     List<SuspiciousCardTransferDto> toListDto(List<SuspiciousCardTransferEntity> suspiciousCardTransfers);
 
     default CardTransferDto toCardTransferDto(Long cardTransferId) {
-        CardTransferDto cardTransferDto = new CardTransferDto();
+        final CardTransferDto cardTransferDto = new CardTransferDto();
         cardTransferDto.setId(cardTransferId);
         return cardTransferDto;
     }

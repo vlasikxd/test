@@ -49,8 +49,9 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
      */
     @Override
     public SuspiciousAccountTransferDto read(Long id) {
-        SuspiciousAccountTransferDto suspiciousAccountTransferDto = mapper.toDto(findById(id));
-        suspiciousAccountTransferDto.setAccountTransferId(transferClient.read(suspiciousAccountTransferDto.getAccountTransferId().getId()).getBody());
+        final SuspiciousAccountTransferDto suspiciousAccountTransferDto = mapper.toDto(findById(id));
+        suspiciousAccountTransferDto.setAccountTransferId(
+                transferClient.read(suspiciousAccountTransferDto.getAccountTransferId().getId()).getBody());
         return suspiciousAccountTransferDto;
     }
 
@@ -63,9 +64,10 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
         final List<SuspiciousAccountTransferEntity> suspiciousAccountTransfers = repository.findAllById(ids);
         validatorSize.checkSize(ids, suspiciousAccountTransfers,
                 () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает."));
-        List<SuspiciousAccountTransferDto> suspiciousAccountTransferDto = mapper.toListDto(suspiciousAccountTransfers);
-        suspiciousAccountTransferDto.forEach(x -> x.setAccountTransferId(transferClient.read(x.getAccountTransferId().getId()).getBody()));
-        return suspiciousAccountTransferDto;
+        final var suspiciousAccountTransferDtoList = mapper.toListDto(suspiciousAccountTransfers);
+        suspiciousAccountTransferDtoList.forEach(x -> x.setAccountTransferId(
+                transferClient.read(x.getAccountTransferId().getId()).getBody()));
+        return suspiciousAccountTransferDtoList;
     }
 
     /**

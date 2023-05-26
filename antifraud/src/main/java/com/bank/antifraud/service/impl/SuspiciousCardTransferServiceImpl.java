@@ -51,8 +51,9 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
      */
     @Override
     public SuspiciousCardTransferDto read(Long id) {
-        SuspiciousCardTransferDto suspiciousCardTransferDto = mapper.toDto(findById(id));
-        suspiciousCardTransferDto.setCardTransferId(transferClient.read(suspiciousCardTransferDto.getCardTransferId().getId()).getBody());
+        final SuspiciousCardTransferDto suspiciousCardTransferDto = mapper.toDto(findById(id));
+        suspiciousCardTransferDto.setCardTransferId(
+                transferClient.read(suspiciousCardTransferDto.getCardTransferId().getId()).getBody());
         return suspiciousCardTransferDto;
     }
 
@@ -65,9 +66,10 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
         final List<SuspiciousCardTransferEntity> suspiciousCardTransfers = repository.findAllById(ids);
         validatorSize.checkSize(ids, suspiciousCardTransfers,
                 () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает."));
-        List<SuspiciousCardTransferDto> suspiciousCardTransferDto = mapper.toListDto(suspiciousCardTransfers);
-        suspiciousCardTransferDto.forEach(x -> x.setCardTransferId(transferClient.read(x.getCardTransferId().getId()).getBody()));
-        return suspiciousCardTransferDto;
+        final var suspiciousCardTransferDtoList = mapper.toListDto(suspiciousCardTransfers);
+        suspiciousCardTransferDtoList.forEach(x -> x.setCardTransferId(
+                transferClient.read(x.getCardTransferId().getId()).getBody()));
+        return suspiciousCardTransferDtoList;
     }
 
     /**
