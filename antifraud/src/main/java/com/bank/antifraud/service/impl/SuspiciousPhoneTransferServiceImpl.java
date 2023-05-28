@@ -2,6 +2,7 @@ package com.bank.antifraud.service.impl;
 
 import com.bank.antifraud.dto.SuspiciousPhoneTransferDto;
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
+import com.bank.antifraud.feign.TransferPhoneClient;
 import com.bank.antifraud.mapper.SuspiciousPhoneTransferMapper;
 import com.bank.antifraud.repository.SuspiciousPhoneTransferRepository;
 import com.bank.antifraud.service.SuspiciousPhoneTransferService;
@@ -25,7 +26,7 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
     private final SuspiciousPhoneTransferRepository repository;
     private final SuspiciousPhoneTransferMapper mapper;
     private final ValidatorSize validatorSize;
-
+    private final TransferPhoneClient transferClient;
     /**
      * @param transfer {@link SuspiciousPhoneTransferDto}
      * @return {@link SuspiciousPhoneTransferDto}
@@ -39,7 +40,7 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
         final SuspiciousPhoneTransferEntity suspiciousPhoneTransfer = repository.save(
                 mapper.toEntity(transfer)
         );
-        return mapper.toDto(suspiciousPhoneTransfer);
+        return setPhoneTransferDto(mapper.toDto(suspiciousPhoneTransfer));
     }
 
     /**
@@ -48,8 +49,7 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
      */
     @Override
     public SuspiciousPhoneTransferDto read(Long id) {
-        final SuspiciousPhoneTransferEntity suspiciousPhoneTransfer = findById(id);
-        return mapper.toDto(suspiciousPhoneTransfer);
+        return setPhoneTransferDto(mapper.toDto(findById(id)));
     }
 
     /**
@@ -60,9 +60,11 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
     public List<SuspiciousPhoneTransferDto> readAll(List<Long> ids) {
         final List<SuspiciousPhoneTransferEntity> suspiciousPhoneTransfers = repository.findAllById(ids);
         validatorSize.checkSize(ids, suspiciousPhoneTransfers,
-                () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает.")
-        );
-        return mapper.toListDto(suspiciousPhoneTransfers);
+                () -> new EntityNotFoundException("Количество найденных и запрошенных записей не совпадает."));
+        final var suspiciousPhoneTransferDtoList = mapper.toListDto(suspiciousPhoneTransfers);
+        suspiciousPhoneTransferDtoList.forEach(x -> x.setPhoneTransferId(
+                transferClient.read(x.getPhoneTransferId().getId()).getBody()));
+        return suspiciousPhoneTransferDtoList;
     }
 
     /**
@@ -80,7 +82,7 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
         final SuspiciousPhoneTransferEntity savedSuspiciousPhoneTransfer = repository.save(
                 mapper.mergeToEntity(transfer, suspiciousPhoneTransferById)
         );
-        return mapper.toDto(savedSuspiciousPhoneTransfer);
+        return setPhoneTransferDto(mapper.toDto(savedSuspiciousPhoneTransfer));
     }
 
     /**
@@ -91,5 +93,15 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
         return repository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("SuspiciousPhoneTransfer с id = " + id + " не найден.")
         );
+    }
+
+    /**
+     * @param transfer {@link SuspiciousPhoneTransferDto}
+     * @return {@link SuspiciousPhoneTransferDto}
+     */
+    private SuspiciousPhoneTransferDto setPhoneTransferDto(SuspiciousPhoneTransferDto transfer) {
+        transfer.setPhoneTransferId(
+                transferClient.read(transfer.getPhoneTransferId().getId()).getBody());
+        return transfer;
     }
 }

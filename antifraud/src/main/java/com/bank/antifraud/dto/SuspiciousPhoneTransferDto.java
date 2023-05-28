@@ -1,5 +1,6 @@
 package com.bank.antifraud.dto;
 
+import com.bank.antifraud.dto.transferDto.PhoneTransferDto;
 import com.bank.antifraud.entity.SuspiciousPhoneTransferEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,20 +22,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SuspiciousPhoneTransferDto implements Serializable {
-
     Long id;
-
     @NotNull
-    Long phoneTransferId;
-
+    PhoneTransferDto phoneTransferId;
     @NotNull
     Boolean isBlocked;
-
     @NotNull
     Boolean isSuspicious;
-
     String blockedReason;
-
     @NotBlank
     String suspiciousReason;
 }
