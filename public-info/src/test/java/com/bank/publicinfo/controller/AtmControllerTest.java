@@ -8,6 +8,7 @@ import com.bank.publicinfo.supplier.AtmSupplier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class AtmControllerTest extends ParentTest {
 
-    private static AtmDto atm;
-    private static AtmSupplier atmSupplier;
+    private AtmDto atm;
+    private AtmSupplier atmSupplier;
 
     private final ObjectMapper mapper;
     private final MockMvc mockMvc;
@@ -46,8 +47,8 @@ public class AtmControllerTest extends ParentTest {
     @MockBean
     private AtmService service;
 
-    @BeforeAll
-    static void init() {
+    @BeforeEach
+    void init() {
         atmSupplier = new AtmSupplier();
 
         atm = atmSupplier.getDto(ONE, SPACE, TRUE, null);
