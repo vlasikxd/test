@@ -40,7 +40,7 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
         final SuspiciousPhoneTransferEntity suspiciousPhoneTransfer = repository.save(
                 mapper.toEntity(transfer)
         );
-        return mapper.toDto(suspiciousPhoneTransfer);
+        return setPhoneTransferDto(mapper.toDto(suspiciousPhoneTransfer));
     }
 
     /**
@@ -49,10 +49,7 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
      */
     @Override
     public SuspiciousPhoneTransferDto read(Long id) {
-        final SuspiciousPhoneTransferDto suspiciousPhoneTransferDto = mapper.toDto(findById(id));
-        suspiciousPhoneTransferDto.setPhoneTransferId(
-                transferClient.read(suspiciousPhoneTransferDto.getPhoneTransferId().getId()).getBody());
-        return suspiciousPhoneTransferDto;
+        return setPhoneTransferDto(mapper.toDto(findById(id)));
     }
 
     /**
@@ -85,7 +82,7 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
         final SuspiciousPhoneTransferEntity savedSuspiciousPhoneTransfer = repository.save(
                 mapper.mergeToEntity(transfer, suspiciousPhoneTransferById)
         );
-        return mapper.toDto(savedSuspiciousPhoneTransfer);
+        return setPhoneTransferDto(mapper.toDto(savedSuspiciousPhoneTransfer));
     }
 
     /**
@@ -96,5 +93,15 @@ public class SuspiciousPhoneTransferServiceImpl implements SuspiciousPhoneTransf
         return repository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("SuspiciousPhoneTransfer с id = " + id + " не найден.")
         );
+    }
+
+    /**
+     * @param transfer {@link SuspiciousPhoneTransferDto}
+     * @return {@link SuspiciousPhoneTransferDto}
+     */
+    private SuspiciousPhoneTransferDto setPhoneTransferDto(SuspiciousPhoneTransferDto transfer) {
+        transfer.setPhoneTransferId(
+                transferClient.read(transfer.getPhoneTransferId().getId()).getBody());
+        return transfer;
     }
 }

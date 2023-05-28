@@ -42,7 +42,7 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
         final SuspiciousCardTransferEntity suspiciousCardTransfer = repository.save(
                 mapper.toEntity(transfer)
         );
-        return mapper.toDto(suspiciousCardTransfer);
+        return setCardTransferDto(mapper.toDto(suspiciousCardTransfer));
     }
 
     /**
@@ -51,10 +51,7 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
      */
     @Override
     public SuspiciousCardTransferDto read(Long id) {
-        final SuspiciousCardTransferDto suspiciousCardTransferDto = mapper.toDto(findById(id));
-        suspiciousCardTransferDto.setCardTransferId(
-                transferClient.read(suspiciousCardTransferDto.getCardTransferId().getId()).getBody());
-        return suspiciousCardTransferDto;
+        return setCardTransferDto(mapper.toDto(findById(id)));
     }
 
     /**
@@ -87,7 +84,7 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
         final SuspiciousCardTransferEntity savedSuspiciousCardTransfer = repository.save(
                 mapper.mergeToEntity(transfer, suspiciousCardTransferById)
         );
-        return mapper.toDto(savedSuspiciousCardTransfer);
+        return setCardTransferDto(mapper.toDto(savedSuspiciousCardTransfer));
     }
 
     /**
@@ -98,5 +95,15 @@ public class SuspiciousCardTransferServiceImpl implements SuspiciousCardTransfer
         return repository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("SuspiciousCardTransfer с id = " + id + " не найден.")
         );
+    }
+
+    /**
+     * @param transfer {@link SuspiciousCardTransferDto}
+     * @return {@link SuspiciousCardTransferDto}
+     */
+    private SuspiciousCardTransferDto setCardTransferDto(SuspiciousCardTransferDto transfer) {
+        transfer.setCardTransferId(
+                transferClient.read(transfer.getCardTransferId().getId()).getBody());
+        return transfer;
     }
 }

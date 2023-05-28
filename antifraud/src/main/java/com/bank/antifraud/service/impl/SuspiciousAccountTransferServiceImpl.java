@@ -40,7 +40,7 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
         final SuspiciousAccountTransferEntity suspiciousAccountTransfer = repository.save(
                 mapper.toEntity(transfer)
         );
-        return mapper.toDto(suspiciousAccountTransfer);
+        return setAccountTransferDto(mapper.toDto(suspiciousAccountTransfer));
     }
 
     /**
@@ -49,10 +49,7 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
      */
     @Override
     public SuspiciousAccountTransferDto read(Long id) {
-        final SuspiciousAccountTransferDto suspiciousAccountTransferDto = mapper.toDto(findById(id));
-        suspiciousAccountTransferDto.setAccountTransferId(
-                transferClient.read(suspiciousAccountTransferDto.getAccountTransferId().getId()).getBody());
-        return suspiciousAccountTransferDto;
+        return setAccountTransferDto(mapper.toDto(findById(id)));
     }
 
     /**
@@ -85,7 +82,7 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
         final SuspiciousAccountTransferEntity savedSuspiciousAccountTransfer = repository.save(
                 mapper.mergeToEntity(transfer, suspiciousAccountTransferById)
         );
-        return mapper.toDto(savedSuspiciousAccountTransfer);
+        return setAccountTransferDto(mapper.toDto(savedSuspiciousAccountTransfer));
     }
 
     /**
@@ -97,22 +94,13 @@ public class SuspiciousAccountTransferServiceImpl implements SuspiciousAccountTr
                 () -> new EntityNotFoundException("SuspiciousAccountTransfer с id = " + id + " не найден.")
         );
     }
-
-//    /**
-//     * @param id технический идентификатор {@link SuspiciousAccountTransferEntity}
-//     * @return {@link ResponseEntity} c {@link AccountTransferDto} и {@link HttpStatus}
-//     */
-//    public ResponseEntity<AccountTransferDto> readTransfer(Long id) {
-//        return transferClient.read(findById(id).getAccountTransferId());
-//    }
-//
-//    /**
-//     * @param ids список технических идентификаторов {@link SuspiciousAccountTransferEntity}
-//     * @return {@link ResponseEntity} со списком {@link AccountTransferDto} и {@link HttpStatus}
-//     */
-//    public ResponseEntity<List<AccountTransferDto>> readAllTransfer(List<Long> ids) {
-//        final List<Long> accountTransferIds = readAll(ids).stream()
-//                .map(SuspiciousAccountTransferDto::getAccountTransferId).toList();
-//        return transferClient.readAll(accountTransferIds);
-//    }
+    /**
+     * @param transfer {@link SuspiciousAccountTransferDto}
+     * @return {@link SuspiciousAccountTransferDto}
+     */
+    private SuspiciousAccountTransferDto setAccountTransferDto(SuspiciousAccountTransferDto transfer) {
+        transfer.setAccountTransferId(
+                transferClient.read(transfer.getAccountTransferId().getId()).getBody());
+        return transfer;
+    }
 }
