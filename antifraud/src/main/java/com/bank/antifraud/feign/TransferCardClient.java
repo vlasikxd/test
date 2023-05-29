@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Cacheable(value = "transfer-cache")
 @FeignClient(value = "transfer-card", url = "http://localhost:8092/api/transfer")
 public interface TransferCardClient {
 
+    @Cacheable(value = "transfer-cache")
     @GetMapping("/card/read")
     ResponseEntity<CardTransferDto> read(@RequestParam Long id);
 }
